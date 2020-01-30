@@ -1,0 +1,11 @@
+include "common.fbs";
+
+namespace io.exflo.domain.fb;
+
+table Account {
+    address: Bytes20;
+    nonce: uint64;
+    balance: UInt256;
+    code: [byte];
+    codeHash: Bytes32;
+}

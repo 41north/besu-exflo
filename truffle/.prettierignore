@@ -1,0 +1,11 @@
+.prettierignore
+.gitignore
+.editorconfig
+.eslintignore
+.envrc
+yarn.lock
+bin/
+build/
+tmp/
+truffle-report/
+**/*.sol

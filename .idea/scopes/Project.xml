@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Project" pattern="!file[exflo.domain.main]:*/&amp;&amp;!file[exflo.ingestion.postgres.main]:generated/jooq//*" />
+</component>

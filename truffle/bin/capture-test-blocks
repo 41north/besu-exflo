@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Constants
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TRUFFLE_DIR="$(cd "${SCRIPT_DIR}"/.. && pwd)"
+TMP_DIR="${TRUFFLE_DIR}/tmp"
+ROOT_DIR="$(cd "${TRUFFLE_DIR}"/.. && pwd)"
+
+# Override as necessary
+BESU_VERSION=${BESU_VERSION:-"1.2.4"}
+OUTPUT_DIR=${OUTPUT_DIR:-"${ROOT_DIR}"/testutil/src/main/resources/exflo/}
+
+# install or update dependencies first
+"${SCRIPT_DIR}"/yarn install
+
+# cleanup any previous state
+rm -rf "${TMP_DIR}"
+mkdir -p "${TMP_DIR}"
+
+# start besu in dev mode
+docker run \
+  -d \
+  --name exflo_test_capture \
+  --rm \
+  --network host \
+  --user "$(id -u)":"$(id -g)" \
+  -v "${TMP_DIR}":/opt/besu/dev \
+  -e BESU_NETWORK=dev \
+  -e BESU_SYNC_MODE=full \
+  -e BESU_LOGGING=INFO \
+  -e BESU_DATA_PATH=/opt/besu/dev \
+  -e BESU_P2P_ENABLED=false \
+  -e BESU_RPC_WS_ENABLED=true \
+  -e BESU_RPC_HTTP_ENABLED=true \
+  -e BESU_RPC_HTTP_API=eth,net,web3,admin,priv,debug \
+  -e BESU_RPC_WS_API=eth,net,web3,admin,priv,debug \
+  -e BESU_MINER_COINBASE=0xf17f52151EbEF6C7334FAD080c5704D77216b732 \
+  -e BESU_MINER_ENABLED=true \
+  hyperledger/besu:${BESU_VERSION}
+
+# run test suite
+"${SCRIPT_DIR}"/yarn test
+
+# stop besu
+docker stop exflo_test_capture
+
+# export blocks
+docker run \
+  --name exflo_test_export \
+  --rm \
+  --network host \
+  --user "$(id -u)":"$(id -g)" \
+  -v "${TMP_DIR}":/opt/besu/dev \
+  -e BESU_NETWORK=dev \
+  -e BESU_SYNC_MODE=full \
+  -e BESU_LOGGING=INFO \
+  -e BESU_DATA_PATH=/opt/besu/dev \
+  -e BESU_P2P_ENABLED=false \
+  hyperledger/besu:${BESU_VERSION} \
+  blocks export --format=RLP --to=/opt/besu/dev/test.blocks
+
+# copy artifacts to output dir
+cp "${TMP_DIR}"/*.blocks "${OUTPUT_DIR}"
+cp "${TRUFFLE_DIR}"/truffle-report/truffle-report.json "${OUTPUT_DIR}"/test-report.json
+
+# stop besu
+docker stop stop exflo_test_export

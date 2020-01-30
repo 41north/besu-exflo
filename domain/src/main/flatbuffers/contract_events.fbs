@@ -1,0 +1,118 @@
+include "common.fbs";
+
+namespace io.exflo.domain.fb.events;
+
+table FungibleApproval {
+    contract: Bytes20;
+    owner: Bytes20;
+    spender: Bytes20;
+    value: UInt256;
+}
+
+table FungibleTransfer {
+    contract: Bytes20;
+    from: Bytes20;
+    to: Bytes20;
+    value: UInt256;
+}
+
+table NonFungibleApproval {
+    contract: Bytes20;
+    owner: Bytes20;
+    approved: Bytes20;
+    tokenId: UInt256;
+}
+
+table ApprovalForAll {
+    contract: Bytes20;
+    owner: Bytes20;
+    operator: Bytes20;
+    approved: bool;
+}
+
+table NonFungibleTransfer {
+    contract: Bytes20;
+    from: Bytes20;
+    to: Bytes20;
+    tokenId: UInt256;
+}
+
+table Sent {
+    contract: Bytes20;
+    operator: Bytes20;
+    from: Bytes20;
+    to: Bytes20;
+    amount: UInt256;
+    data: [byte];
+    operatorData: [byte];
+}
+
+table Minted {
+    contract: Bytes20;
+    operator: Bytes20;
+    to: Bytes20;
+    amount: UInt256;
+    data: [byte];
+    operatorData: [byte];
+}
+
+table Burned {
+    contract: Bytes20;
+    operator: Bytes20;
+    to: Bytes20;
+    amount: UInt256;
+    data: [byte];
+    operatorData: [byte];
+}
+
+table AuthorizedOperator {
+    contract: Bytes20;
+    operator: Bytes20;
+    holder: Bytes20;
+}
+
+table RevokedOperator {
+    contract: Bytes20;
+    operator: Bytes20;
+    holder: Bytes20;
+}
+
+table TransferSingle {
+    contract: Bytes20;
+    operator: Bytes20;
+    from: Bytes20;
+    to: Bytes20;
+    id: UInt256;
+    value: UInt256;
+}
+
+table TransferBatch {
+    contract: Bytes20;
+    operator: Bytes20;
+    from: Bytes20;
+    to: Bytes20;
+    ids: [UInt256];
+    values: [UInt256];
+}
+
+table URI {
+    contract: Bytes20;
+    value: string;
+    id: UInt256;
+}
+
+union ContractEvent {
+    FungibleApproval,
+    FungibleTransfer,
+    NonFungibleApproval,
+    ApprovalForAll,
+    NonFungibleTransfer,
+    Sent,
+    Minted,
+    Burned,
+    AuthorizedOperator,
+    RevokedOperator,
+    TransferSingle,
+    TransferBatch,
+    URI
+}

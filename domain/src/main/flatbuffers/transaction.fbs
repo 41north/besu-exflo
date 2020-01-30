@@ -1,0 +1,28 @@
+include "common.fbs";
+include "receipt.fbs";
+include "trace.fbs";
+
+namespace io.exflo.domain.fb;
+
+table Signature {
+    r: UInt256;
+    s: UInt256;
+    recId: byte;
+}
+
+table Transaction {
+    hash: Bytes32;
+    from: Bytes20;
+    nonce: uint64;
+    gasPrice: UInt256;
+    gasLimit: uint64;
+    to: Bytes20;
+    value: UInt256;
+    payload: [byte];
+    chainId: UInt256;
+    signature: Signature;
+    receipt: TransactionReceipt;
+    trace: TransactionTrace;
+    fee: UInt256;
+    contractAddress: Bytes20;
+}

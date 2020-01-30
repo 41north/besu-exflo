@@ -1,0 +1,26 @@
+include "common.fbs";
+
+namespace io.exflo.domain.fb;
+
+enum DeltaType : byte {
+    BLOCK_REWARD,
+    OMMER_REWARD,
+    TX,
+    TX_FEE,
+    INTERNAL_TX,
+    TOKEN_TRANSFER,
+    CONTRACT_CREATION,
+    CONTRACT_DESTRUCTION
+}
+
+table BalanceDelta {
+    deltaType: DeltaType;
+    pc: int32;
+    contractAddress: Bytes20;
+    from: Bytes20;
+    to: Bytes20;
+    amount: UInt256;
+    tokenId: UInt256;
+    transactionHash: Bytes32;
+    transactionIndex: uint8;
+}

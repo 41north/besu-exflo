@@ -1,0 +1,17 @@
+namespace io.exflo.domain.fb;
+
+table Bytes20 {
+    bytes: [byte];
+}
+
+table Bytes32 {
+    bytes: [byte];
+}
+
+table Bytes256 {
+    bytes: [byte];
+}
+
+table UInt256 {
+    bytes: [byte];
+}

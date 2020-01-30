@@ -1,0 +1,24 @@
+include "common.fbs";
+include "contract_events.fbs";
+
+namespace io.exflo.domain.fb;
+
+table LogTopic {
+    bytes: [byte];
+}
+
+table Log {
+    logger: Bytes20;
+    data: [byte];
+    topics: [LogTopic];
+}
+
+table TransactionReceipt {
+    stateRoot: Bytes32;
+    cumulativeGasUsed: int64;
+    logs: [Log];
+    events: [io.exflo.domain.fb.events.ContractEvent];
+    bloomFilter: Bytes256;
+    status: byte;
+    revertReason: [byte];
+}

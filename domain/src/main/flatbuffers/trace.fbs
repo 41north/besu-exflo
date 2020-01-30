@@ -1,0 +1,79 @@
+include "common.fbs";
+
+namespace io.exflo.domain.fb;
+
+enum TransactionStatus : byte {
+    INVALID,
+    SUCCESSFUL,
+    FAILED
+}
+
+enum ContractType : byte {
+    ERC1155,
+    ERC777,
+    ERC721,
+    ERC20,
+    GENERIC
+}
+
+enum ContractCapability : byte {
+    ERC1155,
+    ERC1155_TOKEN_RECEIVER,
+    ERC777,
+    ERC165,
+    ERC721,
+    ERC721_METADATA,
+    ERC721_ENUMERABLE,
+    ERC20,
+    ERC20_DETAILED,
+    ERC20_BURNABLE,
+    ERC20_MINTABLE,
+    ERC20_PAUSABLE,
+    ERC20_CAPPED
+}
+
+table ContractMetadata {
+    name: string;
+    symbol: string;
+    decimals: byte;
+    totalSupply: UInt256;
+    granularity: UInt256;
+    cap: UInt256;
+}
+
+table ContractCreated {
+    pc: int32;
+    depth: uint32;
+    address: Bytes20;
+    creator: Bytes20;
+    code: [byte];
+    amount: UInt256;
+    transactionHash: Bytes32;
+    type: ContractType;
+    capabilities: [ContractCapability];
+    metadata: ContractMetadata;
+}
+
+table ContractDestroyed {
+    pc: int32;
+    address: Bytes20;
+    refundAddress: Bytes20;
+    refundAmount: UInt256;
+    transactionHash: Bytes32;
+}
+
+table InternalTransaction {
+    pc: int32;
+    from: Bytes20;
+    to: Bytes20;
+    amount: UInt256;
+    transactionHash: Bytes32;
+}
+
+table TransactionTrace {
+    contractsCreated: [ContractCreated];
+    contractsDestroyed: [ContractDestroyed];
+    internalTransactions: [InternalTransaction];
+    status: TransactionStatus;
+    revertReason: [byte];
+}

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRC_DIR="$(cd "$SCRIPT_DIR"/.. && pwd)"
+
+docker run \
+  --rm \
+  --volume "${SRC_DIR}":/truffle \
+  --network host \
+  --workdir /truffle \
+  --user "$(id -u)":"$(id -g)" \
+  node:10.16.3 bash -c "yarn $*"

@@ -1,0 +1,38 @@
+version: '3.7'
+
+networks:
+  net:
+    driver: bridge
+
+volumes:
+  postgres:
+    driver: local
+
+services:
+
+  postgres:
+    image: postgres:12
+    restart: unless-stopped
+    shm_size: 4g
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./docker/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - net
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+
+  pgweb:
+    image: sosedoff/pgweb:0.11.5
+    restart: unless-stopped
+    networks:
+      - net
+    depends_on:
+      - postgres
+    ports:
+      - 8082:8082
+    command: "/usr/bin/pgweb --bind=0.0.0.0 --listen=8082 --url postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"

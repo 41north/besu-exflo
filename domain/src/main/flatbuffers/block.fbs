@@ -1,0 +1,52 @@
+include "common.fbs";
+include "transaction.fbs";
+include "receipt.fbs";
+include "trace.fbs";
+include "account.fbs";
+include "balances.fbs";
+
+namespace io.exflo.domain.fb;
+
+table BlockHeader {
+    hash: Bytes32;
+    parentHash: Bytes32;
+    ommersHash: Bytes32;
+    coinbase: Bytes20;
+    stateRoot: Bytes32;
+    transactionsRoot: Bytes32;
+    receiptsRoot: Bytes32;
+    logsBloom: Bytes256;
+    difficulty: UInt256;
+    totalDifficulty: UInt256;
+    number: uint64;
+    gasLimit: uint64;
+    gasUsed: uint64;
+    timestamp: uint64;
+    extraData: [byte];
+    mixHash: Bytes32;
+    nonce: uint64;
+}
+
+table BlockBody {
+    ommers: [BlockHeader];
+    transactions: [Transaction];
+}
+
+table Rewards {
+    rewards: [Reward];
+}
+
+table Reward {
+    hash: Bytes32;
+    amount: UInt256;
+}
+
+table Block {
+    header: BlockHeader;
+    body: BlockBody;
+    rewards: Rewards;
+    touchedAccounts: [Account];
+    balanceDeltas: [BalanceDelta];
+}
+
+root_type Block;
