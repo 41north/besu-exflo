@@ -96,7 +96,7 @@ We chose Besu for several reasons:
 
 ### Why not use the Web3 interface that every Ethereum client has?
 
-If you have every tried this you will quickly realise that extracting even just the basic information from an Ethereum client via the Web3 interface requires a lot of requests and some non-trivial logic to do well. On top of that, depending on the client (we won't name anyone in particular) you may find that under heavy load, such as when syncing for the first time, your client may become unstable and periodically core dump. Maximising throughput whilst keeping the client happy quickly becomes a tedious exercise.
+If you have ever tried this you will quickly realise that extracting even just the basic information from an Ethereum client via the Web3 interface requires a lot of requests and some non-trivial logic to do well. On top of that, depending on the client (we won't name anyone in particular) you may find that under heavy load, such as when syncing for the first time, your client may become unstable and periodically core dump. Maximising throughput whilst keeping the client happy quickly becomes a tedious exercise.
 
 Put simply it has been our experience that pulling via the Web3 interface is sub-optimal for a variety reasons which are better explored in a blog post.
 
