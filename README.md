@@ -37,7 +37,7 @@ besu:
   image: hyperledger/besu:1.3.8
   volumes:
     - ./path/exflo-{kafka, postgres}-jar/:/etc/besu/plugins
-  command: "----plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
+  command: "--plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
 ```
 
 ## Usage
