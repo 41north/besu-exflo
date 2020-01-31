@@ -1,5 +1,23 @@
 # Development Guide
 
+## Table of Contents
+
+* [Development Guide](#development-guide)
+    * [Prerequisites](#prerequisites)
+    * [Checkout source code](#checkout-source-code)
+    * [How code is organized](#how-code-is-organized)
+    * [See what tasks are available](#see-what-tasks-are-available)
+    * [Generating Intellij's Run Configurations](#generating-intellijs-run-configurations)
+    * [Updating FlatBuffers Java entities](#updating-flatbuffers-java-entities)
+    * [Updating Web3 Contract Wrappers](#updating-web3-contract-wrappers)
+    * [Processing using Postgres](#processing-using-postgres)
+       * [Performing Migrations](#performing-migrations)
+       * [Updating Jooq Entities](#updating-jooq-entities)
+    * [Processing into Kafka](#processing-into-kafka)
+    * [How to update tests](#how-to-update-tests)
+    * [Run tests](#run-tests)
+    * [Formatting source](#formatting-source)
+
 ## Prerequisites
 
 1. Java 11+ ([AdoptOpenJDK](https://adoptopenjdk.net/), [Zulu Community](https://www.azul.com/products/zulu-community/) or [OpenJDK](https://openjdk.java.net/))
@@ -17,17 +35,18 @@ $ git clone git@github.com:41north/exflo.git
 
 The codebase can be broken down as follows:
 
-- `buildSrc/` - This folder includes `gradle` [custom tasks and plugins](https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#sec:build_sources) that aids in development.
+- [`buildSrc`](buildSrc) - This folder includes `gradle` [custom tasks and plugins](https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#sec:build_sources) that aids in development.
   - There are two custom made plugins focused on compiling [`flatbuffers`](buildSrc/src/main/kotlin/io/exflo/gradle/plugins/flatbuffers) and [`solidity`](buildSrc/src/main/kotlin/io/exflo/gradle/plugins/solidity) source using `docker`.
   - Several minor tasks to generate [`Kotlin` code from `Solidity's ABI`](buildSrc/src/main/kotlin/io/exflo/gradle/tasks/Web3KtCodeGenTask.kt) or for [generating Intellij's Run configurations](#generating-intellij's-run-configurations).
-- `docker/` - Folder to store custom Dockerfiles with images.
-- `domain/` - As the name implies, this submodule stores information related to `flatbuffer` entities for those plugins that needs a compact form of serialization (see [How to generate Flatbuffer Java entities](#updating-flatbuffers-java-entities) section).
-- `ingestion/` - This folder is the main core of Exflo. It's composed of:
-  - `base/` - Includes all the important logic for `tracer`, the `chain tracker`, `token detector` code and base implementations for Exflo plugins.
-  - `postgres/` - All relevant postgres implementation lies here (see [Processing using Postgres](#processing-using-postgres) section).
-  - `kafka/` - All relevant kafka implementation lies here (see [Processing using Kafka](#processing-using-kafka) section).
-- `truffle/` - Basic tests are performed on [Truffle](https://www.trufflesuite.com/) and later exported to a private besu chain by `testutil/` utilities (see [How to update tests](#how-to-update-tests) section).
-- `testutil/` - Test utilities related to testing Exflo.
+- [`docker`](docker) - Folder to store custom Dockerfiles with images.
+- [`domain`](domain) - As the name implies, this submodule stores information related to `flatbuffer` entities for those plugins that needs a compact form of serialization (see [How to generate Flatbuffer Java entities](#updating-flatbuffers-java-entities) section).
+- [`ingestion`](ingestion) - This folder is the main core of Exflo. It's composed of:
+  - [`base`](ingestion/base) - Includes all the important logic for [`tracer`](ingestion/base/src/main/kotlin/io/exflo/ingestion/tracer), the [`chain tracker`](ingestion/base/src/main/kotlin/io/exflo/ingestion/tracker), [`token detector`](ingestion/base/src/main/kotlin/io/exflo/ingestion/tokens) code and base implementations for Exflo plugins.
+  - [`postgres`](ingestion/postgres) - All relevant postgres implementation lies here (see [Processing using Postgres](#processing-using-postgres) section).
+  - [`kafka`](ingestion/kafka) - All relevant kafka implementation lies here (see [Processing using Kafka](#processing-using-kafka) section).
+- [`truffle`](truffle) - Basic tests are performed on [Truffle](https://www.trufflesuite.com/) and later exported to a private besu chain by `testutil/` utilities (see [How to update tests](#how-to-update-tests) section).
+- [`testutil`](testutil) - Test utilities related to testing Exflo.
+- [`intellij`](intellij) - Definitions for generating Run configuration tasks for Intellij 
 
 ## See what tasks are available
 
@@ -46,7 +65,7 @@ If you plan to use the IDE shortcuts (which we strongly recommend), after clonin
 $ ./gradlew generateIntellijRunConfigs
 ```
 
-This `gradle` task will auto create required XMLs that are stored inside `.idea/runConfigurations` folder. If you want to customize options, you can edit the `YAML` file found on `intellij/` folder.
+This `gradle` task will auto create required XMLs that are stored inside `.idea/runConfigurations` folder. If you want to customize options, you can edit the YAML [`run-configs.yaml`](intellij/run-configs.yaml) file found on [`intellij`](intellij) folder.
 
 ## Updating FlatBuffers Java entities
 
