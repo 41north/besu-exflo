@@ -2,6 +2,7 @@
 
 > A plugin for the [Besu](http://besu.hyperledger.org/en/stable/) enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines.
 
+![KtLint](https://github.com/41north/exflo/workflows/KtLint/badge.svg)
 ![License](https://img.shields.io/github/license/41north/exflo?style=flat-square)
 ![Github Starts](https://img.shields.io/github/stars/41North/exflo.svg?style=flat-square)
 [![GitHub contributors](https://img.shields.io/github/contributors/41North/exflo.svg?style=flat-square)](https://github.com/41North/exflo/graphs/contributors/)
