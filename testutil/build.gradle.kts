@@ -37,7 +37,3 @@ dependencies {
     api("org.koin:koin-test")
     api("io.mockk:mockk")
 }
-
-tasks.withType<Jar> {
-    enabled = false
-}
