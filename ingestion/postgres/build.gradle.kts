@@ -15,7 +15,7 @@
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.rohanprabhu.gradle.plugins.kdjooq.JooqEdition
+import io.exflo.gradle.plugins.jooq.JooqEdition
 import org.jooq.meta.jaxb.Configuration
 
 plugins {
@@ -25,7 +25,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
     id("org.jlleitschuh.gradle.ktlint")
     id("org.flywaydb.flyway") version "6.2.0"
-    id("com.rohanprabhu.kotlin-dsl-jooq") version "0.4.4"
+    id("io.exflo.gradle.plugins.jooq")
 }
 
 dependencies {
@@ -53,15 +53,10 @@ flyway {
     url = postgresUrl
 }
 
-afterEvaluate {
-    // jooq codegen is hardcoded into the build phase so we manually disable for now
-    // so that it isn't performing unnecessary generations
-    project.tasks["jooq-codegen-primary"].enabled = false
-}
-
 jooqGenerator {
     jooqEdition = JooqEdition.OpenSource
     jooqVersion = "3.12.3"
+    attachToCompileJava = false
 
     configuration("primary", project.sourceSets["main"]) {
 
