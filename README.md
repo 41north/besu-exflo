@@ -10,6 +10,8 @@
 
 ## Description
 
+**Note**: This project is in alpha stage, there are known issues that we are working on actively! Be warned!
+
 Exflo can extract the following information from a Besu archive instance into either a Postgres database or a Kafka topic:
 
 - Block headers.
