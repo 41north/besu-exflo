@@ -6,7 +6,6 @@
 ![License](https://img.shields.io/github/license/41north/exflo?style=flat-square)
 ![Github Starts](https://img.shields.io/github/stars/41North/exflo.svg?style=flat-square)
 [![GitHub contributors](https://img.shields.io/github/contributors/41North/exflo.svg?style=flat-square)](https://github.com/41North/exflo/graphs/contributors/)
-[![Chat on Gitter](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg?style=flat-square)](https://gitter.im/exfloio/community)
 
 ## Description
 
