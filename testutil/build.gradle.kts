@@ -21,7 +21,7 @@ plugins {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    api(kotlin("stdlib"))
 
     implementation("org.hyperledger.besu.internal:besu")
     implementation("org.hyperledger.besu.internal:core")

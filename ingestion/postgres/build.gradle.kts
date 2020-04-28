@@ -127,12 +127,14 @@ publishing {
 val build: DefaultTask by project.tasks
 build.dependsOn(tasks.shadowJar)
 
-tasks.withType<ShadowJar> {
-    archiveBaseName.set(project.name)
-    archiveClassifier.set("")
-    minimize()
-}
+tasks {
+    withType<ShadowJar> {
+        archiveBaseName.set(project.name)
+        archiveClassifier.set("")
+        minimize()
+    }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+    withType<Test> {
+        useJUnitPlatform()
+    }
 }

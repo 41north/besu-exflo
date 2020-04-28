@@ -15,10 +15,8 @@
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import io.exflo.gradle.plugins.solidity.EVMVersion
-import io.exflo.gradle.plugins.solidity.OutputComponent
-import io.exflo.gradle.plugins.solidity.SolidityExtension
-import io.exflo.gradle.plugins.solidity.SolidityPlugin
+import dev.north.fortyone.gradle.solidity.EVMVersion.ISTANBUL
+import dev.north.fortyone.gradle.solidity.OutputComponent
 import io.exflo.gradle.tasks.ClassOutput
 import io.exflo.gradle.tasks.ClassVisibility
 import io.exflo.gradle.tasks.Web3KtCodegenTask
@@ -28,14 +26,13 @@ plugins {
     kotlin("jvm")
     id("com.github.johnrengelman.shadow")
     id("org.jlleitschuh.gradle.ktlint")
+    id("dev.north.fortyone.solidity") version "0.1.0"
 }
-
-apply<SolidityPlugin>()
 
 dependencies {
 
-    api("org.jetbrains.kotlin:kotlin-stdlib")
-    api("org.jetbrains.kotlin:kotlin-reflect")
+    api(kotlin("stdlib"))
+    api(kotlin("reflect"))
 
     api(project(":domain"))
 
@@ -70,43 +67,45 @@ ktlint {
     }
 }
 
-configure<SolidityExtension> {
-    solidityImage.set("ethereum/solc:0.5.13")
-    evmVersion.set(EVMVersion.ISTANBUL)
+solidity {
+    dockerSolidityImage.set("ethereum/solc:0.5.13")
+    evmVersion.set(ISTANBUL)
     outputComponents.set(listOf(OutputComponent.BIN_RUNTIME, OutputComponent.ABI))
 }
 
 val build: DefaultTask by tasks
 build.dependsOn(tasks.shadowJar)
 
-tasks.withType<ShadowJar> {
-    archiveBaseName.set(project.name)
-    archiveClassifier.set("")
-    minimize()
-}
+tasks {
+    withType<ShadowJar> {
+        archiveBaseName.set(project.name)
+        archiveClassifier.set("")
+        minimize()
+    }
 
-tasks.withType<Jar> {
-    enabled = false
-}
+    withType<Jar> {
+        enabled = false
+    }
 
-tasks.register<Web3KtCodegenTask>("generateContractWrappers") {
-    dependsOn(project.tasks["compileSolidity"])
+    register<Web3KtCodegenTask>("generateContractWrappers") {
+        dependsOn(project.tasks["compileSolidity"])
 
-    group = "web3"
+        group = "web3"
 
-    solidityDir = "${project.buildDir.path}/resources/main/solidity"
-    basePackageName = "${project.group}.ingestion.tokens.detectors"
-    destinationDir = project.sourceSets.main.get().allJava.sourceDirectories.first { it.name.contains("kotlin") }.path
+        solidityDir = "${project.buildDir.path}/resources/main/solidity"
+        basePackageName = "${project.group}.ingestion.tokens.detectors"
+        destinationDir = project.sourceSets.main.get().allJava.sourceDirectories.first { it.name.contains("kotlin") }.path
 
-    contracts = listOf(
-        ClassOutput("ERC20Detector", ClassVisibility.ABSTRACT),
-        ClassOutput("ERC165Detector"),
-        ClassOutput("ERC721Detector"),
-        ClassOutput("ERC777Detector"),
-        ClassOutput("ERC1155Detector")
-    )
-}
+        contracts = listOf(
+            ClassOutput("ERC20Detector", ClassVisibility.ABSTRACT),
+            ClassOutput("ERC165Detector"),
+            ClassOutput("ERC721Detector"),
+            ClassOutput("ERC777Detector"),
+            ClassOutput("ERC1155Detector")
+        )
+    }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+    withType<Test> {
+        useJUnitPlatform()
+    }
 }
