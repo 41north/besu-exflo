@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-import io.exflo.gradle.plugins.flatbuffers.FlatBuffersExtension
-import io.exflo.gradle.plugins.flatbuffers.FlatBuffersPlugin
-import io.exflo.gradle.plugins.flatbuffers.Language
+import dev.north.fortyone.gradle.flatbuffers.Language
 
 plugins {
     kotlin("jvm")
     id("org.jlleitschuh.gradle.ktlint")
+    id("dev.north.fortyone.flatbuffers") version "0.1.0"
 }
 
-apply<FlatBuffersPlugin>()
-
 dependencies {
-    api("org.jetbrains.kotlin:kotlin-stdlib")
+    api(kotlin("stdlib"))
 
     api("com.google.flatbuffers:flatbuffers-java")
 
@@ -38,12 +35,14 @@ dependencies {
     testImplementation("org.apache.commons:commons-lang3")
 }
 
-configure<FlatBuffersExtension> {
+flatbuffers {
     language.set(Language.JAVA)
     inputSources.set(listOf("block.fbs"))
     extraFlatcArgs.set("flatc --java -o /output/ -I /input --gen-all /input/block.fbs")
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+tasks {
+    withType<Test> {
+        useJUnitPlatform()
+    }
 }

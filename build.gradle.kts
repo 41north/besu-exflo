@@ -66,15 +66,17 @@ allprojects {
         maven(url = "https://dl.bintray.com/tuweni/tuweni/")
     }
 
-    tasks.withType<KotlinCompile>().all {
-        sourceCompatibility = "${JavaVersion.VERSION_11}"
-        targetCompatibility = "${JavaVersion.VERSION_11}"
-        kotlinOptions.jvmTarget = "${JavaVersion.VERSION_11}"
-    }
+    tasks {
+        withType<KotlinCompile>().all {
+            sourceCompatibility = "${JavaVersion.VERSION_11}"
+            targetCompatibility = "${JavaVersion.VERSION_11}"
+            kotlinOptions.jvmTarget = "${JavaVersion.VERSION_11}"
+        }
 
-    tasks.withType<JavaCompile> {
-        sourceCompatibility = "${JavaVersion.VERSION_11}"
-        targetCompatibility = "${JavaVersion.VERSION_11}"
+        withType<JavaCompile> {
+            sourceCompatibility = "${JavaVersion.VERSION_11}"
+            targetCompatibility = "${JavaVersion.VERSION_11}"
+        }
     }
 }
 
@@ -101,24 +103,26 @@ ktlint {
     }
 }
 
-tasks.jar {
-    enabled = false
-}
-
-tasks.register<IntellijRunConfiguratorTask>("generateIntellijRunConfigs") {
-    tasksDefinitions = File("intellij/run-configs.yaml")
-}
-
-tasks.withType<DependencyUpdatesTask> {
-    fun isNonStable(version: String): Boolean {
-        val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
-        val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-        val isStable = stableKeyword || regex.matches(version)
-        return isStable.not()
+tasks {
+    jar {
+        enabled = false
     }
 
-    // Reject all non stable versions
-    rejectVersionIf {
-        isNonStable(candidate.version)
+    register<IntellijRunConfiguratorTask>("generateIntellijRunConfigs") {
+        tasksDefinitions = File("intellij/run-configs.yaml")
+    }
+
+    withType<DependencyUpdatesTask> {
+        fun isNonStable(version: String): Boolean {
+            val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+            val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+            val isStable = stableKeyword || regex.matches(version)
+            return isStable.not()
+        }
+
+        // Reject all non stable versions
+        rejectVersionIf {
+            isNonStable(candidate.version)
+        }
     }
 }

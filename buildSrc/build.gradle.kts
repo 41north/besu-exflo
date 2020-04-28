@@ -40,17 +40,12 @@ dependencies {
     implementation("org.hyperledger.besu.internal:util")
 
     implementation("org.redundent:kotlin-xml-builder")
-
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
 
-    implementation("org.jooq:jooq:3.12.3")
-    implementation("org.jooq:jooq-meta:3.12.3")
-    implementation("org.jooq:jooq-codegen:3.12.3")
     implementation("javax.activation:activation:1.1.1")
     implementation("javax.xml.bind:jaxb-api:2.3.0")
     implementation("com.sun.xml.bind:jaxb-core:2.3.0.1")
-
     runtimeOnly("com.sun.xml.bind:jaxb-impl:2.3.0.1")
 }
