@@ -17,9 +17,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import dev.north.fortyone.gradle.solidity.EVMVersion.ISTANBUL
 import dev.north.fortyone.gradle.solidity.OutputComponent
-import io.exflo.gradle.tasks.ClassOutput
-import io.exflo.gradle.tasks.ClassVisibility
-import io.exflo.gradle.tasks.Web3KtCodegenTask
 
 plugins {
     `java-library`
@@ -41,6 +38,9 @@ dependencies {
     api("org.hyperledger.besu.internal:metrics-core")
     api("org.hyperledger.besu.internal:plugins-rocksdb")
     api("org.hyperledger.besu.internal:kvstore")
+
+    api("org.apache.tuweni:tuweni-bytes")
+    api("org.apache.tuweni:tuweni-units")
 
     api("info.picocli:picocli")
 
@@ -85,24 +85,6 @@ tasks {
 
     withType<Jar> {
         enabled = false
-    }
-
-    register<Web3KtCodegenTask>("generateContractWrappers") {
-        dependsOn(project.tasks["compileSolidity"])
-
-        group = "web3"
-
-        solidityDir = "${project.buildDir.path}/resources/main/solidity"
-        basePackageName = "${project.group}.ingestion.tokens.detectors"
-        destinationDir = project.sourceSets.main.get().allJava.sourceDirectories.first { it.name.contains("kotlin") }.path
-
-        contracts = listOf(
-            ClassOutput("ERC20Detector", ClassVisibility.ABSTRACT),
-            ClassOutput("ERC165Detector"),
-            ClassOutput("ERC721Detector"),
-            ClassOutput("ERC777Detector"),
-            ClassOutput("ERC1155Detector")
-        )
     }
 
     withType<Test> {

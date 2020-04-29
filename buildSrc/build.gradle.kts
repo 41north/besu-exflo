@@ -29,16 +29,6 @@ repositories {
 }
 
 dependencies {
-    implementation("com.squareup:kotlinpoet")
-
-    implementation("org.web3j:core")
-    implementation("org.web3j:abi")
-    implementation("org.web3j:utils")
-
-    implementation("org.hyperledger.besu:plugin-api")
-    implementation("org.hyperledger.besu.internal:core")
-    implementation("org.hyperledger.besu.internal:util")
-
     implementation("org.redundent:kotlin-xml-builder")
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

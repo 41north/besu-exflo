@@ -56,6 +56,8 @@ import io.exflo.domain.fb.TransactionTrace.createContractsDestroyedVector
 import io.exflo.domain.fb.TransactionTrace.createInternalTransactionsVector
 import io.exflo.domain.fb.TransactionTrace.endTransactionTrace
 import io.exflo.domain.fb.TransactionTrace.startTransactionTrace
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Block
@@ -64,8 +66,6 @@ import org.hyperledger.besu.ethereum.core.Transaction
 import org.hyperledger.besu.ethereum.core.Wei
 import org.hyperledger.besu.ethereum.debug.TraceFrame
 import org.hyperledger.besu.ethereum.mainnet.TransactionProcessor
-import org.hyperledger.besu.util.bytes.BytesValue
-import org.hyperledger.besu.util.uint.UInt256
 
 data class BlockTrace(
     val block: Block,
@@ -139,7 +139,7 @@ data class TransactionTrace(
         val revertReasonOffset: Int? =
             result
                 .revertReason
-                .map { bb.createByteVector(it.extractArray()) }.orElse(null)
+                .map { bb.createByteVector(it.toArray()) }.orElse(null)
 
         startTransactionTrace(bb)
 
@@ -158,7 +158,7 @@ data class ContractCreated(
     val transactionHash: Hash? = null,
     val originatorAddress: Address,
     val contractAddress: Address,
-    val code: BytesValue,
+    val code: Bytes,
     val amount: Wei,
     val type: ContractType? = null,
     val capabilities: Set<ContractCapability>? = null,
@@ -170,7 +170,7 @@ data class ContractCreated(
 
         val addressOffset = contractAddress.toFlatBuffer(bb)
         val creatorOffset = originatorAddress.toFlatBuffer(bb)
-        val codeOffset = bb.createByteVector(code.extractArray())
+        val codeOffset = bb.createByteVector(code.toArray())
         val amountOffset = amount.toFlatBuffer(bb)
         val transactionHashOffset = transactionHash?.toFlatBuffer(bb)
         val capabilitiesOffset = capabilities

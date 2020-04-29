@@ -19,12 +19,9 @@ package io.exflo.ingestion.tracer
 import io.exflo.domain.ContractCreated
 import io.exflo.domain.ContractDestroyed
 import io.exflo.domain.InternalTransaction
-import java.util.ArrayDeque
-import java.util.Deque
-import java.util.EnumSet
-import java.util.Optional
-import java.util.TreeMap
 import org.apache.logging.log4j.LogManager
+import org.apache.tuweni.bytes.Bytes32
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.ethereum.core.Gas
 import org.hyperledger.besu.ethereum.core.Wei
 import org.hyperledger.besu.ethereum.debug.TraceFrame
@@ -32,8 +29,11 @@ import org.hyperledger.besu.ethereum.vm.Code
 import org.hyperledger.besu.ethereum.vm.MessageFrame
 import org.hyperledger.besu.ethereum.vm.OperationTracer
 import org.hyperledger.besu.ethereum.vm.Words
-import org.hyperledger.besu.util.bytes.Bytes32
-import org.hyperledger.besu.util.uint.UInt256
+import java.util.ArrayDeque
+import java.util.Deque
+import java.util.EnumSet
+import java.util.Optional
+import java.util.TreeMap
 
 /**
  * An implementation of an [OperationTracer] in charge of finding the following in a contract:
@@ -234,12 +234,12 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
     private fun captureMemory(frame: MessageFrame): Optional<Array<Bytes32>> =
         when {
             options.traceMemory -> {
-                val memoryContents = Array<Bytes32>(frame.memoryWordSize().toInt()) { Bytes32.ZERO }
+                val memoryContents = Array<Bytes32>(frame.memoryWordSize().intValue()) { Bytes32.ZERO }
                 memoryContents.indices.forEach { i ->
                     memoryContents[i] = Bytes32.wrap(
                         frame.readMemory(
-                            UInt256.of(i.toLong()).times(UInt256.U_32),
-                            UInt256.U_32
+                            UInt256.valueOf(i.toLong()).multiply(UINT256_32),
+                            UINT256_32
                         ), 0
                     )
                 }
@@ -259,6 +259,10 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
             "CREATE", "CREATE2", "SELFDESTRUCT", "CALL", "CALLCODE" -> captureStack(frame)
             else -> emptyArray()
         }
+
+    companion object {
+        private val UINT256_32 = UInt256.valueOf(32)
+    }
 }
 
 data class TraceOptions(

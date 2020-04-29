@@ -18,11 +18,11 @@ package io.exflo.ingestion.tokens.detectors
 
 import io.exflo.ingestion.extensions.bytesValue
 import io.exflo.ingestion.extensions.indexOf
+import org.apache.tuweni.bytes.Bytes
 import org.hyperledger.besu.crypto.Hash.keccak256
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.transaction.TransactionSimulator
-import org.hyperledger.besu.util.bytes.BytesValue
 
 /**
  * Detects ERC20 contracts (or at least, it tries to do so).
@@ -43,7 +43,7 @@ class ERC20Detector(
     precompiledAddress: Address,
     contractAddress: Address,
     blockHash: Hash,
-    contractCode: BytesValue
+    contractCode: Bytes
 ) : AbstractERC20Detector(
     transactionSimulator,
     precompiledAddress,
@@ -51,7 +51,7 @@ class ERC20Detector(
     blockHash
 ) {
 
-    private val code = contractCode.byteArray
+    private val code = contractCode.toArray()
 
     fun hasERC20Interface(): Boolean = ERC20Signatures.erc20.find { code.indexOf(it) == -1 }?.let { false } ?: true
 
@@ -88,5 +88,5 @@ object ERC20Signatures {
     )
 
     @Suppress("FunctionName")
-    private fun `4bytes`(method: String) = keccak256(method.toByteArray().bytesValue).slice(0, 4).byteArray
+    private fun `4bytes`(method: String) = keccak256(method.toByteArray().bytesValue).slice(0, 4).toArray()
 }

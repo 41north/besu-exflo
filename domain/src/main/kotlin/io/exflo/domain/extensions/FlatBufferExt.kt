@@ -102,17 +102,17 @@ import org.hyperledger.besu.ethereum.core.LogsBloomFilter as BesuLogsBloomFilter
 import org.hyperledger.besu.ethereum.core.Transaction as BesuTransaction
 import org.hyperledger.besu.ethereum.core.TransactionReceipt as BesuTransactionReceipt
 import org.hyperledger.besu.ethereum.core.Wei
-import org.hyperledger.besu.util.uint.UInt256 as BesuUInt256
+import org.apache.tuweni.units.bigints.UInt256 as BesuUInt256
 
 fun Wei.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(byteArray)
+    val offset = bb.createByteVector(toBytes().toArray())
     UInt256.startUInt256(bb)
     UInt256.addBytes(bb, offset)
     return UInt256.endUInt256(bb)
 }
 
 fun Address.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(byteArray)
+    val offset = bb.createByteVector(toArray())
     Bytes20.startBytes20(bb)
     Bytes20.addBytes(bb, offset)
     return Bytes20.endBytes20(bb)
@@ -133,7 +133,7 @@ fun BesuSignature.toFlatBuffer(bb: FlatBufferBuilder): Int {
 }
 
 fun BesuLogTopic.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(byteArray)
+    val offset = bb.createByteVector(toArray())
     LogTopic.startLogTopic(bb)
     LogTopic.addBytes(bb, offset)
     return LogTopic.endLogTopic(bb)
@@ -142,7 +142,7 @@ fun BesuLogTopic.toFlatBuffer(bb: FlatBufferBuilder): Int {
 fun BesuLog.toFlatBuffer(bb: FlatBufferBuilder): Int {
 
     val loggerOffset = logger.toFlatBuffer(bb)
-    val dataOffset = bb.createByteVector(data.byteArray)
+    val dataOffset = bb.createByteVector(data.toArray())
 
     val topicOffsets = topics.map { it.toFlatBuffer(bb) }
     val topicVectorOffset = Log.createTopicsVector(bb, topicOffsets.toIntArray())
@@ -156,14 +156,14 @@ fun BesuLog.toFlatBuffer(bb: FlatBufferBuilder): Int {
 }
 
 fun Hash.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(byteArray)
+    val offset = bb.createByteVector(toArray())
     Bytes32.startBytes32(bb)
     Bytes32.addBytes(bb, offset)
     return Bytes32.endBytes32(bb)
 }
 
 fun BesuLogsBloomFilter.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(byteArray)
+    val offset = bb.createByteVector(toArray())
     Bytes256.startBytes256(bb)
     Bytes256.addBytes(bb, offset)
     return Bytes256.endBytes256(bb)
@@ -182,7 +182,7 @@ fun BesuTransactionReceipt.toFlatBuffer(bb: FlatBufferBuilder, logParser: (recei
     val eventsVectorOffset = createEventsVector(bb, eventsWithType.map { (_, eventOffset) -> eventOffset }.toIntArray())
 
     val revertReasonOffset: Int? = revertReason
-        .map { bb.createByteVector(it.byteArray) }
+        .map { bb.createByteVector(it.toArray()) }
         .orElse(null)
 
     startTransactionReceipt(bb)
@@ -210,7 +210,7 @@ fun BesuTransaction.toFlatBuffer(
     val fromOffset = sender.toFlatBuffer(bb)
     val gasPriceOffset = gasPrice.toFlatBuffer(bb)
     val valueOffset = value.toFlatBuffer(bb)
-    val payloadOffset = bb.createByteVector(payload.byteArray)
+    val payloadOffset = bb.createByteVector(payload.toArray())
     val signatureOffset = signature.toFlatBuffer(bb)
     val receiptOffset = receipt.toFlatBuffer(bb, logParser)
     val feeOffset = fee.toFlatBuffer(bb)
@@ -246,7 +246,7 @@ fun BesuAccount.toFlatBuffer(bb: FlatBufferBuilder, contractsCreated: List<Addre
     val addressOffset = address.toFlatBuffer(bb)
     val balanceOffset = balance.toFlatBuffer(bb)
 
-    val codeOffset: Int? = if (contractCreated) bb.createByteVector(code.extractArray()) else null
+    val codeOffset: Int? = if (contractCreated) bb.createByteVector(code.toArray()) else null
     val codeHashOffset: Int? = if (contractCreated) codeHash.toFlatBuffer(bb) else null
 
     startAccount(bb)
@@ -262,7 +262,7 @@ fun BesuAccount.toFlatBuffer(bb: FlatBufferBuilder, contractsCreated: List<Addre
 }
 
 fun BesuUInt256.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(byteArray)
+    val offset = bb.createByteVector(toBytes().toArray())
     UInt256.startUInt256(bb)
     UInt256.addBytes(bb, offset)
     return UInt256.endUInt256(bb)
@@ -279,7 +279,7 @@ fun BesuBlockHeader.toFlatBuffer(bb: FlatBufferBuilder, totalDifficulty: BesuUIn
     val receiptsRootOffset = receiptsRoot.toFlatBuffer(bb)
     val logsBloomOffset = logsBloom.toFlatBuffer(bb)
     val difficultyOffset = difficulty.toFlatBuffer(bb)
-    val extraDataOffset = bb.createByteVector(extraData.byteArray)
+    val extraDataOffset = bb.createByteVector(extraData.toArray())
     val mixHashOffset = mixHash.toFlatBuffer(bb)
     // Total difficulty is not set on ommers
     val totalDifficultyOffset: Int? = totalDifficulty?.toFlatBuffer(bb)
@@ -329,7 +329,7 @@ fun BesuBlockBody.toFlatBuffer(
         .map { (tx, receipt, trace) ->
             val gasUsed = receipt.cumulativeGasUsed.minus(totalGasUsed)
             totalGasUsed += gasUsed
-            val fee = tx.gasPrice.times(gasUsed)
+            val fee = tx.gasPrice.multiply(gasUsed)
             tx.toFlatBuffer(bb, receipt, fee, trace, logParser)
         }
         .let { offsetArray -> createTransactionsVector(bb, offsetArray.toIntArray()) }
