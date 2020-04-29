@@ -16,13 +16,14 @@
 
 package io.exflo.ingestion.tokens.precompiled
 
+import io.exflo.ingestion.extensions.reflektField
 import io.exflo.ingestion.tokens.EVMFactory
-import java.math.BigInteger
-import java.util.NavigableSet
 import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.mainnet.MutableProtocolSchedule
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule
 import org.hyperledger.besu.ethereum.mainnet.ScheduledProtocolSpec
+import java.math.BigInteger
+import java.util.NavigableSet
 
 /**
  * In order to use directly Solidity to detect several Token types (instead of relying directly with low level stuff)
@@ -38,13 +39,10 @@ object PrecompiledContractsFactory {
         check(protocolSchedule is MutableProtocolSchedule<*>) { "protocolSchedule must be of MutableProtocolSchedule" }
 
         // TODO: Review with Besu devs if there's a better way to avoid having reflection here
-        val protocolSpecsField = protocolSchedule::class.java.getDeclaredField("protocolSpecs")
-        protocolSpecsField.isAccessible = true
+        val protocolSpecs =
+            reflektField<NavigableSet<ScheduledProtocolSpec<*>>>(protocolSchedule, "protocolSpecs")
 
-        // Obtain registry of defined protocol specs
-        @Suppress("UNCHECKED_CAST") val protocolSpecs =
-            protocolSpecsField.get(protocolSchedule) as NavigableSet<ScheduledProtocolSpec<*>>
-
+        // TODO: MainnetEvmRegistries is also another useful class that shouldn't be private
         val evm = EVMFactory.istanbul(chainId)
 
         val erc20Detector = ERC20DetectorPrecompiledContract(evm)

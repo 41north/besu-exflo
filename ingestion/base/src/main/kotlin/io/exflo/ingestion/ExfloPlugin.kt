@@ -19,16 +19,15 @@ package io.exflo.ingestion
 import io.exflo.ingestion.KoinModules.eventsModule
 import io.exflo.ingestion.KoinModules.stateModule
 import io.exflo.ingestion.KoinModules.storageModule
+import io.exflo.ingestion.extensions.reflektField
 import io.exflo.ingestion.tokens.precompiled.PrecompiledContractsFactory
 import io.exflo.ingestion.tracker.BlockWriter
 import io.exflo.ingestion.tracker.ChainTracker
 import org.apache.logging.log4j.LogManager
+import org.hyperledger.besu.cli.BesuCommand
 import org.hyperledger.besu.cli.config.EthNetworkConfig
-import org.hyperledger.besu.cli.config.NetworkName
 import org.hyperledger.besu.config.GenesisConfigFile
 import org.hyperledger.besu.ethereum.chain.GenesisState
-import org.hyperledger.besu.ethereum.core.PrivacyParameters
-import org.hyperledger.besu.ethereum.mainnet.MainnetProtocolSchedule
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule
 import org.hyperledger.besu.ethereum.mainnet.ScheduleBasedBlockHeaderFunctions
 import org.hyperledger.besu.plugin.BesuContext
@@ -39,6 +38,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import picocli.CommandLine
 
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
@@ -52,6 +52,10 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
     protected lateinit var context: BesuContext
 
     private lateinit var blockWriter: BlockWriter
+
+    private lateinit var commandLine: CommandLine
+
+    private lateinit var besuCommand: BesuCommand
 
     private val rocksDBPlugin = RocksDBPlugin()
 
@@ -67,6 +71,10 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
         val cliOptions = cmdlineOptions.get()
         cliOptions.addPicoCLIOptions(name, options)
 
+        // TODO: Review with BESU devs how we can improve obtaining this info without resorting to reflection
+        commandLine = reflektField(cliOptions, "commandLine")
+        besuCommand = commandLine.commandSpec.userObject() as BesuCommand
+
         log.info("Plugin registered")
     }
 
@@ -80,20 +88,13 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
         try {
             rocksDBPlugin.start()
 
-            // TODO: Review with Besu devs if there's a better way of obtaining this info without resorting on env variables
-            val networkName = NetworkName.valueOf(System.getenv("BESU_NETWORK").toUpperCase())
-            val networkConfig = EthNetworkConfig.getNetworkConfig(networkName)
-
-            log.debug("Network name: $networkName | Network Config: $networkConfig")
-
+            val networkConfig = reflektField<EthNetworkConfig>(besuCommand, "ethNetworkConfig")
             val genesisConfigFile = GenesisConfigFile.fromConfig(networkConfig.genesisConfig)
 
-            // TODO needs to change based on network properties, should be good for mainnet and ropsten
-            val protocolSchedule = MainnetProtocolSchedule.fromConfig(
-                genesisConfigFile.configOptions,
-                PrivacyParameters.DEFAULT,
-                true
-            )
+            log.debug("Network id: ${networkConfig.networkId} | Network Config: $networkConfig")
+
+            val controller = besuCommand.controllerBuilder.build()
+            val protocolSchedule = controller.protocolSchedule
 
             // Register custom precompiled contracts
             PrecompiledContractsFactory.register(protocolSchedule, networkConfig.networkId)
@@ -103,7 +104,6 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
             // create a module for injecting various basic context objects
             val contextModule = module {
                 single { context }
-                single { networkName }
                 single { networkConfig }
                 single { protocolSchedule }
                 single { genesisState }
