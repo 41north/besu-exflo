@@ -178,8 +178,8 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
 
                     val inputOffset = UInt256.fromBytes(stack[1])
                     val inputSize = UInt256.fromBytes(stack[2])
-                    val inputData = frame.readMemory(inputOffset, inputSize)
-                    val code = Code(inputData).bytes
+                    val data = frame.readMemory(inputOffset, inputSize)
+                    val code = Code(data).bytes
 
                     val amount = Wei.wrap(stack[0])
 

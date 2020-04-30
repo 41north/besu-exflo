@@ -26,18 +26,6 @@ fun <T : Any> assertNotNull(
 
 inline fun <reified T : Any> reflektField(entity: Any, fieldName: String): T {
     val field = assertNotNull(entity::class.java.declaredFields.find { it.name == fieldName })
-    if (!field.isAccessible) field.isAccessible = true
+    if (!field.canAccess(entity)) field.isAccessible = true
     return field.get(entity) as T
-}
-
-inline fun <reified T : Any> reflektMethod(entity: Any, methodName: String, vararg args: Any?): T {
-    val method = assertNotNull(entity::class.java.declaredMethods.find { it.name == methodName })
-    if (!method.isAccessible) method.isAccessible = true
-    return method.invoke(entity, args) as T
-}
-
-inline fun <reified T : Any> reflektMethod(entity: Any? = null, clazz: Class<*>, methodName: String, vararg args: Any?): T {
-    val method = assertNotNull(clazz.declaredMethods.find { it.name == methodName })
-    if (!method.isAccessible) method.isAccessible = true
-    return method.invoke(entity, args) as T
 }

@@ -57,9 +57,10 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
 
     private lateinit var besuCommand: BesuCommand
 
-    private val rocksDBPlugin = RocksDBPlugin()
+    private val rocksDBPlugin = ExfloRocksDBPlugin()
 
     override fun register(context: BesuContext) {
+
         rocksDBPlugin.register(context)
 
         log.debug("Registering plugin")
