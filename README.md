@@ -54,13 +54,13 @@ Decide which data store you want to run:
 For Postgres:
 
 ```bash
-docker-compose up -f docker-compose.exflo-postgres.yml up
+docker-compose -f docker-compose.exflo-postgres.yml up
 ```
 
 For Kafka:
 
 ```bash
-docker-compose up -f docker-compose.exflo-kafka.yml up
+docker-compose -f docker-compose.exflo-kafka.yml up
 ```
 
 Wait for each docker service to be properly initialized. After that, inside Intellij, execute accordingly the Run config:
