@@ -82,6 +82,8 @@ dependencyManagement {
 
         dependency 'org.flywaydb:flyway-core:6.2.0'
 
+        dependency 'com.squareup:kotlinpoet:1.4.3'
+
         dependency 'com.google.flatbuffers:flatbuffers-java:1.11.0'
 
         dependency 'io.reactivex.rxjava3:rxjava:3.0.0-RC8'
