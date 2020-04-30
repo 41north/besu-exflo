@@ -13,9 +13,9 @@
     A plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. <br/> Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
 </p>
 
-## 🗒️ Features 
-
 **⚠️ Warning**: This project is in alpha stage, and we are working actively!
+
+## 🗒️ Features 
 
 Exflo can extract the following information from a Besu archive instance into either a [Postgres](https://www.postgresql.org/) database or a [Kafka](https://kafka.apache.org/) topic:
 
@@ -27,15 +27,12 @@ Exflo can extract the following information from a Besu archive instance into ei
 - Contract creations and self destructs.
 - Per block account state changes.
 
-Some screenshots of captured data for Postgres:
+Some screenshots of captured data:
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-1.png" width="100" />
-  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-2.png" width="100" />
-  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-3.png" width="100" /> 
-  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-4.png" width="100" />
-  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-5.png" width="100" />
-</p>
+| Plugin        | Screenshots        |
+| ------------- |:------------------:|
+| Postgres      | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-2.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-3.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-4.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-5.png" width="100" /></p> |
+| Kafka         | TBW      |
 
 ## 🚆 Quickstart
 
