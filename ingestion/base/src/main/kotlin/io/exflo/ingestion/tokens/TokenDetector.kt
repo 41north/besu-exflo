@@ -32,10 +32,10 @@ import io.exflo.ingestion.tokens.precompiled.ERC20DetectorPrecompiledContract
 import io.exflo.ingestion.tokens.precompiled.ERC721DetectorPrecompiledContract
 import io.exflo.ingestion.tokens.precompiled.ERC777DetectorPrecompiledContract
 import org.apache.logging.log4j.LogManager
+import org.apache.tuweni.bytes.Bytes
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.transaction.TransactionSimulator
-import org.hyperledger.besu.util.bytes.BytesValue
 
 /**
  * Class that tries to detect if a contract implements any of the following ERC20, ERC165, ERC721, ERC777 or ERC_1155 standards.
@@ -75,7 +75,7 @@ class TokenDetector(
     private val transactionSimulator: TransactionSimulator,
     private val blockHash: Hash,
     private val contractAddress: Address,
-    private val contractCode: BytesValue
+    private val contractCode: Bytes
 ) {
 
     private val logger = LogManager.getLogger()

@@ -278,7 +278,7 @@ fun BesuBlockHeader.toFlatBuffer(bb: FlatBufferBuilder, totalDifficulty: BesuUIn
     val transactionsRootOffset = transactionsRoot.toFlatBuffer(bb)
     val receiptsRootOffset = receiptsRoot.toFlatBuffer(bb)
     val logsBloomOffset = logsBloom.toFlatBuffer(bb)
-    val difficultyOffset = difficulty.toFlatBuffer(bb)
+    val difficultyOffset = (difficulty.toUInt256()).toFlatBuffer(bb)
     val extraDataOffset = bb.createByteVector(extraData.toArray())
     val mixHashOffset = mixHash.toFlatBuffer(bb)
     // Total difficulty is not set on ommers

@@ -34,13 +34,9 @@ import org.hyperledger.besu.ethereum.core.Wei
 import org.hyperledger.besu.ethereum.worldstate.WorldStateArchive
 import java.util.stream.Collectors
 
-fun UInt256.bigInteger() = toBytes().toBigInteger()
+fun UInt256.bigDecimal() = toBigInteger().toBigDecimal()
 
-fun UInt256.bigDecimal() = this.bigInteger().toBigDecimal()
-
-fun Wei.bigInteger() = this.toBytes().toBigInteger()
-
-fun Wei.bigDecimal() = this.bigInteger().toBigDecimal()
+fun Wei.bigDecimal() = this.toBigInteger().toBigDecimal()
 
 fun TransactionReceipt.contractEvents(): List<ContractEvent> =
     LogParser.parse(this)

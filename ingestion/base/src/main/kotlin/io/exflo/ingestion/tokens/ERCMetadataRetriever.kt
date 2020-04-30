@@ -16,13 +16,13 @@
 
 package io.exflo.ingestion.tokens
 
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.transaction.CallParameter
 import org.hyperledger.besu.ethereum.transaction.TransactionSimulator
 import org.hyperledger.besu.ethereum.transaction.TransactionSimulatorResult
-import org.hyperledger.besu.util.bytes.BytesValue
-import org.hyperledger.besu.util.uint.UInt256
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
@@ -47,11 +47,11 @@ class ERCMetadataRetriever(
             listOf(),
             listOf(TypeReference.create(Utf8String::class.java))
         )
-        val fnEncoded = BytesValue.fromHexString(FunctionEncoder.encode(fn))
+        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
         return execute(fnEncoded, contractAddress, blockHash)
             ?.output
             ?.let {
-                val rawInput = it.toUnprefixedString()
+                val rawInput = it.toUnprefixedHexString()
                 FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Utf8String>
             }
             ?.firstOrNull()
@@ -65,11 +65,11 @@ class ERCMetadataRetriever(
             listOf(),
             listOf(TypeReference.create(Utf8String::class.java))
         )
-        val fnEncoded = BytesValue.fromHexString(FunctionEncoder.encode(fn))
+        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
         return execute(fnEncoded, contractAddress, blockHash)
             ?.output
             ?.let {
-                val rawInput = it.toUnprefixedString()
+                val rawInput = it.toUnprefixedHexString()
                 FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Utf8String>
             }
             ?.firstOrNull()
@@ -83,15 +83,15 @@ class ERCMetadataRetriever(
             listOf(),
             listOf(TypeReference.create(Uint256::class.java))
         )
-        val fnEncoded = BytesValue.fromHexString(FunctionEncoder.encode(fn))
+        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
         return execute(fnEncoded, contractAddress, blockHash)
             ?.output
             ?.let {
-                val rawInput = it.toUnprefixedString()
+                val rawInput = it.toUnprefixedHexString()
                 FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint256>
             }
             ?.firstOrNull()
-            ?.value?.let { UInt256.of(it) }
+            ?.value?.let { UInt256.valueOf(it) }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -101,11 +101,11 @@ class ERCMetadataRetriever(
             listOf(),
             listOf(TypeReference.create(Uint8::class.java))
         )
-        val fnEncoded = BytesValue.fromHexString(FunctionEncoder.encode(fn))
+        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
         return execute(fnEncoded, contractAddress, blockHash)
             ?.output
             ?.let {
-                val rawInput = it.toUnprefixedString()
+                val rawInput = it.toUnprefixedHexString()
                 FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint8>
             }
             ?.firstOrNull()
@@ -120,15 +120,15 @@ class ERCMetadataRetriever(
             listOf(),
             listOf(TypeReference.create(Uint256::class.java))
         )
-        val fnEncoded = BytesValue.fromHexString(FunctionEncoder.encode(fn))
+        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
         return execute(fnEncoded, contractAddress, blockHash)
             ?.output
             ?.let {
-                val rawInput = it.toUnprefixedString()
+                val rawInput = it.toUnprefixedHexString()
                 FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint256>
             }
             ?.firstOrNull()
-            ?.value?.let { UInt256.of(it) }
+            ?.value?.let { UInt256.valueOf(it) }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -138,19 +138,19 @@ class ERCMetadataRetriever(
             listOf(),
             listOf(TypeReference.create(Uint256::class.java))
         )
-        val fnEncoded = BytesValue.fromHexString(FunctionEncoder.encode(fn))
+        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
         return execute(fnEncoded, contractAddress, blockHash)
             ?.output
             ?.let {
-                val rawInput = it.toUnprefixedString()
+                val rawInput = it.toUnprefixedHexString()
                 FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint256>
             }
             ?.firstOrNull()
-            ?.value?.let { UInt256.of(it) }
+            ?.value?.let { UInt256.valueOf(it) }
     }
 
     private fun execute(
-        method: BytesValue,
+        method: Bytes,
         address: Address,
         blockHash: Hash
     ): TransactionSimulatorResult? = transactionSimulator.process(
