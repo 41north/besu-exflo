@@ -1,12 +1,8 @@
-name: KtLint
-
+name: build
 on: [push]
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.11
@@ -17,3 +13,5 @@ jobs:
       run: chmod +x gradlew
     - name: Check source with KtLint
       run: ./gradlew ktlintCheck
+    - name: Execute tests
+      run: ./gradlew test
