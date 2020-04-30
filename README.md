@@ -94,8 +94,8 @@ besu:
 
 Each plugin exposes a set of command line options with sane defaults and tries to autoconfigure itself as much as possible:
 
-- Command line arguments for Postgres.
-- Command line arguments for Kafka.
+- [Command line arguments for Postgres](.github/POSTGRES_PLUGIN.md).
+- [Command line arguments for Kafka](.github/KAFKA_PLUGIN.md).
 
 ### Bundled docker images
 
@@ -115,7 +115,8 @@ Also, we are not only limited to technical contributions. Things that make us ha
 * Add a [GitHub Star](https://github.com/41north/athena/stargazers) to the project.
 * ETH donations to [this address](https://etherscan.io/address/0xcee9ad6d00237e25A945D7ac2f7532C602d265Df)!
 * Tweet about this project.
-* Write a review or tutorial.
+* Write a review or tutorial:
+    - [Exflo: A plugin for Hyperledger Besu](https://41north.dev/blog/open-source/exflo-a-plugin-for-hyperledger-besu/)
 
 ## ❔ FAQ
 
