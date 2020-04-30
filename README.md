@@ -27,6 +27,16 @@ Exflo can extract the following information from a Besu archive instance into ei
 - Contract creations and self destructs.
 - Per block account state changes.
 
+Some screenshots of captured data for Postgres:
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-1.png" width="100" />
+  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-2.png" width="100" />
+  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-3.png" width="100" /> 
+  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-4.png" width="100" />
+  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-5.png" width="100" />
+</p>
+
 ## 🚆 Quickstart
 
 Before continuing you will need to ensure you have the following installed:
