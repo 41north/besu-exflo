@@ -27,9 +27,54 @@ Exflo can extract the following information from a Besu archive instance into ei
 - Contract creations and self destructs.
 - Per block account state changes.
 
-## Installation
+## 🚆 Quickstart
 
-If you want to run Exflo, the approach is the same as other Besu plugins. Assuming you're using docker:
+Before continuing you will need to ensure you have the following installed:
+
+* Java 11 or higher ([AdoptOpenJDK](https://adoptopenjdk.net/), [Zulu Community](https://www.azul.com/products/zulu-community/) or [OpenJDK](https://openjdk.java.net/))
+* [Docker](https://docs.docker.com/install/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+* [direnv](https://github.com/direnv/direnv/blob/master/docs/installation.md)
+* [IntelliJ IDEA Community or Ultimate](https://www.jetbrains.com/)
+
+Clone the repository:
+
+```bash
+git clone git@github.com:41north/exflo.git
+```
+
+Generate Intellij run configurations:
+
+```bash
+./gradlew generateIntellijRunConfigs
+```
+
+Decide which data store you want to run:
+
+For Postgres:
+
+```bash
+docker-compose up -f docker-compose.exflo-postgres.yml up
+```
+
+For Kafka:
+
+```bash
+docker-compose up -f docker-compose.exflo-kafka.yml up
+```
+
+Wait for each docker service to be properly initialized. After that, inside Intellij, execute accordingly the Run config:
+
+```text
+BESU | Ropsten | Kafka > Run
+BESU | Ropsten | Postgres > Run
+```
+
+## Usage with Besu
+
+### Jar
+
+If you want to run Exflo, the approach is the same as other Besu plugin. Assuming you're using docker:
 
 1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file.
 2. Extract the `tar` or the `zip` file.
@@ -47,42 +92,16 @@ besu:
   command: "--plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
 ```
 
-## Usage
+Each plugin exposes a set of command line options with sane defaults and tries to autoconfigure itself as much as possible:
 
-Each plugin exposes a set of command line options with sane defaults and tries to autoconfigure itself as much as possible. 
-In the case of the `kafka` plugin it creates associated topics by default or for the `postgres` one it deploys automatically migrations if 
-it detects that the DB is not initialized.
+- Command line arguments for Postgres.
+- Command line arguments for Kafka.
 
-### Kafka
+### Bundled docker images
 
-Possible command line arguments for `kafka` are described below:
+We also offer bundled docker images with Besu to ease even more its usage:
 
-| Flag                                                   |                                              Description                                              |                                      Default | Optional |
-| ------------------------------------------------------ | :---------------------------------------------------------------------------------------------------: | -------------------------------------------: | -------: |
-| `--plugin-exflo-kafka-start-block-override`            |                              Block number from which to start publishing                              | Genesis block or from latest published block |      Yes |
-| `--plugin-exflo-kafka-max-fork-size`                   | Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart |                                          192 |      Yes |
-| `--plugin-exflo-kafka-processing-entities`             |     Comma separated list of entities to include on import / ingest. Default is a predefined list      |               HEADER, BODY, RECEIPTS, TRACES |      Yes |
-| `--plugin-exflo-kafka-bootstrap-servers`               |                                     Kafka cluster to publish into                                     |                               localhost:9092 |      Yes |
-| `--plugin-exflo-kafka-client-id`                       |                                 Client id to use with Kafka Publisher                                 |                                        exflo |      Yes |
-| `--plugin-exflo-kafka-replication-factor`              |                                 Replication factor to use for topics                                  |                                            1 |      Yes |
-| `--plugin-exflo-kafka-import-cache-topic`              |                               Topic to use for import progress tracking                               |                         \_exflo-import-cache |      Yes |
-| `--plugin-exflo-kafka-blocks-topic`                    |                              Topic to use for chain tracker state store                               |                                       blocks |      Yes |
-| `--plugin-exflo-kafka-blocks-topic-partitions`         |                               Num of partitions related to blocks topic                               |                                            1 |      Yes |
-| `--plugin-exflo-kafka-blocks-topic-replication-factor` |                           Num of replication factor related to blocks topic                           |                                            1 |      Yes |
-| `--plugin-exflo-kafka-ignore-kafka-topic-creation`     |                     Enables or disables the creation of the required Kafka topic                      |                                        false |      Yes |
-| `--plugin-exflo-kafka-safe-sync-block-amount`          |                     Number of blocks to check during the initial safe sync check                      |                                          256 |      Yes |
-
-### Postgres
-
-Possible command line arguments for `postgres` are described below:
-
-| Flag                                              |                                              Description                                              |                                                                 Default | Optional |
-| ------------------------------------------------- | :---------------------------------------------------------------------------------------------------: | ----------------------------------------------------------------------: | -------: |
-| `--plugin-exflo-postgres-start-block-override`    |                              Block number from which to start publishing                              |                            Genesis block or from latest published block |      Yes |
-| `--plugin-exflo-postgres-max-fork-size`           | Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart |                                                                     192 |      Yes |
-| `--plugin-exflo-postgres-processing-level`        |     Comma separated list of entities to include on import / ingest. Default is a predefined list      |                                          HEADER, BODY, RECEIPTS, TRACES |      Yes |
-| `--plugin-exflo-postgres-jdbc-url`                |                               DBC connection url for postgres database                                | jdbc:postgresql://localhost/exflo_dev?user=exflo_dev&password=exflo_dev |      Yes |
-| `--plugin-exflo-postgres-ignore-migrations-check` |                      Enables or disables checking migrations on the selected DB                       |                                                                   false |      Yes |
+TBW
 
 ## 💻 Contribute
 
