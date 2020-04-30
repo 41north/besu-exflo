@@ -1,17 +1,23 @@
-# Exflo
+<h1 align="center">Exflo</h1>
 
-> A plugin for the [Besu](http://besu.hyperledger.org/en/stable/) enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines.
+<p align="center">
+  <a href="https://github.com/41north/exflo/workflows/KtLint/badge.svg">
+    <img alt="KtLint" height="20px" src="https://github.com/41north/exflo/workflows/KtLint/badge.svg" />
+  </a>
+  <a href="https://img.shields.io/github/license/41north/exflo?style=flat-square">
+    <img alt="Exflo License" height="20px" src="https://img.shields.io/github/license/41north/exflo?style=flat-square" />
+  </a>
+</p>
 
-![KtLint](https://github.com/41north/exflo/workflows/KtLint/badge.svg)
-![License](https://img.shields.io/github/license/41north/exflo?style=flat-square)
-![Github Starts](https://img.shields.io/github/stars/41North/exflo.svg?style=flat-square)
-[![GitHub contributors](https://img.shields.io/github/contributors/41North/exflo.svg?style=flat-square)](https://github.com/41North/exflo/graphs/contributors/)
+<p align="center">
+    <b>Exflo</b> is a plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
+</p>
 
-## Description
+## 🗒️ Features 
 
-**Note**: This project is in alpha stage, there are known issues that we are working on actively! Be warned!
+**⚠️ Warning**: This project is in alpha stage, and we are working actively!
 
-Exflo can extract the following information from a Besu archive instance into either a Postgres database or a Kafka topic:
+Exflo can extract the following information from a Besu archive instance into either a [Postgres](https://www.postgresql.org/) database or a [Kafka](https://kafka.apache.org/) topic:
 
 - Block headers.
 - Transactions.
@@ -35,7 +41,7 @@ Here's an example of a possible `docker` configuration using `docker-compose` sy
 
 ```yaml
 besu:
-  image: hyperledger/besu:1.3.8
+  image: hyperledger/besu:1.4.4
   volumes:
     - ./path/exflo-{kafka, postgres}-jar/:/etc/besu/plugins
   command: "--plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
@@ -43,7 +49,9 @@ besu:
 
 ## Usage
 
-Each plugin exposes a set of command line options with sane defaults and tries to autoconfigure itself as much as possible. In the case of the `kafka` plugin it creates associated topics by default or for the `postgres` one it deploys automatically migrations if it detects that the DB is not initialized.
+Each plugin exposes a set of command line options with sane defaults and tries to autoconfigure itself as much as possible. 
+In the case of the `kafka` plugin it creates associated topics by default or for the `postgres` one it deploys automatically migrations if 
+it detects that the DB is not initialized.
 
 ### Kafka
 
@@ -76,15 +84,21 @@ Possible command line arguments for `postgres` are described below:
 | `--plugin-exflo-postgres-jdbc-url`                |                               DBC connection url for postgres database                                | jdbc:postgresql://localhost/exflo_dev?user=exflo_dev&password=exflo_dev |      Yes |
 | `--plugin-exflo-postgres-ignore-migrations-check` |                      Enables or disables checking migrations on the selected DB                       |                                                                   false |      Yes |
 
-## Development
+## 💻 Contribute
 
-Please read the [instructions for how to get started](DEVELOPMENT.md) with developing on the Exflo codebase. Also read the [contribution guide](CONTRIBUTING.md) for more detail on how to submit a pull request (PR).
+We welcome any kind of contribution or support to this project but before to do so:
 
-## Roadmap
+* Read our [development guide](/.github/DEVELOPMENT.md) to understand how to properly develop on the codebase.
+* Make sure you have read the [contribution guide](/.github/CONTRIBUTING.md) for more details on how to submit a good PR (pull request).
 
-See our [Roadmap guide](ROADMAP.md) for more information.
+Also, we are not only limited to technical contributions. Things that make us happy are:
 
-## FAQ
+* Add a [GitHub Star](https://github.com/41north/athena/stargazers) to the project.
+* ETH donations to [this address](https://etherscan.io/address/0xcee9ad6d00237e25A945D7ac2f7532C602d265Df)!
+* Tweet about this project.
+* Write a review or tutorial.
+
+## ❔ FAQ
 
 ### Why Besu?
 
@@ -98,22 +112,21 @@ We chose Besu for several reasons:
 
 ### Why not use the Web3 interface that every Ethereum client has?
 
-If you have ever tried this you will quickly realise that extracting even just the basic information from an Ethereum client via the Web3 interface requires a lot of requests and some non-trivial logic to do well. On top of that, depending on the client (we won't name anyone in particular) you may find that under heavy load, such as when syncing for the first time, your client may become unstable and periodically core dump. Maximising throughput whilst keeping the client happy quickly becomes a tedious exercise.
+If you have ever tried this you will quickly realise that extracting even just the basic information from an Ethereum client via the Web3 
+interface requires a lot of requests and some non-trivial logic to do well. On top of that, depending on the client 
+(we won't name anyone in particular) you may find that under heavy load, such as when syncing for the first time, your client may become 
+unstable and periodically core dump. Maximising throughput whilst keeping the client happy quickly becomes a tedious exercise.
 
-Put simply it has been our experience that pulling via the Web3 interface is sub-optimal for a variety reasons which are better explored in a blog post.
+Put simply it has been our experience that pulling via the Web3 interface is sub-optimal for a variety reasons which are better explored 
+in a blog post.
 
-## Donations
+## 📬 Get in touch
 
-We plan to keep Exflo open and free.
+`Exflo` has been developed initially by [°41North](https://41north.dev). 
 
-If you find it useful and want to help use direct more of our time to it's continued support and development, please consider donating.
+If you think this project would be useful for your use case and want to talk more about it you can reach out to us via our contact form 
+or by sending an email to `hello@41north.dev`. We try to respond within 48 hours and look forward to hearing from you.
 
-- ETH donations to [this address](https://etherscan.io/address/0xcee9ad6d00237e25A945D7ac2f7532C602d265Df)!
-
-Also consider [leaving a star](https://github.com/41North/exflo/stargazers) on GitHub if you like this project.
-
-Thank you :heartbeat:!
-
-## License
+## ✍️ License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.

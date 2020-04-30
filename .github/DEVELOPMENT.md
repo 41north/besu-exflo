@@ -35,18 +35,18 @@ $ git clone git@github.com:41north/exflo.git
 
 The codebase can be broken down as follows:
 
-- [`buildSrc`](buildSrc) - This folder includes `gradle` [custom tasks and plugins](https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#sec:build_sources) that aids in development.
+- [`buildSrc`](../buildSrc) - This folder includes `gradle` [custom tasks and plugins](https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#sec:build_sources) that aids in development.
   - There are two custom made plugins focused on compiling [`flatbuffers`](buildSrc/src/main/kotlin/io/exflo/gradle/plugins/flatbuffers) and [`solidity`](buildSrc/src/main/kotlin/io/exflo/gradle/plugins/solidity) source using `docker`.
-  - Several minor tasks to generate [`Kotlin` code from `Solidity's ABI`](buildSrc/src/main/kotlin/io/exflo/gradle/tasks/Web3KtCodeGenTask.kt) or for [generating Intellij's Run configurations](#generating-intellij's-run-configurations).
-- [`docker`](docker) - Folder to store custom Dockerfiles with images.
-- [`domain`](domain) - As the name implies, this submodule stores information related to `flatbuffer` entities for those plugins that needs a compact form of serialization (see [How to generate Flatbuffer Java entities](#updating-flatbuffers-java-entities) section).
-- [`ingestion`](ingestion) - This folder is the main core of Exflo. It's composed of:
-  - [`base`](ingestion/base) - Includes all the important logic for [`tracer`](ingestion/base/src/main/kotlin/io/exflo/ingestion/tracer), the [`chain tracker`](ingestion/base/src/main/kotlin/io/exflo/ingestion/tracker), [`token detector`](ingestion/base/src/main/kotlin/io/exflo/ingestion/tokens) code and base implementations for Exflo plugins.
-  - [`postgres`](ingestion/postgres) - All relevant postgres implementation lies here (see [Processing using Postgres](#processing-using-postgres) section).
-  - [`kafka`](ingestion/kafka) - All relevant kafka implementation lies here (see [Processing using Kafka](#processing-using-kafka) section).
-- [`truffle`](truffle) - Basic tests are performed on [Truffle](https://www.trufflesuite.com/) and later exported to a private besu chain by `testutil/` utilities (see [How to update tests](#how-to-update-tests) section).
-- [`testutil`](testutil) - Test utilities related to testing Exflo.
-- [`intellij`](intellij) - Definitions for generating Run configuration tasks for Intellij 
+  - Several minor tasks to generate [`Kotlin` code from `Solidity's ABI`](../buildSrc/src/main/kotlin/io/exflo/gradle/tasks/Web3KtCodeGenTask.kt) or for [generating Intellij's Run configurations](#generating-intellij's-run-configurations).
+- [`docker`](../docker) - Folder to store custom Dockerfiles with images.
+- [`domain`](../domain) - As the name implies, this submodule stores information related to `flatbuffer` entities for those plugins that needs a compact form of serialization (see [How to generate Flatbuffer Java entities](#updating-flatbuffers-java-entities) section).
+- [`ingestion`](../ingestion) - This folder is the main core of Exflo. It's composed of:
+  - [`base`](../ingestion/base) - Includes all the important logic for [`tracer`](../ingestion/base/src/main/kotlin/io/exflo/ingestion/tracer), the [`chain tracker`](../ingestion/base/src/main/kotlin/io/exflo/ingestion/tracker), [`token detector`](../ingestion/base/src/main/kotlin/io/exflo/ingestion/tokens) code and base implementations for Exflo plugins.
+  - [`postgres`](../ingestion/postgres) - All relevant postgres implementation lies here (see [Processing using Postgres](#processing-using-postgres) section).
+  - [`kafka`](../ingestion/kafka) - All relevant kafka implementation lies here (see [Processing using Kafka](#processing-using-kafka) section).
+- [`truffle`](../truffle) - Basic tests are performed on [Truffle](https://www.trufflesuite.com/) and later exported to a private besu chain by `testutil/` utilities (see [How to update tests](#how-to-update-tests) section).
+- [`testutil`](../testutil) - Test utilities related to testing Exflo.
+- [`intellij`](../intellij) - Definitions for generating Run configuration tasks for Intellij 
 
 ## See what tasks are available
 
@@ -65,7 +65,7 @@ If you plan to use the IDE shortcuts (which we strongly recommend), after clonin
 $ ./gradlew generateIntellijRunConfigs
 ```
 
-This `gradle` task will auto create required XMLs that are stored inside `.idea/runConfigurations` folder. If you want to customize options, you can edit the YAML [`run-configs.yaml`](intellij/run-configs.yaml) file found on [`intellij`](intellij) folder.
+This `gradle` task will auto create required XMLs that are stored inside `.idea/runConfigurations` folder. If you want to customize options, you can edit the YAML [`run-configs.yaml`](../intellij/run-configs.yaml) file found on [`intellij`](../intellij) folder.
 
 ## Updating FlatBuffers Java entities
 
@@ -101,7 +101,7 @@ The final step is to execute the Run configuration named `ROPSTEN | Postgres | R
 
 ### Performing Migrations
 
-By default, [`ExfloPostgresPlugin`](ingestion/postgres/src/main/kotlin/io/exflo/ingestion/postgres/ExfloPostgresPlugin.kt) will try to apply migrations automatically.
+By default, [`ExfloPostgresPlugin`](../ingestion/postgres/src/main/kotlin/io/exflo/ingestion/postgres/ExfloPostgresPlugin.kt) will try to apply migrations automatically.
 
 If for whatever reason you want to run the migrations yourself you can use the following:
 
