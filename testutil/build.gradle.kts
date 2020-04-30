@@ -36,4 +36,5 @@ dependencies {
     api("org.hyperledger.besu.internal:testutil")
     api("org.koin:koin-test")
     api("io.mockk:mockk")
+    api("com.splunk.logging:splunk-library-javalogging")
 }
