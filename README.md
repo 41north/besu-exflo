@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-    <b>Exflo</b> is a plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
+    <b>Exflo</b> is a plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. <br/> Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
 </p>
 
 ## 🗒️ Features 
