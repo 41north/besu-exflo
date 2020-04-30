@@ -27,7 +27,6 @@ import org.hyperledger.besu.plugin.services.StorageService
 import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBKeyValuePrivacyStorageFactory
 import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBKeyValueStorageFactory
 import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBMetricsFactory
-import org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBCLIOptions
 import org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBConfiguration
 import org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBFactoryConfiguration
 import picocli.CommandLine
