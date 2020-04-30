@@ -48,7 +48,7 @@ dependencyManagement {
 
         dependency 'io.mockk:mockk:1.9.3'
 
-        dependency 'info.picocli:picocli:3.9.6'
+        dependency 'info.picocli:picocli:4.2.0'
 
         dependency 'org.apache.kafka:kafka-clients:2.4.0'
 
