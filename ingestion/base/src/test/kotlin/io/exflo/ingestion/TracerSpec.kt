@@ -35,9 +35,9 @@ import io.kotlintest.matchers.numerics.shouldBeGreaterThan
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.FunSpec
+import org.apache.tuweni.bytes.Bytes
 import org.hyperledger.besu.ethereum.core.Wei
 import org.hyperledger.besu.ethereum.vm.Code
-import org.hyperledger.besu.util.bytes.BytesValue
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
@@ -89,7 +89,7 @@ class TracerSpec : KoinTest, FunSpec() {
                     createdEvent.originatorAddress shouldBe TestPremineAddresses.one
                     createdEvent.contractAddress.size() shouldBe 20
                     createdEvent.amount shouldBe Wei.of(100000000000)
-                    createdEvent.code shouldBe Code(BytesValue.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
+                    createdEvent.code shouldBe Code(Bytes.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
                 }
 
                 test("we should detect a CREATE opcode inside our tracer with valid code and without ether associated") {
@@ -114,7 +114,7 @@ class TracerSpec : KoinTest, FunSpec() {
                     createdEvent.originatorAddress shouldBe TestPremineAddresses.one
                     createdEvent.contractAddress.size() shouldBe 20
                     createdEvent.amount shouldBe Wei.of(0)
-                    createdEvent.code shouldBe Code(BytesValue.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
+                    createdEvent.code shouldBe Code(Bytes.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
                 }
 
                 test("we should detect a CREATE opcode inside our tracer without code and without ether associated") {
@@ -138,7 +138,7 @@ class TracerSpec : KoinTest, FunSpec() {
                     createdEvent.originatorAddress shouldBe TestPremineAddresses.one
                     createdEvent.contractAddress.size() shouldBe 20
                     createdEvent.amount shouldBe Wei.of(0)
-                    createdEvent.code shouldBe Code(BytesValue.fromHexString("0x0000000000000000000000000000000000000000000000000000000000000000")).bytes
+                    createdEvent.code shouldBe Code(Bytes.fromHexString("0x0000000000000000000000000000000000000000000000000000000000000000")).bytes
                 }
 
                 test("we should NOT detect a CREATE opcode inside our tracer with invalid code and without ether associated") {
@@ -179,14 +179,14 @@ class TracerSpec : KoinTest, FunSpec() {
                     createdEvent.originatorAddress shouldBe TestPremineAddresses.one
                     createdEvent.contractAddress.size() shouldBe 20
                     createdEvent.amount shouldBe Wei.of(100000000000)
-                    createdEvent.code shouldBe Code(BytesValue.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
+                    createdEvent.code shouldBe Code(Bytes.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
 
                     val createdEvent2 = transactionTrace.contractsCreated[1]
 
                     createdEvent2.originatorAddress shouldBe TestPremineAddresses.one
                     createdEvent2.contractAddress.size() shouldBe 20
                     createdEvent2.amount shouldBe Wei.of(100000000000)
-                    createdEvent2.code shouldBe Code(BytesValue.fromHexString("0x3200000000000000000000000000000000000000000000000000000000000000")).bytes
+                    createdEvent2.code shouldBe Code(Bytes.fromHexString("0x3200000000000000000000000000000000000000000000000000000000000000")).bytes
                 }
 
                 test("we should detect a CREATE opcode inside our tracer with valid code and with ether associated while the second one is discarded") {
@@ -210,7 +210,7 @@ class TracerSpec : KoinTest, FunSpec() {
                     createdEvent.originatorAddress shouldBe TestPremineAddresses.one
                     createdEvent.contractAddress.size() shouldBe 20
                     createdEvent.amount shouldBe Wei.of(100000000000)
-                    createdEvent.code shouldBe Code(BytesValue.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
+                    createdEvent.code shouldBe Code(Bytes.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
                 }
             }
 
@@ -240,7 +240,7 @@ class TracerSpec : KoinTest, FunSpec() {
                         originatorAddress shouldBe originatorAddress
                         contractAddress.size() shouldBe 20
                         amount shouldBe Wei.of(100000000000)
-                        code shouldBe Code(BytesValue.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
+                        code shouldBe Code(Bytes.fromHexString("0x3000000000000000000000000000000000000000000000000000000000000000")).bytes
                     }
                 }
             }

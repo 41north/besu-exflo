@@ -33,8 +33,8 @@ import io.kotlintest.matchers.beInstanceOf
 import io.kotlintest.should
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.FunSpec
-import org.hyperledger.besu.util.bytes.BytesValue
-import org.hyperledger.besu.util.uint.UInt256
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.units.bigints.UInt256
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
@@ -75,7 +75,7 @@ class LogParserSpec : FunSpec(), KoinTest {
 
                 transfer.from shouldBe "0x1".hexToAddress()
                 transfer.to shouldBe "0x2".hexToAddress()
-                transfer.value shouldBe UInt256.of(3)
+                transfer.value shouldBe UInt256.valueOf(3)
             }
 
             test("we should detect a fungible approval event") {
@@ -85,7 +85,7 @@ class LogParserSpec : FunSpec(), KoinTest {
 
                 approval.owner shouldBe "0x4".hexToAddress()
                 approval.spender shouldBe "0x5".hexToAddress()
-                approval.value shouldBe UInt256.of(6)
+                approval.value shouldBe UInt256.valueOf(6)
             }
         }
 
@@ -105,7 +105,7 @@ class LogParserSpec : FunSpec(), KoinTest {
 
                 transfer.from shouldBe "0x1".hexToAddress()
                 transfer.to shouldBe "0x2".hexToAddress()
-                transfer.tokenId shouldBe UInt256.of(3)
+                transfer.tokenId shouldBe UInt256.valueOf(3)
             }
 
             test("we should detect a non fungible approval event") {
@@ -116,7 +116,7 @@ class LogParserSpec : FunSpec(), KoinTest {
 
                 approval.owner shouldBe "0x4".hexToAddress()
                 approval.approved shouldBe "0x5".hexToAddress()
-                approval.tokenId shouldBe UInt256.of(6)
+                approval.tokenId shouldBe UInt256.valueOf(6)
             }
 
             test("we should detect an approved approval for all event") {
@@ -159,9 +159,9 @@ class LogParserSpec : FunSpec(), KoinTest {
                 sent.operator shouldBe "0x1".hexToAddress()
                 sent.from shouldBe "0x2".hexToAddress()
                 sent.to shouldBe "0x3".hexToAddress()
-                sent.amount shouldBe UInt256.of(4)
-                sent.data shouldBe BytesValue.wrap("foo".toByteArray())
-                sent.operatorData shouldBe BytesValue.wrap("bar".toByteArray())
+                sent.amount shouldBe UInt256.valueOf(4)
+                sent.data shouldBe Bytes.wrap("foo".toByteArray())
+                sent.operatorData shouldBe Bytes.wrap("bar".toByteArray())
             }
 
             test("we should detect a minted event") {
@@ -172,9 +172,9 @@ class LogParserSpec : FunSpec(), KoinTest {
 
                 minted.operator shouldBe "0x5".hexToAddress()
                 minted.to shouldBe "0x6".hexToAddress()
-                minted.amount shouldBe UInt256.of(7)
-                minted.data shouldBe BytesValue.wrap("hello".toByteArray())
-                minted.operatorData shouldBe BytesValue.wrap("world".toByteArray())
+                minted.amount shouldBe UInt256.valueOf(7)
+                minted.data shouldBe Bytes.wrap("hello".toByteArray())
+                minted.operatorData shouldBe Bytes.wrap("world".toByteArray())
             }
 
             test("we should detect a burned event") {
@@ -185,9 +185,9 @@ class LogParserSpec : FunSpec(), KoinTest {
 
                 burned.operator shouldBe "0x8".hexToAddress()
                 burned.to shouldBe "0x9".hexToAddress()
-                burned.amount shouldBe UInt256.of(10)
-                burned.data shouldBe BytesValue.wrap("fizz".toByteArray())
-                burned.operatorData shouldBe BytesValue.wrap("buzz".toByteArray())
+                burned.amount shouldBe UInt256.valueOf(10)
+                burned.data shouldBe Bytes.wrap("fizz".toByteArray())
+                burned.operatorData shouldBe Bytes.wrap("buzz".toByteArray())
             }
 
             test("we should detect an authorized operator event") {
@@ -228,8 +228,8 @@ class LogParserSpec : FunSpec(), KoinTest {
                 transfer.operator shouldBe "0x1".hexToAddress()
                 transfer.from shouldBe "0x2".hexToAddress()
                 transfer.to shouldBe "0x3".hexToAddress()
-                transfer.id shouldBe UInt256.of(4)
-                transfer.value shouldBe UInt256.of(5)
+                transfer.id shouldBe UInt256.valueOf(4)
+                transfer.value shouldBe UInt256.valueOf(5)
             }
 
             test("we should detect a transfer batch event") {
@@ -242,8 +242,8 @@ class LogParserSpec : FunSpec(), KoinTest {
                 transfer.from shouldBe "0x5".hexToAddress()
                 transfer.to shouldBe "0x6".hexToAddress()
 
-                transfer.ids shouldBe listOf(UInt256.of(1), UInt256.of(2), UInt256.of(3))
-                transfer.values shouldBe listOf(UInt256.of(4), UInt256.of(5), UInt256.of(6))
+                transfer.ids shouldBe listOf(UInt256.valueOf(1), UInt256.valueOf(2), UInt256.valueOf(3))
+                transfer.values shouldBe listOf(UInt256.valueOf(4), UInt256.valueOf(5), UInt256.valueOf(6))
             }
 
             test("we should detect an approved approval for all event") {
@@ -275,7 +275,7 @@ class LogParserSpec : FunSpec(), KoinTest {
                 val uri = eventList[4] as ContractEvents.URI
 
                 uri.value shouldBe "hello world"
-                uri.id shouldBe UInt256.of(1)
+                uri.id shouldBe UInt256.valueOf(1)
             }
         }
     }

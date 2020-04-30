@@ -197,7 +197,7 @@ class BlockImportTask : ImportTask, KoinComponent {
             // update cache
             records
                 .forEach { (_, header, _) ->
-                    importCache[header.number] = header.hash.hexString
+                    importCache[header.number] = header.hash.toHexString()
                 }
 
             importCache.flush()
@@ -224,7 +224,7 @@ class BlockImportTask : ImportTask, KoinComponent {
                 blockReader.header(range.first)
                     ?.takeIf {
                         val cacheEntry = importCache[it.number]
-                        it.hash.hexString != cacheEntry
+                        it.hash.toHexString() != cacheEntry
                     }
                     ?.let { HeaderUpdate(HeaderType.NEW, it) }
                     ?.apply { emitter.onNext(this) }
@@ -247,7 +247,7 @@ class BlockImportTask : ImportTask, KoinComponent {
                 val cacheEntry = importCache[header.number]
 
                 val isNew = cacheEntry == null
-                val isFork = !isNew && header.hash.hexString != cacheEntry
+                val isFork = !isNew && header.hash.toHexString() != cacheEntry
 
                 when {
                     isNew -> updates += HeaderUpdate(HeaderType.NEW, header)

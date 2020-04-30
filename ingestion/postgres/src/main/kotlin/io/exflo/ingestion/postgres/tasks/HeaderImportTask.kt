@@ -171,7 +171,7 @@ class HeaderImportTask(
         val headers = blockReader.headersFrom(hash, 512)
 
         val hashStrings = headers
-            .map { it.hash.hexString }
+            .map { it.hash.toHexString() }
             .toSet()
 
         // check the import queue for existing entries for the headers we just read, indicating we are reaching a common ancestor
@@ -192,7 +192,7 @@ class HeaderImportTask(
                 ?.let { hashStrings.minus(it) }
                 ?: hashStrings
 
-        val filteredHeaders = headers.filter { hashStringsToInsert.contains(it.hash.hexString) }
+        val filteredHeaders = headers.filter { hashStringsToInsert.contains(it.hash.toHexString()) }
 
         when (filteredHeaders.isNotEmpty()) {
 

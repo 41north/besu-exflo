@@ -325,7 +325,7 @@ enum class ContractEventParsers(
 
     private val numIndexedParameters = web3Event.indexedParameters.size
 
-    private val signature: Bytes = EventEncoder.encode(web3Event)
+    private val signature: Bytes = Bytes.fromHexString(EventEncoder.encode(web3Event))
 
     fun parse(log: Log): ContractEvent? =
         // look for signature and indexed topics match
