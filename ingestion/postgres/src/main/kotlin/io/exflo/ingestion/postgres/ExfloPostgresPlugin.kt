@@ -133,6 +133,14 @@ class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 class ExfloPostgresCliOptions : ExfloCliOptions {
 
     @CommandLine.Option(
+        names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-enabled"],
+        paramLabel = "<BOOLEAN>",
+        defaultValue = "false",
+        description = ["Enable this plugin"]
+    )
+    override var enabled: Boolean = false
+
+    @CommandLine.Option(
         names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-start-block-override"],
         paramLabel = "<LONG>",
         description = ["Block number from which to start publishing"]

@@ -24,6 +24,7 @@ import io.exflo.ingestion.tokens.precompiled.PrecompiledContractsFactory
 import io.exflo.ingestion.tracker.BlockWriter
 import io.exflo.ingestion.tracker.ChainTracker
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.hyperledger.besu.cli.BesuCommand
 import org.hyperledger.besu.cli.config.EthNetworkConfig
 import org.hyperledger.besu.config.GenesisConfigFile
@@ -43,11 +44,11 @@ import picocli.CommandLine
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
 
-    private val log = LogManager.getLogger()
-
     protected abstract val name: String
 
     protected abstract val options: T
+
+    private lateinit var log: Logger
 
     protected lateinit var context: BesuContext
 
@@ -60,6 +61,8 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
     private val rocksDBPlugin = ExfloRocksDBPlugin()
 
     override fun register(context: BesuContext) {
+
+        log = LogManager.getLogger(name)
 
         rocksDBPlugin.register(context)
 
@@ -84,6 +87,11 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
     protected open fun implStart(koinApp: KoinApplication) {}
 
     override fun start() {
+
+        if(!options.enabled) {
+            return
+        }
+
         log.debug("Starting plugin")
 
         try {
@@ -139,6 +147,11 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
     }
 
     override fun stop() {
+
+        if(!options.enabled) {
+            return
+        }
+
         log.debug("Stopping plugin")
         blockWriter.stop()
         stopKoin()
@@ -150,6 +163,8 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
  * Defines common cli options shared among implementors.
  */
 interface ExfloCliOptions {
+
+    var enabled: Boolean
 
     var startBlockOverride: Long?
 
