@@ -63,7 +63,7 @@ allprojects {
         maven(url = "https://dl.bintray.com/ethereum/maven/")
         maven(url = "https://dl.bintray.com/hyperledger-org/besu-repo/")
         maven(url = "https://dl.bintray.com/consensys/pegasys-repo/")
-        maven(url = "https://dl.bintray.com/tuweni/tuweni/")
+        maven(url = "https://repo.spring.io/libs-release")
     }
 
     tasks {

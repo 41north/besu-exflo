@@ -20,10 +20,9 @@ import io.exflo.domain.BalanceDelta
 import io.exflo.domain.BlockTrace
 import io.exflo.domain.ContractEvent
 import io.exflo.domain.DeltaType
-import io.exflo.domain.extensions.bigInteger
 import io.exflo.ingestion.core.InMemoryAccount
 import io.exflo.ingestion.tokens.events.LogParser
-import java.util.stream.Collectors
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.cli.config.EthNetworkConfig
 import org.hyperledger.besu.config.GenesisConfigFile
 import org.hyperledger.besu.ethereum.core.Account
@@ -33,15 +32,11 @@ import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.TransactionReceipt
 import org.hyperledger.besu.ethereum.core.Wei
 import org.hyperledger.besu.ethereum.worldstate.WorldStateArchive
-import org.hyperledger.besu.util.uint.UInt256
+import java.util.stream.Collectors
 
-fun UInt256.bigInteger() = byteArray.bigInteger()
+fun UInt256.bigDecimal() = toBigInteger().toBigDecimal()
 
-fun UInt256.bigDecimal() = this.bigInteger().toBigDecimal()
-
-fun Wei.bigInteger() = this.asUInt256().bigInteger()
-
-fun Wei.bigDecimal() = this.bigInteger().toBigDecimal()
+fun Wei.bigDecimal() = this.toBigInteger().toBigDecimal()
 
 fun TransactionReceipt.contractEvents(): List<ContractEvent> =
     LogParser.parse(this)

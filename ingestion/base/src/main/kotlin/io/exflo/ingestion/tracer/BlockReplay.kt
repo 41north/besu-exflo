@@ -105,7 +105,7 @@ class BlockReplay(
         var rewards = mapOf<Hash, Wei>()
 
         // Include "uncle inclusion rewards" if there are ommers
-        val coinbaseReward = blockReward.plus(blockReward.times(ommersSize).dividedBy(32))
+        val coinbaseReward = blockReward.plus(blockReward.multiply(ommersSize).divide(32))
 
         rewards = rewards + (blockHash to coinbaseReward)
 
@@ -115,7 +115,7 @@ class BlockReplay(
                 val ommerHash = ommer.hash
                 val distance = number - ommer.number
 
-                val ommerRewardDelta = blockReward.minus(blockReward.times(distance).dividedBy(8))
+                val ommerRewardDelta = blockReward.subtract(blockReward.multiply(distance).divide(8))
 
                 rewards = rewards + (ommerHash to ommerRewardDelta)
             }
@@ -134,7 +134,7 @@ class BlockReplay(
                 val gasUsed = receipt.cumulativeGasUsed - cumulativeGasUsed
                 cumulativeGasUsed = receipt.cumulativeGasUsed
 
-                tx to Wei.of(gasUsed) * tx.gasPrice
+                tx to Wei.of(gasUsed).multiply(tx.gasPrice)
             }
             .toMap()
     }

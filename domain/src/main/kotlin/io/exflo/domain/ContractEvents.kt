@@ -44,9 +44,9 @@ import io.exflo.domain.fb.events.Sent.createSent
 import io.exflo.domain.fb.events.TransferBatch.createTransferBatch
 import io.exflo.domain.fb.events.TransferSingle.createTransferSingle
 import io.exflo.domain.fb.events.URI.createURI
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.ethereum.core.Address
-import org.hyperledger.besu.util.bytes.BytesValue
-import org.hyperledger.besu.util.uint.UInt256
 
 interface ContractEvent {
     val contract: Address
@@ -162,8 +162,8 @@ object ContractEvents {
         val from: Address,
         val to: Address,
         val amount: UInt256,
-        val data: BytesValue,
-        val operatorData: BytesValue
+        val data: Bytes,
+        val operatorData: Bytes
     ) : ContractEvent {
 
         override fun toFlatBuffer(bb: FlatBufferBuilder): Pair<Byte, Int> {
@@ -172,8 +172,8 @@ object ContractEvents {
             val fromOffset = from.toFlatBuffer(bb)
             val toOffset = to.toFlatBuffer(bb)
             val amountOffset = amount.toFlatBuffer(bb)
-            val dataOffset = bb.createByteVector(data.extractArray())
-            val operatorDataOffset = bb.createByteVector(operatorData.extractArray())
+            val dataOffset = bb.createByteVector(data.toArray())
+            val operatorDataOffset = bb.createByteVector(operatorData.toArray())
             return Pair(
                 Sent,
                 createSent(
@@ -195,8 +195,8 @@ object ContractEvents {
         val operator: Address,
         val to: Address,
         val amount: UInt256,
-        val data: BytesValue,
-        val operatorData: BytesValue
+        val data: Bytes,
+        val operatorData: Bytes
     ) : ContractEvent {
 
         override fun toFlatBuffer(bb: FlatBufferBuilder): Pair<Byte, Int> {
@@ -204,8 +204,8 @@ object ContractEvents {
             val operatorOffset = operator.toFlatBuffer(bb)
             val toOffset = to.toFlatBuffer(bb)
             val amountOffset = amount.toFlatBuffer(bb)
-            val dataOffset = bb.createByteVector(data.extractArray())
-            val operatorDataOffset = bb.createByteVector(operatorData.extractArray())
+            val dataOffset = bb.createByteVector(data.toArray())
+            val operatorDataOffset = bb.createByteVector(operatorData.toArray())
             return Pair(
                 Minted,
                 createMinted(
@@ -226,8 +226,8 @@ object ContractEvents {
         val operator: Address,
         val to: Address,
         val amount: UInt256,
-        val data: BytesValue,
-        val operatorData: BytesValue
+        val data: Bytes,
+        val operatorData: Bytes
     ) : ContractEvent {
 
         override fun toFlatBuffer(bb: FlatBufferBuilder): Pair<Byte, Int> {
@@ -235,8 +235,8 @@ object ContractEvents {
             val operatorOffset = operator.toFlatBuffer(bb)
             val toOffset = to.toFlatBuffer(bb)
             val amountOffset = amount.toFlatBuffer(bb)
-            val dataOffset = bb.createByteVector(data.extractArray())
-            val operatorDataOffset = bb.createByteVector(operatorData.extractArray())
+            val dataOffset = bb.createByteVector(data.toArray())
+            val operatorDataOffset = bb.createByteVector(operatorData.toArray())
             return Pair(
                 Burned,
                 createBurned(

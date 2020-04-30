@@ -16,7 +16,8 @@
 
 package io.exflo.ingestion.tokens
 
-import java.math.BigInteger
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.bytes.Bytes32
 import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.mainnet.IstanbulGasCalculator
 import org.hyperledger.besu.ethereum.vm.EVM
@@ -99,8 +100,7 @@ import org.hyperledger.besu.ethereum.vm.operations.SubOperation
 import org.hyperledger.besu.ethereum.vm.operations.SwapOperation
 import org.hyperledger.besu.ethereum.vm.operations.TimestampOperation
 import org.hyperledger.besu.ethereum.vm.operations.XorOperation
-import org.hyperledger.besu.util.bytes.Bytes32
-import org.hyperledger.besu.util.bytes.BytesValue
+import java.math.BigInteger
 
 // TODO: Review with Besu devs if we can obtain concrete EVM versions directly as currently methods are private
 
@@ -270,7 +270,7 @@ internal object EVMRegistry {
         registry.put(
             ChainIdOperation(
                 gasCalculator,
-                Bytes32.leftPad(BytesValue.of(*chainId.toByteArray()))
+                Bytes32.leftPad(Bytes.of(*chainId.toByteArray()))
             ),
             Account.DEFAULT_VERSION
         )

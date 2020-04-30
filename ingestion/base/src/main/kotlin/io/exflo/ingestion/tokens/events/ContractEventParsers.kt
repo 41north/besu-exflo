@@ -18,12 +18,11 @@ package io.exflo.ingestion.tokens.events
 
 import io.exflo.domain.ContractEvent
 import io.exflo.domain.ContractEvents
-import io.exflo.ingestion.extensions.toBytesValue
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.units.bigints.UInt256
 import java.math.BigInteger
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Log
-import org.hyperledger.besu.util.bytes.BytesValue
-import org.hyperledger.besu.util.uint.UInt256
 import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
@@ -57,7 +56,7 @@ enum class ContractEventParsers(
                 contractAddress,
                 Address.fromHexString(owner.value as String),
                 Address.fromHexString(spender.value as String),
-                UInt256.of(value.value as BigInteger)
+                UInt256.valueOf(value.value as BigInteger)
             )
         }
     ),
@@ -77,7 +76,7 @@ enum class ContractEventParsers(
                 contractAddress,
                 Address.fromHexString(from.value as String),
                 Address.fromHexString(to.value as String),
-                UInt256.of(value.value as BigInteger)
+                UInt256.valueOf(value.value as BigInteger)
             )
         }
     ),
@@ -97,7 +96,7 @@ enum class ContractEventParsers(
                 contractAddress,
                 Address.fromHexString(owner.value as String),
                 Address.fromHexString(approved.value as String),
-                UInt256.of(tokenId.value as BigInteger)
+                UInt256.valueOf(tokenId.value as BigInteger)
             )
         }
     ),
@@ -137,7 +136,7 @@ enum class ContractEventParsers(
                 contractAddress,
                 Address.fromHexString(from.value as String),
                 Address.fromHexString(to.value as String),
-                UInt256.of(tokenId.value as BigInteger)
+                UInt256.valueOf(tokenId.value as BigInteger)
             )
         }
     ),
@@ -165,9 +164,9 @@ enum class ContractEventParsers(
                 Address.fromHexString(operator.value as String),
                 Address.fromHexString(from.value as String),
                 Address.fromHexString(to.value as String),
-                UInt256.of(amount.value as BigInteger),
-                BytesValue.wrap(data.value as ByteArray),
-                BytesValue.wrap(operatorData.value as ByteArray)
+                UInt256.valueOf(amount.value as BigInteger),
+                Bytes.wrap(data.value as ByteArray),
+                Bytes.wrap(operatorData.value as ByteArray)
             )
         }
     ),
@@ -189,9 +188,9 @@ enum class ContractEventParsers(
                 contractAddress,
                 Address.fromHexString(operator.value as String),
                 Address.fromHexString(to.value as String),
-                UInt256.of(amount.value as BigInteger),
-                BytesValue.wrap(data.value as ByteArray),
-                BytesValue.wrap(operatorData.value as ByteArray)
+                UInt256.valueOf(amount.value as BigInteger),
+                Bytes.wrap(data.value as ByteArray),
+                Bytes.wrap(operatorData.value as ByteArray)
             )
         }
     ),
@@ -213,9 +212,9 @@ enum class ContractEventParsers(
                 contractAddress,
                 Address.fromHexString(operator.value as String),
                 Address.fromHexString(to.value as String),
-                UInt256.of(amount.value as BigInteger),
-                BytesValue.wrap(data.value as ByteArray),
-                BytesValue.wrap(operatorData.value as ByteArray)
+                UInt256.valueOf(amount.value as BigInteger),
+                Bytes.wrap(data.value as ByteArray),
+                Bytes.wrap(operatorData.value as ByteArray)
             )
         }
     ),
@@ -274,8 +273,8 @@ enum class ContractEventParsers(
                 Address.fromHexString(operator.value as String),
                 Address.fromHexString(from.value as String),
                 Address.fromHexString(to.value as String),
-                UInt256.of(id.value as BigInteger),
-                UInt256.of(value.value as BigInteger)
+                UInt256.valueOf(id.value as BigInteger),
+                UInt256.valueOf(value.value as BigInteger)
             )
         }
     ),
@@ -298,8 +297,8 @@ enum class ContractEventParsers(
                 Address.fromHexString(operator.value as String),
                 Address.fromHexString(from.value as String),
                 Address.fromHexString(to.value as String),
-                (ids.value as List<AbiUint256>).map { UInt256.of(it.value) },
-                (values.value as List<AbiUint256>).map { UInt256.of(it.value) }
+                (ids.value as List<AbiUint256>).map { UInt256.valueOf(it.value) },
+                (values.value as List<AbiUint256>).map { UInt256.valueOf(it.value) }
             )
         }
     ),
@@ -318,7 +317,7 @@ enum class ContractEventParsers(
             val (id, value) = values
             ContractEvents.URI(
                 contractAddress,
-                UInt256.of(id.value as BigInteger),
+                UInt256.valueOf(id.value as BigInteger),
                 value.value as String
             )
         }
@@ -326,12 +325,12 @@ enum class ContractEventParsers(
 
     private val numIndexedParameters = web3Event.indexedParameters.size
 
-    private val signature: BytesValue = EventEncoder.encode(web3Event).toBytesValue()
+    private val signature: Bytes = Bytes.fromHexString(EventEncoder.encode(web3Event))
 
     fun parse(log: Log): ContractEvent? =
         // look for signature and indexed topics match
         if (signature == log.topics.firstOrNull() && log.topics.size == (numIndexedParameters + 1)) {
-            // TODO we are converting into hex to re-use web3 utilities. We should replace this with some utilities which operate against BytesValue
+            // TODO we are converting into hex to re-use web3 utilities. We should replace this with some utilities which operate against Bytes
             val values =
                 log.topics
                     // drop first entry as that contains the method signature
@@ -340,7 +339,7 @@ enum class ContractEventParsers(
                     // zip each topic with corresponding parameter definition and extract each value
                     .map { (topic, parameter) -> FunctionReturnDecoder.decodeIndexedValue(topic.toString(), parameter) } +
                     // append the non indexed parameters
-                    FunctionReturnDecoder.decode(log.data.hexString, web3Event.nonIndexedParameters)
+                    FunctionReturnDecoder.decode(log.data.toHexString(), web3Event.nonIndexedParameters)
 
             parser(log.logger, values)
         } else {

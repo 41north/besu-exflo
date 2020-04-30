@@ -32,8 +32,8 @@ object Klaxon {
 
         override fun toJson(value: Any): String {
             var res = """{
-                |"logger":"${(value as Log).logger.hexString}",
-                |"data":"${value.data.hexString}",
+                |"logger":"${(value as Log).logger.toHexString()}",
+                |"data":"${value.data.toHexString()}",
             """.trimMargin()
 
             val log = value
@@ -41,7 +41,7 @@ object Klaxon {
             // Serialize topics
             if (log.topics.isNotEmpty()) {
                 res += "\"topics\":["
-                val topicsAsStrings = log.topics.map { topic -> "\"${topic.hexString}\"" }
+                val topicsAsStrings = log.topics.map { topic -> "\"${topic.toHexString()}\"" }
                 res += "${topicsAsStrings.joinToString(",")}]"
             } else {
                 res += "\"topics\":[]"

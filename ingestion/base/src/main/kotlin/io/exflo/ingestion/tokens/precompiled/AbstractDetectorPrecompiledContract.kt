@@ -16,6 +16,7 @@
 
 package io.exflo.ingestion.tokens.precompiled
 
+import org.apache.tuweni.bytes.Bytes
 import java.util.ArrayDeque
 import org.hyperledger.besu.ethereum.core.Gas
 import org.hyperledger.besu.ethereum.mainnet.MainnetMessageCallProcessor
@@ -25,7 +26,6 @@ import org.hyperledger.besu.ethereum.vm.Code
 import org.hyperledger.besu.ethereum.vm.EVM
 import org.hyperledger.besu.ethereum.vm.MessageFrame
 import org.hyperledger.besu.ethereum.vm.OperationTracer
-import org.hyperledger.besu.util.bytes.BytesValue
 
 abstract class AbstractDetectorPrecompiledContract(
     private val evm: EVM
@@ -33,7 +33,7 @@ abstract class AbstractDetectorPrecompiledContract(
 
     abstract val code: Code
 
-    override fun compute(input: BytesValue, frame: MessageFrame): BytesValue {
+    override fun compute(input: Bytes, frame: MessageFrame): Bytes {
         // Create an empty MessageFrame to use in our disposable EVM
         val messageFrameStack = ArrayDeque<MessageFrame>()
         val updater = frame.worldState.updater()
@@ -62,7 +62,7 @@ abstract class AbstractDetectorPrecompiledContract(
             .miningBeneficiary(frame.miningBeneficiary)
             .blockHashLookup(frame.blockHashLookup)
             .maxStackSize(frame.maxStackSize)
-            .isPersistingState(false)
+            .isPersistingPrivateState(false)
             .build()
 
         messageFrameStack.addFirst(initialFrame)
@@ -76,5 +76,5 @@ abstract class AbstractDetectorPrecompiledContract(
         return initialFrame.outputData
     }
 
-    override fun gasRequirement(input: BytesValue?): Gas = Gas.of(1L)
+    override fun gasRequirement(input: Bytes?): Gas = Gas.of(1L)
 }

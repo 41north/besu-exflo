@@ -42,6 +42,9 @@ dependencies {
     api("org.hyperledger.besu.internal:plugins-rocksdb")
     api("org.hyperledger.besu.internal:kvstore")
 
+    api("org.apache.tuweni:tuweni-bytes")
+    api("org.apache.tuweni:tuweni-units")
+
     api("info.picocli:picocli")
 
     api("org.koin:koin-core")
@@ -77,16 +80,6 @@ val build: DefaultTask by tasks
 build.dependsOn(tasks.shadowJar)
 
 tasks {
-    withType<ShadowJar> {
-        archiveBaseName.set(project.name)
-        archiveClassifier.set("")
-        minimize()
-    }
-
-    withType<Jar> {
-        enabled = false
-    }
-
     register<Web3KtCodegenTask>("generateContractWrappers") {
         dependsOn(project.tasks["compileSolidity"])
 
@@ -103,6 +96,16 @@ tasks {
             ClassOutput("ERC777Detector"),
             ClassOutput("ERC1155Detector")
         )
+    }
+
+    withType<ShadowJar> {
+        archiveBaseName.set(project.name)
+        archiveClassifier.set("")
+        minimize()
+    }
+
+    withType<Jar> {
+        enabled = false
     }
 
     withType<Test> {

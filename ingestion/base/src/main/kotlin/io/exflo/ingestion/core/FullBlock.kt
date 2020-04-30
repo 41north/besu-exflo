@@ -22,11 +22,11 @@ import io.exflo.domain.BlockTrace
 import io.exflo.domain.extensions.toFlatBuffer
 import io.exflo.domain.fb.Block
 import io.exflo.ingestion.tokens.events.LogParser
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.core.BlockBody
 import org.hyperledger.besu.ethereum.core.BlockHeader
 import org.hyperledger.besu.ethereum.core.TransactionReceipt
-import org.hyperledger.besu.util.uint.UInt256
 
 /**
  * Data class that stores different computed information related to a [Block].

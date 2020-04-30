@@ -16,11 +16,10 @@
 
 package io.exflo.ingestion.extensions
 
+import org.apache.tuweni.bytes.Bytes
+import org.hyperledger.besu.ethereum.core.Wei
 import java.math.BigInteger
 import java.util.Locale
-import org.hyperledger.besu.ethereum.core.Address
-import org.hyperledger.besu.ethereum.core.Wei
-import org.hyperledger.besu.util.bytes.BytesValue
 
 fun String.hexToLong(): Long {
     var lowercase = this.toLowerCase(Locale.US)
@@ -30,19 +29,15 @@ fun String.hexToLong(): Long {
     return lowercase.toLong(16)
 }
 
-fun String.toAddress(): Address = Address.fromHexString(this)
-
 fun String.toBalance(): Wei {
     val value =
         if (this.startsWith("0x")) {
-            BigInteger(1, BytesValue.fromHexStringLenient(this).extractArray())
+            BigInteger(1, Bytes.fromHexStringLenient(this).toArray())
         } else {
             BigInteger(this)
         }
     return Wei.of(value)
 }
-
-fun String.toBytesValue(): BytesValue = BytesValue.fromHexString(this)
 
 fun String?.sanitize() =
     this

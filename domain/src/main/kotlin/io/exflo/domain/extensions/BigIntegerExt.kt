@@ -17,6 +17,6 @@
 package io.exflo.domain.extensions
 
 import java.math.BigInteger
-import org.hyperledger.besu.util.uint.UInt256 as BesuUInt256
+import org.apache.tuweni.units.bigints.UInt256 as BesuUInt256
 
-fun BigInteger.toBesuUInt256(): BesuUInt256 = BesuUInt256.of(this)
+fun BigInteger.toBesuUInt256(): BesuUInt256 = BesuUInt256.valueOf(this)

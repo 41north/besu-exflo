@@ -19,10 +19,10 @@ package io.exflo.domain
 import com.google.flatbuffers.FlatBufferBuilder
 import io.exflo.domain.extensions.toFlatBuffer
 import io.exflo.domain.fb.BalanceDelta
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.Wei
-import org.hyperledger.besu.util.uint.UInt256
 
 data class BalanceDelta(
     val deltaType: DeltaType,

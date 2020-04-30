@@ -21,6 +21,7 @@ import io.exflo.ingestion.core.FullBlock
 import io.exflo.ingestion.extensions.toBalanceDeltas
 import io.exflo.ingestion.extensions.touchedAccounts
 import io.exflo.ingestion.tracer.BlockTracer
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.cli.config.EthNetworkConfig
 import org.hyperledger.besu.ethereum.chain.BlockchainStorage
 import org.hyperledger.besu.ethereum.core.Account
@@ -30,7 +31,6 @@ import org.hyperledger.besu.ethereum.core.BlockHeader
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.TransactionReceipt
 import org.hyperledger.besu.ethereum.worldstate.WorldStateArchive
-import org.hyperledger.besu.util.uint.UInt256
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -125,7 +125,7 @@ class BlockReader : KoinComponent {
             ?.let { (block, receipts) -> blockTracer.trace(block, receipts) }
 
     fun totalDifficulty(hash: Hash): UInt256? =
-        blockchainStorage.getTotalDifficulty(hash).orElse(null)
+        blockchainStorage.getTotalDifficulty(hash).map { it.toUInt256() }.orElse(null)
 
     fun touchedAccounts(trace: BlockTrace): List<Account> = trace.touchedAccounts(networkConfig, worldStateArchive)
 }

@@ -16,7 +16,7 @@
 
 package io.exflo.ingestion.extensions
 
-import org.hyperledger.besu.util.bytes.BytesValue
+import org.apache.tuweni.bytes.Bytes
 
 /**
  * Computes the failure function using a boot-strapping process, where the pattern is matched against itself.
@@ -61,5 +61,5 @@ fun ByteArray.indexOf(pattern: ByteArray): Int {
     return -1
 }
 
-val ByteArray.bytesValue: BytesValue
-    get() = BytesValue.wrap(this)
+val ByteArray.bytesValue: Bytes
+    get() = Bytes.wrap(this)

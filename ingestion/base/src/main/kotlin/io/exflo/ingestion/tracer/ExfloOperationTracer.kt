@@ -19,21 +19,23 @@ package io.exflo.ingestion.tracer
 import io.exflo.domain.ContractCreated
 import io.exflo.domain.ContractDestroyed
 import io.exflo.domain.InternalTransaction
-import java.util.ArrayDeque
-import java.util.Deque
-import java.util.EnumSet
-import java.util.Optional
-import java.util.TreeMap
 import org.apache.logging.log4j.LogManager
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.bytes.Bytes32
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.ethereum.core.Gas
+import org.hyperledger.besu.ethereum.core.ModificationNotAllowedException
 import org.hyperledger.besu.ethereum.core.Wei
 import org.hyperledger.besu.ethereum.debug.TraceFrame
 import org.hyperledger.besu.ethereum.vm.Code
 import org.hyperledger.besu.ethereum.vm.MessageFrame
 import org.hyperledger.besu.ethereum.vm.OperationTracer
 import org.hyperledger.besu.ethereum.vm.Words
-import org.hyperledger.besu.util.bytes.Bytes32
-import org.hyperledger.besu.util.uint.UInt256
+import java.util.ArrayDeque
+import java.util.Deque
+import java.util.EnumSet
+import java.util.Optional
+import java.util.TreeMap
 
 /**
  * An implementation of an [OperationTracer] in charge of finding the following in a contract:
@@ -55,6 +57,8 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
     private var prevDepth = 0
     private var prevFrame: MessageFrame? = null
 
+    private var lastFrame: TraceFrame? = null
+
     private val log = LogManager.getLogger()
 
     init {
@@ -67,17 +71,18 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
         executeOperation: OperationTracer.ExecuteOperation
     ) {
 
-        val type = frame.type
+        val currentOperation = frame.currentOperation
         val depth = frame.messageStackDepth
         val opcode = frame.currentOperation.name
         val pc = frame.pc
         val gasRemaining = frame.remainingGas
         val exceptionalHaltReason = EnumSet.copyOf(frame.exceptionalHaltReasons)
+        val inputData = frame.inputData
+        val stack = captureStack(frame)
+        val worldUpdater = frame.worldState
+        val type = frame.type
 
         log.trace("Tracing execution -> Type: $type | Depth: $depth | Opcode: $opcode | PC: $pc | Gas remaining: $gasRemaining | ExceptionalHaltReason: $exceptionalHaltReason")
-
-        val stack = captureStackIf(frame, opcode)
-        val memory = captureMemory(frame)
 
         // If we are creating a new contract, add it to the list of contracts created
         if (type == MessageFrame.Type.CONTRACT_CREATION && pc == 0 && depth == 0) {
@@ -114,6 +119,10 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
             executeOperation.execute()
         } finally {
 
+            val outputData = frame.outputData
+            val memory = captureMemory(frame)
+            val stackPostExecution = captureStack(frame)
+            lastFrame?.let { it.gasRemainingPostExecution = gasRemaining }
             val storage = captureStorage(frame)
             val maybeRefunds = when {
                 frame.refunds.isEmpty() -> Optional.empty()
@@ -122,23 +131,35 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
 
             // store traces if enabled
             if (options.traceFrames) {
-                val traceFrame = TraceFrame(
+                lastFrame = TraceFrame(
                     pc,
                     opcode,
                     gasRemaining,
                     currentGasCost,
+                    frame.gasRefund,
                     depth,
                     exceptionalHaltReason,
-                    if (options.traceStack) Optional.of(captureStack(frame)) else Optional.empty(),
+                    frame.recipientAddress,
+                    frame.apparentValue,
+                    inputData,
+                    outputData,
+                    if (options.traceStack) Optional.of(stack) else Optional.empty(),
                     memory,
                     storage,
+                    worldUpdater,
                     frame.revertReason,
-                    maybeRefunds
+                    maybeRefunds,
+                    Optional.ofNullable(frame.messageFrameStack.peek()).map { it.code },
+                    frame.currentOperation.stackItemsProduced,
+                    if (options.traceStack) Optional.of(stackPostExecution) else Optional.empty(),
+                    currentOperation.isVirtualOperation,
+                    Optional.empty(), // frame.maybeUpdatedMemory, TODO: This is not public by default ????
+                    frame.maybeUpdatedStorage
                 )
 
-                log.trace("Adding trace frame: $traceFrame")
+                log.trace("Adding trace frame: $lastFrame")
 
-                traceFrames.add(traceFrame)
+                traceFrames.add(lastFrame!!)
             }
 
             // If there's an issue, we don't process or store invalid information
@@ -155,8 +176,8 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
                     val originatorAddress = frame.originatorAddress
                     val contractAddress = childFrame.contractAddress
 
-                    val inputOffset = stack[1].asUInt256()
-                    val inputSize = stack[2].asUInt256()
+                    val inputOffset = UInt256.fromBytes(stack[1])
+                    val inputSize = UInt256.fromBytes(stack[2])
                     val inputData = frame.readMemory(inputOffset, inputSize)
                     val code = Code(inputData).bytes
 
@@ -213,7 +234,7 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
                 depth > prevDepth -> prevDepth = depth
                 depth < prevDepth -> {
                     depthFrames
-                        .getOrElse(prevDepth, { ArrayDeque<MessageFrame>() })
+                        .getOrElse(prevDepth, { ArrayDeque() })
                         .apply { add(prevFrame) }
                         .also { depthFrames[prevDepth] = it }
                     prevDepth = depth
@@ -223,25 +244,41 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
             // store previous message frame
             prevFrame = frame
         }
+
+        frame.reset()
+    }
+
+    override fun tracePrecompileCall(frame: MessageFrame?, gasRequirement: Gas?, output: Bytes?) {
+        traceFrames[traceFrames.size - 1].precompiledGasCost = Optional.of(gasRequirement!!)
     }
 
     private fun captureStorage(frame: MessageFrame): Optional<Map<UInt256, UInt256>> =
         when {
-            options.traceStorage -> Optional.of(TreeMap(frame.worldState.getAccount(frame.recipientAddress).mutable.updatedStorage))
+            options.traceStorage -> {
+                try {
+                    val storageContents: Map<UInt256, UInt256> =
+                        TreeMap(
+                            frame
+                                .worldState
+                                .getAccount(frame.recipientAddress)
+                                .mutable
+                                .updatedStorage
+                        )
+                    Optional.of(storageContents)
+                } catch (e: ModificationNotAllowedException) {
+                    val empty: Map<UInt256, UInt256> = TreeMap<UInt256, UInt256>()
+                    Optional.of(empty)
+                }
+            }
             else -> Optional.empty()
         }
 
-    private fun captureMemory(frame: MessageFrame): Optional<Array<Bytes32>> =
+    private fun captureMemory(frame: MessageFrame): Optional<Array<Bytes>> =
         when {
             options.traceMemory -> {
-                val memoryContents = Array<Bytes32>(frame.memoryWordSize().toInt()) { Bytes32.ZERO }
+                val memoryContents = Array<Bytes>(frame.memoryWordSize().intValue()) { Bytes32.ZERO }
                 memoryContents.indices.forEach { i ->
-                    memoryContents[i] = Bytes32.wrap(
-                        frame.readMemory(
-                            UInt256.of(i.toLong()).times(UInt256.U_32),
-                            UInt256.U_32
-                        ), 0
-                    )
+                    memoryContents[i] = frame.readMemory(UInt256.valueOf(i * 32L), UINT256_32)
                 }
                 Optional.of(memoryContents)
             }
@@ -254,11 +291,9 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
         return stackContents
     }
 
-    private fun captureStackIf(frame: MessageFrame, opcode: String) =
-        when (opcode) {
-            "CREATE", "CREATE2", "SELFDESTRUCT", "CALL", "CALLCODE" -> captureStack(frame)
-            else -> emptyArray()
-        }
+    companion object {
+        private val UINT256_32 = UInt256.valueOf(32)
+    }
 }
 
 data class TraceOptions(

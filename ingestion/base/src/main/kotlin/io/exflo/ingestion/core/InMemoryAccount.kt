@@ -18,16 +18,16 @@ package io.exflo.ingestion.core
 
 import io.exflo.ingestion.extensions.hexToLong
 import io.exflo.ingestion.extensions.toBalance
-import java.util.NavigableMap
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.bytes.Bytes32
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.config.GenesisAllocation
 import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.core.AccountStorageEntry
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.Wei
-import org.hyperledger.besu.util.bytes.Bytes32
-import org.hyperledger.besu.util.bytes.BytesValue
-import org.hyperledger.besu.util.uint.UInt256
+import java.util.NavigableMap
 
 /**
  * Implementation of [Account] that holds its data as properties.
@@ -38,7 +38,7 @@ class InMemoryAccount(
     private val address: Address,
     private val balance: Wei,
     private val nonce: Long,
-    private val code: BytesValue?,
+    private val code: Bytes?,
     private val codeHash: Hash?
 ) : Account {
 
@@ -48,7 +48,7 @@ class InMemoryAccount(
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun getAddressHash(): Hash = Hash.fromHexString(address.hexString)
+    override fun getAddressHash(): Hash = Hash.fromHexString(address.toHexString())
 
     override fun getOriginalStorageValue(key: UInt256?): UInt256 {
         throw UnsupportedOperationException("not implemented")
@@ -64,7 +64,7 @@ class InMemoryAccount(
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun getCode(): BytesValue = code ?: BytesValue.EMPTY
+    override fun getCode(): Bytes = code ?: Bytes.EMPTY
 
     override fun getNonce(): Long = nonce
 
@@ -77,7 +77,7 @@ class InMemoryAccount(
             val nonce = allocation.nonce.hexToLong()
             val address = Address.fromHexString(allocation.address)
             val balance = allocation.balance.toBalance()
-            val code = allocation.code?.let { BytesValue.fromHexString(it) }
+            val code = allocation.code?.let { Bytes.fromHexString(it) }
 
             return InMemoryAccount(address, balance, nonce, code, null)
         }
