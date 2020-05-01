@@ -26,7 +26,6 @@ import io.exflo.ingestion.ExfloPlugin
 import io.exflo.ingestion.tracker.BlockWriter
 import io.exflo.postgres.jooq.Tables.METADATA
 import io.exflo.postgres.jooq.tables.records.MetadataRecord
-import javax.sql.DataSource
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.configuration.FluentConfiguration
 import org.hyperledger.besu.cli.config.EthNetworkConfig
@@ -35,7 +34,9 @@ import org.jooq.impl.DSL
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import org.postgresql.Driver
 import picocli.CommandLine
+import javax.sql.DataSource
 
 class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 
@@ -51,6 +52,7 @@ class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
             single<DataSource> {
                 val dataSourceConfig = HikariConfig()
                     .apply {
+                        driverClassName = Driver::class.java.name
                         jdbcUrl = options.jdbcUrl
                         isAutoCommit = false
                         maximumPoolSize = 30
