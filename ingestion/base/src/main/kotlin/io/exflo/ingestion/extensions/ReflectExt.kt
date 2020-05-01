@@ -16,16 +16,8 @@
 
 package io.exflo.ingestion.extensions
 
-fun <T : Any> assertNotNull(
-    actual: T?,
-    message: String = "null found"
-): T {
-    assert(actual != null) { message }
-    return actual!!
-}
-
 inline fun <reified T : Any> reflektField(entity: Any, fieldName: String): T {
-    val field = assertNotNull(entity::class.java.declaredFields.find { it.name == fieldName })
+    val field = checkNotNull(entity::class.java.declaredFields.find { it.name == fieldName })
     if (!field.canAccess(entity)) field.isAccessible = true
     return field.get(entity) as T
 }
