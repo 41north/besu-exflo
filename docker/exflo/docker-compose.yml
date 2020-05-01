@@ -40,9 +40,11 @@ services:
     image: 41north/exflo
     networks:
       - net
+    depends_on:
+      - postgres
     environment:
       BESU_LOGGING: debug
-      BESU_NETWORK: ROPSTEN
+      BESU_NETWORK: DEV
       BESU_SYNC_MODE: FULL
       BESU_P2P_ENABLED: 'true'
       BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'false'
