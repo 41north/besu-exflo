@@ -20,6 +20,8 @@ import io.exflo.ingestion.KoinModules.eventsModule
 import io.exflo.ingestion.KoinModules.stateModule
 import io.exflo.ingestion.KoinModules.storageModule
 import io.exflo.ingestion.extensions.reflektField
+import io.exflo.ingestion.storage.InterceptingKeyValueStorageFactory
+import io.exflo.ingestion.storage.InterceptingPrivacyKeyValueStorageFactory
 import io.exflo.ingestion.tokens.precompiled.PrecompiledContractsFactory
 import io.exflo.ingestion.tracker.BlockWriter
 import io.exflo.ingestion.tracker.ChainTracker
@@ -34,6 +36,8 @@ import org.hyperledger.besu.ethereum.mainnet.ScheduleBasedBlockHeaderFunctions
 import org.hyperledger.besu.plugin.BesuContext
 import org.hyperledger.besu.plugin.BesuPlugin
 import org.hyperledger.besu.plugin.services.PicoCLIOptions
+import org.hyperledger.besu.plugin.services.StorageService
+import org.hyperledger.besu.plugin.services.storage.PrivacyKeyValueStorageFactory
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -58,13 +62,12 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
 
     private lateinit var besuCommand: BesuCommand
 
-    private val rocksDBPlugin = ExfloRocksDBPlugin()
+    private lateinit var interceptingKeyValueStorageFactory: InterceptingKeyValueStorageFactory
+    private lateinit var interceptingPrivacyKeyValueStorageFactory: InterceptingPrivacyKeyValueStorageFactory
 
     override fun register(context: BesuContext) {
 
         log = LogManager.getLogger(name)
-
-        rocksDBPlugin.register(context)
 
         log.debug("Registering plugin")
         this.context = context
@@ -79,7 +82,47 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
         commandLine = reflektField(cliOptions, "commandLine")
         besuCommand = commandLine.commandSpec.userObject() as BesuCommand
 
+        this.registerCustomRocksDBPlugin()
+
         log.info("Plugin registered")
+    }
+
+    private fun registerCustomRocksDBPlugin() {
+
+        val storageService = context
+            .getService(StorageService::class.java)
+            .get()
+
+        // get the original factories registered by the rocks db plugin
+
+        val keyValueStorageFactory = storageService
+            .getByName("rocksdb")
+            .get()
+
+        val privacyKeyValueStorageFactory = storageService
+            .getByName("rocksdb-privacy")
+            .get()
+
+        // determine if another exflo plugin has already decorated the base storage factories and capture their
+        // references, otherwise register our intercepting factories
+
+        if (
+            keyValueStorageFactory is InterceptingKeyValueStorageFactory &&
+            privacyKeyValueStorageFactory is InterceptingPrivacyKeyValueStorageFactory
+        ) {
+            this.interceptingKeyValueStorageFactory = keyValueStorageFactory
+            this.interceptingPrivacyKeyValueStorageFactory = privacyKeyValueStorageFactory
+        } else {
+
+            this.interceptingKeyValueStorageFactory =
+                InterceptingKeyValueStorageFactory(keyValueStorageFactory)
+
+            this.interceptingPrivacyKeyValueStorageFactory =
+                InterceptingPrivacyKeyValueStorageFactory(privacyKeyValueStorageFactory as PrivacyKeyValueStorageFactory)
+
+            storageService.registerKeyValueStorage(interceptingKeyValueStorageFactory)
+            storageService.registerKeyValueStorage(interceptingPrivacyKeyValueStorageFactory)
+        }
     }
 
     protected abstract fun implKoinModules(): List<Module>
@@ -88,14 +131,13 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
 
     override fun start() {
 
-        if(!options.enabled) {
+        if (!options.enabled) {
             return
         }
 
         log.debug("Starting plugin")
 
         try {
-            rocksDBPlugin.start()
 
             val networkConfig = reflektField<EthNetworkConfig>(besuCommand, "ethNetworkConfig")
             val genesisConfigFile = GenesisConfigFile.fromConfig(networkConfig.genesisConfig)
@@ -148,14 +190,13 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
 
     override fun stop() {
 
-        if(!options.enabled) {
+        if (!options.enabled) {
             return
         }
 
         log.debug("Stopping plugin")
         blockWriter.stop()
         stopKoin()
-        rocksDBPlugin.stop()
     }
 }
 
