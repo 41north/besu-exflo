@@ -82,7 +82,7 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
         commandLine = reflektField(cliOptions, "commandLine")
         besuCommand = commandLine.commandSpec.userObject() as BesuCommand
 
-        this.registerCustomRocksDBPlugin()
+        registerCustomRocksDBPlugin()
 
         log.info("Plugin registered")
     }
@@ -110,14 +110,14 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
             keyValueStorageFactory is InterceptingKeyValueStorageFactory &&
             privacyKeyValueStorageFactory is InterceptingPrivacyKeyValueStorageFactory
         ) {
-            this.interceptingKeyValueStorageFactory = keyValueStorageFactory
-            this.interceptingPrivacyKeyValueStorageFactory = privacyKeyValueStorageFactory
+            interceptingKeyValueStorageFactory = keyValueStorageFactory
+            interceptingPrivacyKeyValueStorageFactory = privacyKeyValueStorageFactory
         } else {
 
-            this.interceptingKeyValueStorageFactory =
+            interceptingKeyValueStorageFactory =
                 InterceptingKeyValueStorageFactory(keyValueStorageFactory)
 
-            this.interceptingPrivacyKeyValueStorageFactory =
+            interceptingPrivacyKeyValueStorageFactory =
                 InterceptingPrivacyKeyValueStorageFactory(privacyKeyValueStorageFactory as PrivacyKeyValueStorageFactory)
 
             storageService.registerKeyValueStorage(interceptingKeyValueStorageFactory)
