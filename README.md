@@ -1,8 +1,8 @@
 <h1 align="center">Exflo</h1>
 
 <p align="center">
-  <a href="https://github.com/41north/exflo/workflows/KtLint/badge.svg">
-    <img alt="KtLint" height="20px" src="https://github.com/41north/exflo/workflows/KtLint/badge.svg" />
+  <a href="https://github.com/41north/exflo/workflows/build/badge.svg">
+    <img alt="Build Badge" height="20px" src="https://github.com/41north/exflo/workflows/build/badge.svg" />
   </a>
   <a href="https://img.shields.io/github/license/41north/exflo?style=flat-square">
     <img alt="Exflo License" height="20px" src="https://img.shields.io/github/license/41north/exflo?style=flat-square" />
@@ -31,18 +31,18 @@ Some screenshots of captured data:
 
 | Plugin        | Screenshots        |
 | ------------- |:------------------:|
-| Postgres      | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-2.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-3.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-4.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/capture-5.png" width="100" /></p> |
+| Postgres      | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-2.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-3.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-4.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-5.png" width="100" /></p> |
 | Kafka         | TBW      |
 
 ## 🚆 Quickstart
 
-Before continuing you will need to ensure you have the following installed:
+Before continuing ensure you have the following programs installed:
 
 * Java 11 or higher ([AdoptOpenJDK](https://adoptopenjdk.net/), [Zulu Community](https://www.azul.com/products/zulu-community/) or [OpenJDK](https://openjdk.java.net/))
 * [Docker](https://docs.docker.com/install/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 * [direnv](https://github.com/direnv/direnv/blob/master/docs/installation.md)
-* [IntelliJ IDEA Community or Ultimate](https://www.jetbrains.com/)
+* (Optional but highly recommendable) [IntelliJ IDEA Community or Ultimate](https://www.jetbrains.com/)
 
 Clone the repository:
 
