@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# suppress inspection "UnusedProperty" for whole file
-org.gradle.jvmargs=-Xmx1g
-org.gradle.caching=true
-org.gradle.parallel=true
+
+io.exflo.ingestion.kafka.ExfloKafkaPlugin
+io.exflo.ingestion.postgres.ExfloPostgresPlugin

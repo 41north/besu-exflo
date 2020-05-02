@@ -128,7 +128,7 @@ class BlockImportTask : ImportTask, KoinComponent {
                 .map(this::readBlock)
                 .buffer(batchSize)
                 .doOnNext(this::publishRecords)
-                .doOnComplete { log.info("Initial sync import pass complete") }
+                .doOnComplete { log.debug("Initial sync import pass complete") }
                 .takeUntil { !running }
                 .blockingSubscribe()
 
@@ -139,11 +139,11 @@ class BlockImportTask : ImportTask, KoinComponent {
                     .map(this::readBlock)
                     .buffer(batchSize)
                     .doOnNext(this::publishRecords)
-                    .doOnComplete { log.info("Live sync import pass complete") }
+                    .doOnComplete { log.debug("Live sync import pass complete") }
                     .takeUntil { !running }
                     .blockingSubscribe()
 
-                log.info("Waiting $pollInterval before starting another import pass")
+                log.debug("Waiting $pollInterval before starting another import pass")
                 Thread.sleep(pollInterval.toMillis())
             }
         } catch (t: Throwable) {

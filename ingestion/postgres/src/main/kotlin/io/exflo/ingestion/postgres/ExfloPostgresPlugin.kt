@@ -16,6 +16,8 @@
 
 package io.exflo.ingestion.postgres
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.type.TypeFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.exflo.ingestion.ExfloCliDefaultOptions
@@ -26,7 +28,6 @@ import io.exflo.ingestion.ExfloPlugin
 import io.exflo.ingestion.tracker.BlockWriter
 import io.exflo.postgres.jooq.Tables.METADATA
 import io.exflo.postgres.jooq.tables.records.MetadataRecord
-import javax.sql.DataSource
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.configuration.FluentConfiguration
 import org.hyperledger.besu.cli.config.EthNetworkConfig
@@ -35,7 +36,10 @@ import org.jooq.impl.DSL
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import org.postgresql.Driver
 import picocli.CommandLine
+import javax.sql.DataSource
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 
@@ -45,12 +49,25 @@ class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 
     override fun implKoinModules(): List<Module> = listOf(
         module {
+
             single { options }
             single<ExfloCliOptions> { options }
+
+            single {
+                val classLoader = get<ClassLoader>()
+                ObjectMapper()
+                    .registerModule(KotlinModule())
+                    .apply {
+                    this.typeFactory = TypeFactory
+                        .defaultInstance()
+                        .withClassLoader(classLoader)
+                }
+            }
 
             single<DataSource> {
                 val dataSourceConfig = HikariConfig()
                     .apply {
+                        driverClassName = Driver::class.java.name
                         jdbcUrl = options.jdbcUrl
                         isAutoCommit = false
                         maximumPoolSize = 30
@@ -63,7 +80,7 @@ class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
             }
 
             single<BlockWriter> {
-                PostgresBlockWriter(get(), get(), options)
+                PostgresBlockWriter(get(), get(), get(), get(), options)
             }
         }
     )
@@ -84,7 +101,10 @@ class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 
     private fun migrateDatabase(dataSource: DataSource) {
 
-        val config = FluentConfiguration()
+        // we need to use the class loader from the plugin class so we correctly pick up the plugin classloader
+        // otherwise flyway will not correctly detect the migrations in the classpath
+
+        val config = FluentConfiguration(ExfloPostgresPlugin::class.java.classLoader)
             .dataSource(dataSource)
             .locations("classpath:/db/migration")
 
@@ -131,6 +151,14 @@ class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 }
 
 class ExfloPostgresCliOptions : ExfloCliOptions {
+
+    @CommandLine.Option(
+        names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-enabled"],
+        paramLabel = "<BOOLEAN>",
+        defaultValue = "false",
+        description = ["Enable this plugin"]
+    )
+    override var enabled: Boolean = false
 
     @CommandLine.Option(
         names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-start-block-override"],

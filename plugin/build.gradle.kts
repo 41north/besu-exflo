@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-pluginManagement {
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-    repositories {
-        gradlePluginPortal()
-        jcenter()
-        maven(url = "https://dl.bintray.com/gradle/gradle-plugins")
-    }
-
+plugins {
+    `java-library`
+    `maven-publish`
+    id("com.github.johnrengelman.shadow")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
-include(":domain")
-include(":ingestion:base")
-include(":ingestion:kafka")
-include(":ingestion:postgres")
-include(":plugin")
-include(":testutil")
+dependencies {
+    implementation(project(":ingestion:kafka"))
+    implementation(project(":ingestion:postgres"))
+}
+
+val build: DefaultTask by project.tasks
+build.dependsOn(tasks.shadowJar)
+
+tasks {
+    withType<ShadowJar> {
+        archiveBaseName.set(project.name)
+        archiveClassifier.set("")
+    }
+}

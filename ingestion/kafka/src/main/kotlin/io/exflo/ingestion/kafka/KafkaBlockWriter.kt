@@ -21,13 +21,13 @@ import io.exflo.ingestion.tracker.BlockWriter
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
-import org.koin.core.KoinComponent
 
-class KafkaBlockWriter : BlockWriter, KoinComponent {
+class KafkaBlockWriter(classLoader: ClassLoader) : BlockWriter {
 
     private val executor = Executors.newCachedThreadPool {
         val factory = Executors.defaultThreadFactory()
         val thread = factory.newThread(it)
+        thread.contextClassLoader = classLoader
         thread.name = "ExfloExecutorThread-%d"
         thread
     }

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import dev.north.fortyone.gradle.solidity.EVMVersion.ISTANBUL
 import dev.north.fortyone.gradle.solidity.OutputComponent
 import io.exflo.gradle.tasks.ClassOutput
@@ -24,9 +23,8 @@ import io.exflo.gradle.tasks.Web3KtCodegenTask
 plugins {
     `java-library`
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow")
     id("org.jlleitschuh.gradle.ktlint")
-    id("dev.north.fortyone.solidity") version "0.1.0"
+    id("dev.north.fortyone.solidity") version "0.1.1"
 }
 
 dependencies {
@@ -71,13 +69,11 @@ ktlint {
 }
 
 solidity {
+    attachToBuild.set(false)
     dockerSolidityImage.set("ethereum/solc:0.5.13")
     evmVersion.set(ISTANBUL)
     outputComponents.set(listOf(OutputComponent.BIN_RUNTIME, OutputComponent.ABI))
 }
-
-val build: DefaultTask by tasks
-build.dependsOn(tasks.shadowJar)
 
 tasks {
     register<Web3KtCodegenTask>("generateContractWrappers") {
@@ -96,16 +92,6 @@ tasks {
             ClassOutput("ERC777Detector"),
             ClassOutput("ERC1155Detector")
         )
-    }
-
-    withType<ShadowJar> {
-        archiveBaseName.set(project.name)
-        archiveClassifier.set("")
-        minimize()
-    }
-
-    withType<Jar> {
-        enabled = false
     }
 
     withType<Test> {
