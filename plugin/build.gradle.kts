@@ -28,36 +28,6 @@ dependencies {
     implementation(project(":ingestion:postgres"))
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-
-            groupId = "${rootProject.group}"
-            version = "${project.version}"
-
-            project.shadow.component(this)
-
-            pom {
-                name.set("Exflo - ${project.name}")
-                url.set("https://github.com/41North/exflo")
-
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git://github.com/41North/exflo.git")
-                    developerConnection.set("scm:git:ssh://github.com/41North/exflo.git")
-                    url.set("https://github.com/41North/exflo")
-                }
-            }
-        }
-    }
-}
-
 val build: DefaultTask by project.tasks
 build.dependsOn(tasks.shadowJar)
 
