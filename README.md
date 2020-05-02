@@ -79,36 +79,44 @@ BESU | Ropsten | Postgres > Run
 
 ## Usage with Besu
 
+There are two possible ways of running Exflo. Choose whatever suits you for your particular usecase and necessities:
+
 ### Jar
 
-If you want to run Exflo, the approach is the same as other Besu plugin. Assuming you're using docker:
+This method is like running a regular Besu plugin (assuming you're using Docker to execute Besu):
 
-1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file.
-2. Extract the `tar` or the `zip` file.
-3. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) exposes a `/etc/besu/plugins` folder where it loads the jars.
-4. Select which plugin you want to run (kafka or postgres).
-5. If you want to tweak default params, we recommend you to take a look on the [usage section](#usage).
+1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file and extract it.
+2. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) exposes a `/etc/besu/plugins` folder where it loads the jars.
+3. Add a bind volume where to put the jar.
+4. If you want to tweak default params, we recommend you to take a look on the [usage section](#usage).
 
 Here's an example of a possible `docker` configuration using `docker-compose` syntax:
 
 ```yaml
-besu:
-  image: hyperledger/besu:1.4.4
-  volumes:
-    - ./path/exflo-{kafka, postgres}-jar/:/etc/besu/plugins
-  command: "--plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
+version: '3.7'
+services:
+  besu:
+    image: hyperledger/besu:1.4.4
+    volumes:
+      - ./path/to/exflo-jar/:/etc/besu/plugins
+    command: "--plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
 ```
 
-Each plugin exposes a set of command line options with sane defaults and tries to autoconfigure itself as much as possible:
-
-- [Command line arguments for Postgres](.github/POSTGRES_PLUGIN.md).
-- [Command line arguments for Kafka](.github/KAFKA_PLUGIN.md).
+We recommend you to have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your fitting.
 
 ### Bundled docker images
 
 We also offer bundled docker images with Besu to ease even more its usage:
 
-TBW
+```yaml
+version: '3.7'
+services:
+  besu:
+    image: 41north/exflo:latest
+    command: "--plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
+```
+
+We recommend you to have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your fitting.
 
 ## 💻 Contribute
 
@@ -146,6 +154,14 @@ unstable and periodically core dump. Maximising throughput whilst keeping the cl
 
 Put simply it has been our experience that pulling via the Web3 interface is sub-optimal for a variety reasons which are better explored 
 in a blog post.
+
+### Why Kafka and Postgres? Is it possible to develop more data stores?
+
+TBW
+
+### Can we replace RocksDB storage engine with Exflo?
+
+TBW
 
 ## 📬 Get in touch
 
