@@ -62,14 +62,10 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
 
     private lateinit var besuCommand: BesuCommand
 
-    private lateinit var interceptingKeyValueStorageFactory: InterceptingKeyValueStorageFactory
-    private lateinit var interceptingPrivacyKeyValueStorageFactory: InterceptingPrivacyKeyValueStorageFactory
-
     override fun register(context: BesuContext) {
 
         log = LogManager.getLogger(name)
 
-        log.debug("Registering plugin")
         this.context = context
 
         val cmdlineOptions = context.getService(PicoCLIOptions::class.java)
@@ -82,12 +78,12 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
         commandLine = reflektField(cliOptions, "commandLine")
         besuCommand = commandLine.commandSpec.userObject() as BesuCommand
 
-        registerCustomRocksDBPlugin()
+        registerStorageInterceptors()
 
         log.info("Plugin registered")
     }
 
-    private fun registerCustomRocksDBPlugin() {
+    private fun registerStorageInterceptors() {
 
         val storageService = context
             .getService(StorageService::class.java)
@@ -110,19 +106,18 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
             keyValueStorageFactory is InterceptingKeyValueStorageFactory &&
             privacyKeyValueStorageFactory is InterceptingPrivacyKeyValueStorageFactory
         ) {
-            interceptingKeyValueStorageFactory = keyValueStorageFactory
-            interceptingPrivacyKeyValueStorageFactory = privacyKeyValueStorageFactory
-        } else {
-
-            interceptingKeyValueStorageFactory =
-                InterceptingKeyValueStorageFactory(keyValueStorageFactory)
-
-            interceptingPrivacyKeyValueStorageFactory =
-                InterceptingPrivacyKeyValueStorageFactory(privacyKeyValueStorageFactory as PrivacyKeyValueStorageFactory)
-
-            storageService.registerKeyValueStorage(interceptingKeyValueStorageFactory)
-            storageService.registerKeyValueStorage(interceptingPrivacyKeyValueStorageFactory)
+            // we have already setup the interceptors in another exflo plugin
+            return
         }
+
+        val interceptingKeyValueStorageFactory =
+            InterceptingKeyValueStorageFactory(keyValueStorageFactory)
+
+        val interceptingPrivacyKeyValueStorageFactory =
+            InterceptingPrivacyKeyValueStorageFactory(privacyKeyValueStorageFactory as PrivacyKeyValueStorageFactory)
+
+        storageService.registerKeyValueStorage(interceptingKeyValueStorageFactory)
+        storageService.registerKeyValueStorage(interceptingPrivacyKeyValueStorageFactory)
     }
 
     protected abstract fun implKoinModules(): List<Module>
@@ -155,6 +150,9 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
             // create a module for injecting various basic context objects
             val contextModule = module {
                 single { context }
+                // we capture the classloader as plugins are executed under a custom classloader and we need to
+                // specify this in some places to ensure behaviour
+                single<ClassLoader> { ExfloPlugin::class.java.classLoader }
                 single { networkConfig }
                 single { protocolSchedule }
                 single { genesisState }

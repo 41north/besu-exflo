@@ -44,7 +44,7 @@ class ExfloKafkaPlugin : ExfloPlugin<ExfloKafkaCliOptions>() {
         module {
             single { options }
             single<ExfloCliOptions> { options }
-            factory<BlockWriter> { KafkaBlockWriter() }
+            factory<BlockWriter> { KafkaBlockWriter(get()) }
         }
     )
 
