@@ -44,7 +44,7 @@ class ExfloKafkaPlugin : ExfloPlugin<ExfloKafkaCliOptions>() {
         module {
             single { options }
             single<ExfloCliOptions> { options }
-            factory<BlockWriter> { KafkaBlockWriter() }
+            factory<BlockWriter> { KafkaBlockWriter(get()) }
         }
     )
 
@@ -79,6 +79,14 @@ class ExfloKafkaPlugin : ExfloPlugin<ExfloKafkaCliOptions>() {
 }
 
 class ExfloKafkaCliOptions : ExfloCliOptions {
+
+    @CommandLine.Option(
+        names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-enabled"],
+        paramLabel = "<BOOLEAN>",
+        defaultValue = "false",
+        description = ["Enable this plugin"]
+    )
+    override var enabled: Boolean = false
 
     @CommandLine.Option(
         names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-start-block-override"],

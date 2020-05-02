@@ -16,6 +16,7 @@
 
 package io.exflo.ingestion.postgres.tasks
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.exflo.ingestion.core.ImportTask
 import io.exflo.ingestion.postgres.extensions.blockHash
 import io.exflo.ingestion.postgres.extensions.blockNumber
@@ -39,6 +40,7 @@ import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 
 class HeaderImportTask(
+    private val objectMapper: ObjectMapper,
     private val blockReader: BlockReader,
     dataSource: DataSource
 ) : ImportTask {
@@ -118,13 +120,13 @@ class HeaderImportTask(
                             }
                         }
 
-                        log.info("Written $updateCount records in $elapsedMs ms")
+                        log.debug("Written $updateCount records in $elapsedMs ms")
                     }
-                    .doOnComplete { log.info("Import pass complete") }
+                    .doOnComplete { log.debug("Import pass complete") }
                     .takeUntil { !running }
                     .blockingSubscribe()
 
-                log.info("Waiting ${pollInterval.toSeconds()} sec(s) before starting another import pass")
+                log.debug("Waiting ${pollInterval.toSeconds()} sec(s) before starting another import pass")
                 Thread.sleep(pollInterval.toMillis())
             } catch (t: Throwable) {
                 // TODO handle any transient errors in the Flowable pipeline so that an exception isn't thrown

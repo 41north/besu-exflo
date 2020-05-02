@@ -16,6 +16,7 @@
 
 package io.exflo.ingestion.postgres.tasks
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.exflo.ingestion.core.ImportTask
 import io.exflo.ingestion.postgres.extensions.toOmmerRecord
 import io.exflo.ingestion.postgres.extensions.toTransactionRecord
@@ -38,6 +39,7 @@ import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 
 class BodyImportTask(
+    private val objectMapper: ObjectMapper,
     private val blockReader: BlockReader,
     dataSource: DataSource
 ) : ImportTask {
@@ -110,14 +112,14 @@ class BodyImportTask(
 
                         blockCount += items.size
 
-                        log.info("Written $blockCount blocks, $updateCount updates in $elapsedMs ms")
+                        log.debug("Written $blockCount blocks, $updateCount updates in $elapsedMs ms")
                     }
-                    .doOnComplete { log.info("Bodies import pass complete") }
+                    .doOnComplete { log.debug("Bodies import pass complete") }
                     .takeUntil { !running }
                     .blockingSubscribe()
 
                 if (blockCount == 0) {
-                    log.info("Waiting ${pollInterval.toSeconds()} sec(s) before starting another import pass")
+                    log.debug("Waiting ${pollInterval.toSeconds()} sec(s) before starting another import pass")
                     Thread.sleep(pollInterval.toMillis())
                 }
             } catch (t: Throwable) {

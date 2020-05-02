@@ -16,6 +16,7 @@
 
 package io.exflo.ingestion.postgres.extensions
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.exflo.domain.BalanceDelta
 import io.exflo.domain.ContractCapability
 import io.exflo.domain.ContractCreated
@@ -24,7 +25,6 @@ import io.exflo.domain.ContractEvents
 import io.exflo.domain.ContractType
 import io.exflo.ingestion.extensions.bigDecimal
 import io.exflo.ingestion.extensions.contractEvents
-import io.exflo.ingestion.postgres.json.Klaxon
 import io.exflo.postgres.jooq.enums.ContractEventType
 import io.exflo.postgres.jooq.tables.records.AccountRecord
 import io.exflo.postgres.jooq.tables.records.BalanceDeltaRecord
@@ -121,13 +121,14 @@ fun Transaction.toTransactionRecord(header: BlockHeaderRecord, index: Int): Tran
 }
 
 fun TransactionReceipt.toTransactionReceiptRecord(
+    objectMapper: ObjectMapper,
     blockHeader: BlockHeaderRecord,
     transaction: TransactionRecord,
     gasUsed: Long
 ): TransactionReceiptRecord {
 
     val receipt = this
-    val logsAsJson = logs.map { Klaxon().toJsonString(it) }
+    val logsAsJson = logs.map { objectMapper.writeValueAsString(it) }
 
     return TransactionReceiptRecord()
         .apply {
