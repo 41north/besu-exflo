@@ -10,4 +10,4 @@ FROM hyperledger/besu:1.4.4
 
 RUN mkdir -p /opt/besu/plugins
 
-COPY --from=build /build/plugin/build/libs/*.jar /opt/besu/plugins
+COPY --from=build /build/plugin/build/libs/*.jar /opt/besu/plugins/

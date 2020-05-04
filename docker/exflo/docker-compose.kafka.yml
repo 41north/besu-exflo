@@ -7,13 +7,11 @@ networks:
 
 volumes:
 
-  zookeeper-data:
+
+  zookeeper:
     driver: local
 
-  zookeeper-log:
-    driver: local
-
-  kafka-data:
+  kafka:
     driver: local
 
   besu:
@@ -25,8 +23,7 @@ services:
     image: confluentinc/cp-zookeeper:5.5.0
     restart: unless-stopped
     volumes:
-      - zookeeper-data:/var/lib/zookeeper/data
-      - zookeeper-log:/var/lib/zookeeper/log
+      - zookeeper:/var/lib/zookeeper
     networks:
       - net
     ports:
@@ -44,7 +41,7 @@ services:
     depends_on:
       - zookeeper
     volumes:
-      - kafka-data:/var/lib/kafka
+      - kafka:/var/lib/kafka
     networks:
       - net
     ports:
@@ -86,7 +83,7 @@ services:
                 bootstrap.servers: "kafka:9092"
 
   besu:
-    image: 41north/exflo
+    image: 41north/exflo:latest
     networks:
       - net
     depends_on:
