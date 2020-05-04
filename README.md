@@ -50,7 +50,7 @@ Clone the repository:
 git clone git@github.com:41north/exflo.git
 ```
 
-Generate Intellij run configurations:
+Generate Intellij run configurations (it will auto populate configurations to ease common operations):
 
 ```bash
 ./gradlew generateIntellijRunConfigs
@@ -72,20 +72,18 @@ docker-compose -f docker-compose.exflo-kafka.yml up
 
 Wait for each docker service to be properly initialized (being those Postgres or Kafka respectively). 
 
-After that, inside Intellij, execute accordingly the Run config:
+After that, inside Intellij, execute accordingly the Run config (there are other networks available, so select whichever you like):
 
-For Postgres
-```text
-BESU | Ropsten | Postgres > Run
-```
+For Postgres:
+
+![Postgres Intellij Run](.github/assets/ropsten-postgres-run.png)
 
 Or for Kafka:
 
-```text
-BESU | Ropsten | Kafka > Run
-```
+![Kafka Intellij Run](.github/assets/ropsten-kafka-run.png)
 
-Open your browser and navigate to `[http://localhost:8082](http://localhost:8082)` and you will be greeted with either `pgweb` or `kafkahq` respectively.
+Open your browser and navigate to `[http://localhost:8082](http://localhost:8082)` and you will be greeted with either 
+[`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively.
 
 ## Usage with Besu
 
@@ -97,8 +95,8 @@ This method is like running a regular Besu plugin (assuming you're using Docker 
 
 1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file and extract it.
 2. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) exposes a `/etc/besu/plugins` folder where it loads the jars.
-3. Add a bind volume where to put the jar.
-4. If you want to tweak default params, we recommend you to take a look on the [usage section](#usage).
+3. Add a bind volume where to put Exflo jar.
+4. If you want to tweak default params, we recommend you to take a look on the [usage section](.github/USAGE.md).
 
 Here's an example of a possible `docker` configuration using `docker-compose` syntax:
 
@@ -109,10 +107,17 @@ services:
     image: hyperledger/besu:1.4.4
     volumes:
       - ./path/to/exflo-jar/:/etc/besu/plugins
-    command: "--plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
+    environment:
+      BESU_LOGGING: INFO
+      BESU_NETWORK: ROPSTEN
+      BESU_SYNC_MODE: FULL
+      BESU_DATA_PATH: /opt/besu/data
+      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'false'
+      BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: 'true'
+      BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
 ```
 
-We recommend you to have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your fitting.
+Have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your liking.
 
 ### Bundled docker images
 
@@ -123,10 +128,17 @@ version: '3.7'
 services:
   besu:
     image: 41north/exflo:latest
-    command: "--plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
+    environment:
+      BESU_LOGGING: INFO
+      BESU_NETWORK: ROPSTEN
+      BESU_SYNC_MODE: FULL
+      BESU_DATA_PATH: /opt/besu/data
+      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'false'
+      BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: 'true'
+      BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
 ```
 
-We recommend you to have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your fitting.
+Have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your liking.
 
 ## 💻 Contribute
 
@@ -158,20 +170,26 @@ We chose Besu for several reasons:
 ### Why not use the Web3 interface that every Ethereum client has?
 
 If you have ever tried this you will quickly realise that extracting even just the basic information from an Ethereum client via the Web3 
-interface requires a lot of requests and some non-trivial logic to do well. On top of that, depending on the client 
+interface requires a lot of requests, and some non-trivial logic to do well. On top of that, depending on the client 
 (we won't name anyone in particular) you may find that under heavy load, such as when syncing for the first time, your client may become 
 unstable and periodically core dump. Maximising throughput whilst keeping the client happy quickly becomes a tedious exercise.
 
 Put simply it has been our experience that pulling via the Web3 interface is sub-optimal for a variety reasons which are better explored 
 in a blog post.
 
-### Why Kafka and Postgres? Is it possible to develop more data stores?
+### Why Postgres and Kafka? Is it possible to develop more data stores?
 
-TBW
+Majority of people will find very useful to externalise the internal information that a typical Ethereum node stores. Postgres and Kafka 
+are well-known data store technologies (each of one serving different purposes and necessities) that are often used to perform
+better queries or real-time analytics.
 
-### Can we replace RocksDB storage engine with Exflo?
+Having said that. Yes, we thought originally on Exflo to be easily extendable so, if you find another possible use-case let us know!
 
-TBW
+### Can we replace RocksDB storage engine that Besu uses with the Postgres' one inside Exflo?
+
+As far as we know, Besu originally had planned support to add Postgres directly as a storage plugin. To us, Exflo is considered a 
+second class storage to Besu that complements and adds more meaning so we don't see it replacing RocksDB (for multiple obvious reasons one 
+of them being performance).
 
 ## 📬 Get in touch
 

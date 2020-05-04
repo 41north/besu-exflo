@@ -1,4 +1,6 @@
-# Postgres
+# Usage
+
+## Postgres
 
 Possible command line arguments for `postgres` are described below:
 
@@ -10,7 +12,7 @@ Possible command line arguments for `postgres` are described below:
 | `--plugin-exflo-postgres-jdbc-url`                |                               DBC connection url for postgres database                                | jdbc:postgresql://localhost/exflo_dev?user=exflo_dev&password=exflo_dev |      Yes |
 | `--plugin-exflo-postgres-ignore-migrations-check` |                      Enables or disables checking migrations on the selected DB                       |                                                                   false |      Yes |
 
-# Kafka
+## Kafka
 
 Possible command line arguments for `kafka` are described below:
 
