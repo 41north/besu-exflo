@@ -70,12 +70,22 @@ For Kafka:
 docker-compose -f docker-compose.exflo-kafka.yml up
 ```
 
-Wait for each docker service to be properly initialized. After that, inside Intellij, execute accordingly the Run config:
+Wait for each docker service to be properly initialized (being those Postgres or Kafka respectively). 
+
+After that, inside Intellij, execute accordingly the Run config:
+
+For Postgres
+```text
+BESU | Ropsten | Postgres > Run
+```
+
+Or for Kafka:
 
 ```text
 BESU | Ropsten | Kafka > Run
-BESU | Ropsten | Postgres > Run
 ```
+
+Open your browser and navigate to `[http://localhost:8082](http://localhost:8082)` and you will be greeted with either `pgweb` or `kafkahq` respectively.
 
 ## Usage with Besu
 
