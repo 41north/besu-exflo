@@ -20,33 +20,33 @@
 
 ## Prerequisites
 
-1. Java 11+ ([AdoptOpenJDK](https://adoptopenjdk.net/), [Zulu Community](https://www.azul.com/products/zulu-community/) or [OpenJDK](https://openjdk.java.net/))
-2. [docker](https://docs.docker.com/install/)
-3. [docker-compose](https://docs.docker.com/compose/install/)
-4. (Optional): [IntelliJ IDEA Community or Ultimate](https://www.jetbrains.com/)
+1. Java 11 or higher ([AdoptOpenJDK](https://adoptopenjdk.net/), [Zulu Community](https://www.azul.com/products/zulu-community/) or [OpenJDK](https://openjdk.java.net/))
+2. [Docker](https://docs.docker.com/install/)
+3. [Docker Compose](https://docs.docker.com/compose/install/)
+4. [direnv](https://github.com/direnv/direnv/blob/master/docs/installation.md)
+5. (Optional but highly recommendable) [IntelliJ IDEA Community or Ultimate](https://www.jetbrains.com/)
 
-## Checkout source code
-
-```sh
-$ git clone git@github.com:41north/exflo.git
-```
-
-## How code is organized
+## Code organization
 
 The codebase can be broken down as follows:
 
-- [`buildSrc`](../buildSrc) - This folder includes `gradle` [custom tasks and plugins](https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#sec:build_sources) that aids in development.
-  - There are two custom made plugins focused on compiling [`flatbuffers`](buildSrc/src/main/kotlin/io/exflo/gradle/plugins/flatbuffers) and [`solidity`](buildSrc/src/main/kotlin/io/exflo/gradle/plugins/solidity) source using `docker`.
-  - Several minor tasks to generate [`Kotlin` code from `Solidity's ABI`](../buildSrc/src/main/kotlin/io/exflo/gradle/tasks/Web3KtCodeGenTask.kt) or for [generating Intellij's Run configurations](#generating-intellij's-run-configurations).
-- [`docker`](../docker) - Folder to store custom Dockerfiles with images.
-- [`domain`](../domain) - As the name implies, this submodule stores information related to `flatbuffer` entities for those plugins that needs a compact form of serialization (see [How to generate Flatbuffer Java entities](#updating-flatbuffers-java-entities) section).
-- [`ingestion`](../ingestion) - This folder is the main core of Exflo. It's composed of:
-  - [`base`](../ingestion/base) - Includes all the important logic for [`tracer`](../ingestion/base/src/main/kotlin/io/exflo/ingestion/tracer), the [`chain tracker`](../ingestion/base/src/main/kotlin/io/exflo/ingestion/tracker), [`token detector`](../ingestion/base/src/main/kotlin/io/exflo/ingestion/tokens) code and base implementations for Exflo plugins.
-  - [`postgres`](../ingestion/postgres) - All relevant postgres implementation lies here (see [Processing using Postgres](#processing-using-postgres) section).
-  - [`kafka`](../ingestion/kafka) - All relevant kafka implementation lies here (see [Processing using Kafka](#processing-using-kafka) section).
-- [`truffle`](../truffle) - Basic tests are performed on [Truffle](https://www.trufflesuite.com/) and later exported to a private besu chain by `testutil/` utilities (see [How to update tests](#how-to-update-tests) section).
-- [`testutil`](../testutil) - Test utilities related to testing Exflo.
-- [`intellij`](../intellij) - Definitions for generating Run configuration tasks for Intellij 
+```text
+├── buildSrc          # Custom gradle tasks that aids in development.
+├── docker            # Custom Dockerfiles
+│   ├── exflo         #   - Base Dockerfile to generate docker releases of Exflo  
+│   └── flatbuffers   #   - Base Dockerfile to generate flatbuffer specific images
+├── domain            # Shared domain entities across different modules (mainly related to flatbuffers)
+├── gradle            # Configuration of main gradle dependencies
+├── ingestion         # Core of Exflo
+│   ├── base          #   - Common logic to all plugins
+│   ├── kafka         #   - Specific logic related to Kafka implementation
+│   └── postgres      #   - Specific logic related to Postgres implementation
+├── intellij
+├── plugin            # Common entry point plugin definitions for Besu
+├── postman           # JSON RPC Postman collection to interact with the node
+├── testutil          # Test utilities and helpers related to testing Exflo
+└── truffle           # Some tests require the interaction with the Blockchain, here are located Solidity tests
+```
 
 ## See what tasks are available
 

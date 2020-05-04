@@ -23,7 +23,7 @@ Exflo can extract the following information from a Besu archive instance into ei
 - Transactions.
 - Transaction traces.
 - Log events for standards-compliant [ERC20](https://eips.ethereum.org/EIPS/eip-20), [ERC721](https://eips.ethereum.org/EIPS/eip-721), [ERC777](https://eips.ethereum.org/EIPS/eip-777) and [ERC1155](https://eips.ethereum.org/EIPS/eip-1155) tokens.
-- Detailed breakdown of Ether movements e.g. block rewards, tx fees, simple ether transfers and so on.
+- A detailed breakdown of Ether movements e.g. block rewards, tx fees, simple ether transfers and so on.
 - Contract creations and self destructs.
 - Per block account state changes.
 
@@ -34,7 +34,27 @@ Some screenshots of captured data:
 | Postgres      | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-2.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-3.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-4.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-5.png" width="100" /></p> |
 | Kafka         | TBW      |
 
-## 🚆 Quickstart
+## ⏲️ Try Exflo in 10 seconds
+
+We offer two `docker-compose` files [ready to launch Exflo](docker/exflo/) very easily on Ethereum's Ropsten network. Choose your flavor!
+
+Postgres:
+
+```bash
+docker-compose -f docker/exflo/docker-compose.exflo-postgres.yml up
+```
+
+Kafka:
+
+```bash
+docker-compose -f docker/exflo/docker-compose.exflo-kafka.yml up
+```
+
+Wait for docker to properly initialize each service. Once everything is ready just navigate to 
+[`http://localhost:8082`](http://localhost:8082), you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or 
+[`kafkahq`](https://akhq.io/) respectively and, luckily, with Exflo processing data! 
+
+## 🚆 Development quick start
 
 Before continuing ensure you have the following programs installed:
 
@@ -87,11 +107,34 @@ Open your browser and navigate to [`http://localhost:8082`](http://localhost:808
 
 ## Usage with Besu
 
-There are two possible ways of running Exflo. Choose whatever suits you for your particular usecase and necessities:
+There are two possible ways of running Exflo with Besu. Choose whatever suits you for your particular usecase and necessities:
+
+### Bundled docker images
+
+We offer bundled docker images with Besu to make your life easier. This is the recommended way of running Exflo as you don't need to
+ worry about placing the plugin for Besu. Below there's an example using `docker-compose` syntax:
+
+```yaml
+version: '3.7'
+services:
+  besu:
+    image: 41north/exflo:latest
+    environment:
+      BESU_LOGGING: INFO
+      BESU_NETWORK: ROPSTEN
+      BESU_SYNC_MODE: FULL
+      BESU_DATA_PATH: /opt/besu/data
+      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'false'
+      BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: 'true'
+      BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
+```
+
+Have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your liking.
 
 ### Jar
 
-This method is like running a regular Besu plugin (assuming you're using docker to execute Besu):
+If you are already using Besu with other plugins, or you want to customize further the settings, using the JARs directly is another 
+possibility. Below are instructions assuming you are running Besu within docker: 
 
 1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file and extract it.
 2. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) exposes a `/etc/besu/plugins` folder where it loads the jars.
@@ -107,27 +150,6 @@ services:
     image: hyperledger/besu:1.4.4
     volumes:
       - ./path/to/exflo-jar/:/etc/besu/plugins
-    environment:
-      BESU_LOGGING: INFO
-      BESU_NETWORK: ROPSTEN
-      BESU_SYNC_MODE: FULL
-      BESU_DATA_PATH: /opt/besu/data
-      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'false'
-      BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: 'true'
-      BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
-```
-
-Have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your liking.
-
-### Bundled docker images
-
-We also offer bundled docker images with Besu to ease even more its usage:
-
-```yaml
-version: '3.7'
-services:
-  besu:
-    image: 41north/exflo:latest
     environment:
       BESU_LOGGING: INFO
       BESU_NETWORK: ROPSTEN
