@@ -13,7 +13,7 @@
     A plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. <br/> Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
 </p>
 
-**⚠️ Warning**: This project is in alpha stage, and we are working actively!
+<p align="center"><b>⚠️ Warning</b>: This project is in alpha stage, and we are working actively!</p>
 
 ## 🗒️ Features 
 
@@ -82,7 +82,7 @@ Or for Kafka:
 
 ![Kafka Intellij Run](.github/assets/ropsten-kafka-run.png)
 
-Open your browser and navigate to `[http://localhost:8082](http://localhost:8082)` and you will be greeted with either 
+Open your browser and navigate to [`http://localhost:8082`](http://localhost:8082) and you will be greeted with either 
 [`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively.
 
 ## Usage with Besu
