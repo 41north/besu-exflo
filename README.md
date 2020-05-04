@@ -188,8 +188,8 @@ Having said that. Yes, we thought originally on Exflo to be easily extendable so
 ### Can we replace RocksDB storage engine that Besu uses with the Postgres' one inside Exflo?
 
 As far as we know, Besu originally had planned support to add Postgres directly as a storage plugin. To us, Exflo is considered a 
-second class storage to Besu that complements and adds more meaning so we don't see it replacing RocksDB (for multiple obvious reasons one 
-of them being performance).
+second class storage to Besu that complements and adds more meaning, so we don't see it replacing RocksDB (for multiple obvious reasons and 
+one of them being performance).
 
 ## 📬 Get in touch
 
