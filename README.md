@@ -91,14 +91,14 @@ There are two possible ways of running Exflo. Choose whatever suits you for your
 
 ### Jar
 
-This method is like running a regular Besu plugin (assuming you're using Docker to execute Besu):
+This method is like running a regular Besu plugin (assuming you're using docker to execute Besu):
 
 1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file and extract it.
 2. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) exposes a `/etc/besu/plugins` folder where it loads the jars.
 3. Add a bind volume where to put Exflo jar.
 4. If you want to tweak default params, we recommend you to take a look on the [usage section](.github/USAGE.md).
 
-Here's an example of a possible `docker` configuration using `docker-compose` syntax:
+Here's an example of a possible docker configuration using `docker-compose` syntax:
 
 ```yaml
 version: '3.7'
@@ -149,7 +149,7 @@ We welcome any kind of contribution or support to this project but before to do 
 
 Also, we are not only limited to technical contributions. Things that make us happy are:
 
-* Add a [GitHub Star](https://github.com/41north/athena/stargazers) to the project.
+* Add a [GitHub Star 🌟](https://github.com/41north/exflo/stargazers) to the project.
 * ETH donations to [this address](https://etherscan.io/address/0xcee9ad6d00237e25A945D7ac2f7532C602d265Df)!
 * Tweet about this project.
 * Write a review or tutorial:
