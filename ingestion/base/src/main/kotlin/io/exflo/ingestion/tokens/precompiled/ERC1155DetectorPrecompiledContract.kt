@@ -25,7 +25,7 @@ class ERC1155DetectorPrecompiledContract(evm: EVM) : AbstractDetectorPrecompiled
 
     override val code: Code = ERC1155Detector.CODE
 
-    override fun getName(): String = ERC1155Detector::class.simpleName!!
+    override fun getName(): String = ERC1155Detector::class.java.simpleName
 
     companion object {
         val ADDRESS: Address = Address.fromHexString("0xfffffffffffffffffffffffffffffffffffffffb")
