@@ -1,0 +1,59 @@
+version: '3.7'
+
+networks:
+
+  net:
+    driver: bridge
+
+volumes:
+
+  postgres:
+    driver: local
+
+  besu:
+    driver: local
+
+services:
+
+  postgres:
+    image: postgres:12
+    restart: unless-stopped
+    shm_size: 4g
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - net
+    environment:
+      POSTGRES_USER: exflo
+      POSTGRES_PASSWORD: exflo
+      POSTGRES_DB: exflo
+
+  pgweb:
+    image: sosedoff/pgweb:0.11.6
+    restart: unless-stopped
+    networks:
+      - net
+    depends_on:
+      - postgres
+    ports:
+      - 8082:8082
+    command: "/usr/bin/pgweb --bind=0.0.0.0 --listen=8082 --url postgres://exflo:exflo@postgres:5432/exflo?sslmode=disable"
+
+  besu:
+    image: 41north/exflo
+    networks:
+      - net
+    depends_on:
+      - postgres
+    volumes:
+      - besu:/opt/besu/data
+    environment:
+      BESU_LOGGING: INFO
+      BESU_NETWORK: ROPSTEN
+      BESU_SYNC_MODE: FULL
+      BESU_DATA_PATH: /opt/besu/data
+      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'false'
+      BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: 'true'
+      BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
