@@ -24,7 +24,7 @@ Exflo can extract the following information from a Besu archive instance into ei
 - Transaction traces.
 - Log events for standards-compliant [ERC20](https://eips.ethereum.org/EIPS/eip-20), [ERC721](https://eips.ethereum.org/EIPS/eip-721), [ERC777](https://eips.ethereum.org/EIPS/eip-777) and [ERC1155](https://eips.ethereum.org/EIPS/eip-1155) tokens.
 - A detailed breakdown of Ether movements e.g. block rewards, tx fees, simple ether transfers and so on.
-- Contract creations and self destructs.
+- Contract creations and self-destructs.
 - Per block account state changes.
 
 Some screenshots of captured data:
@@ -36,19 +36,24 @@ Some screenshots of captured data:
 
 ## ⏲️ Try Exflo in 10 seconds
 
-We offer two `docker-compose` files [ready to launch Exflo](docker/exflo/) very easily on Ethereum's Ropsten network. Choose your flavor!
+We offer two `docker-compose` files [ready to launch Exflo](docker/exflo/) on Ethereum's Ropsten network (and easily configurable to 
+other networks). Choose your flavor!
 
-Postgres:
-
-```bash
-docker-compose -f docker/exflo/docker-compose.exflo-postgres.yml up
-```
-
-Kafka:
+<details>
+<summary>Postgres</summary>
 
 ```bash
-docker-compose -f docker/exflo/docker-compose.exflo-kafka.yml up
+docker-compose -f docker/exflo/docker-compose.postgres.yml up
 ```
+</details>
+
+<details>
+<summary>Kafka</summary>
+
+```bash
+docker-compose -f docker/exflo/docker-compose.kafka.yml up
+```
+</details>
 
 Wait for docker to properly initialize each service. Once everything is ready just navigate to 
 [`http://localhost:8082`](http://localhost:8082), you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or 
@@ -56,7 +61,7 @@ Wait for docker to properly initialize each service. Once everything is ready ju
 
 ## 🚆 Development quick start
 
-Before continuing ensure you have the following programs installed:
+First and foremost, ensure you have the following programs installed in your system:
 
 * Java 11 or higher ([AdoptOpenJDK](https://adoptopenjdk.net/), [Zulu Community](https://www.azul.com/products/zulu-community/) or [OpenJDK](https://openjdk.java.net/))
 * [Docker](https://docs.docker.com/install/)
@@ -70,7 +75,8 @@ Clone the repository:
 git clone git@github.com:41north/exflo.git
 ```
 
-Generate Intellij run configurations (it will auto populate configurations to ease common operations):
+Generate Intellij run configurations (it will read from the file [`intellij-run-configs.yml`](intellij-run-configs.yml) and auto populate 
+configurations to ease common operations inside the IDE):
 
 ```bash
 ./gradlew generateIntellijRunConfigs
@@ -78,41 +84,49 @@ Generate Intellij run configurations (it will auto populate configurations to ea
 
 Decide which data store you want to run:
 
-For Postgres:
+<details>
+<summary>Postgres</summary>
 
 ```bash
 docker-compose -f docker-compose.exflo-postgres.yml up
 ```
+</details>
 
-For Kafka:
+<details>
+<summary>Kafka</summary>
 
 ```bash
 docker-compose -f docker-compose.exflo-kafka.yml up
 ```
+</details>
 
 Wait for each docker service to be properly initialized (being those Postgres or Kafka respectively). 
 
 After that, inside Intellij, execute accordingly the Run config (there are other networks available, so select whichever you like):
 
-For Postgres:
+<details>
+<summary>Postgres</summary>
 
 ![Postgres Intellij Run](.github/assets/ropsten-postgres-run.png)
+</details>
 
-Or for Kafka:
+<details>
+<summary>Kafka</summary>
 
 ![Kafka Intellij Run](.github/assets/ropsten-kafka-run.png)
+</details>
 
-Open your browser and navigate to [`http://localhost:8082`](http://localhost:8082) and you will be greeted with either 
-[`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively.
+Exflo will start processing. You can now check the logs or open your browser and navigate to [`http://localhost:8082`](http://localhost:8082) 
+and you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively.
 
 ## Usage with Besu
 
-There are two possible ways of running Exflo with Besu. Choose whatever suits you for your particular usecase and necessities:
+There are two possible ways of running Exflo with Besu. Choose whatever method suits you for your particular use-case and necessities:
 
 ### Bundled docker images
 
-We offer bundled docker images with Besu to make your life easier. This is the recommended way of running Exflo as you don't need to
- worry about placing the plugin for Besu. Below there's an example using `docker-compose` syntax:
+We offer bundled docker images with Besu to make your life easier. This is the recommended way of running Exflo as you don't need to 
+worry about placing the plugin for Besu. Below there's an example using `docker-compose` syntax:
 
 ```yaml
 version: '3.7'
@@ -138,7 +152,7 @@ possibility. Below are instructions assuming you are running Besu within docker:
 
 1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file and extract it.
 2. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) exposes a `/etc/besu/plugins` folder where it loads the jars.
-3. Add a bind volume where to put Exflo jar.
+3. Add a bind volume where to put Exflo's jar.
 4. If you want to tweak default params, we recommend you to take a look on the [usage section](.github/USAGE.md).
 
 Here's an example of a possible docker configuration using `docker-compose` syntax:
