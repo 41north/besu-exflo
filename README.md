@@ -145,7 +145,7 @@ services:
 
 Have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your liking.
 
-### Jar
+### JAR
 
 If you are already using Besu with other plugins, or you want to customize further the settings, using the JARs directly is another 
 possibility. Below are instructions assuming you are running Besu within docker: 
