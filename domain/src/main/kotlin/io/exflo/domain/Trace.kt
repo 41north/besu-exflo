@@ -58,13 +58,11 @@ import io.exflo.domain.fb.TransactionTrace.endTransactionTrace
 import io.exflo.domain.fb.TransactionTrace.startTransactionTrace
 import org.apache.tuweni.bytes.Bytes
 import org.apache.tuweni.units.bigints.UInt256
-import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Block
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.Transaction
 import org.hyperledger.besu.ethereum.core.Wei
-import org.hyperledger.besu.ethereum.debug.TraceFrame
 import org.hyperledger.besu.ethereum.mainnet.TransactionProcessor
 
 data class BlockTrace(
@@ -100,11 +98,10 @@ data class BlockTrace(
 data class TransactionTrace(
     val transaction: Transaction,
     val result: TransactionProcessor.Result,
-    val traceFrames: List<TraceFrame>,
     val contractsCreated: List<ContractCreated>,
     val contractsDestroyed: List<ContractDestroyed>,
     val internalTransactions: List<InternalTransaction>,
-    val touchedAccounts: Set<Account>
+    val touchedAccounts: Set<Address>
 ) {
 
     fun toFlatBuffer(bb: FlatBufferBuilder): Int {

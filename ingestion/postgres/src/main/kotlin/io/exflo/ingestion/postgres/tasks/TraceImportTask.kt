@@ -79,7 +79,7 @@ class TraceImportTask(
                         val hash = Hash.fromHexString(header.hash)
                         val coinbase = Address.fromHexString(header.coinbase)
 
-                        log.debug("Processing traces -> Block Number: ${header.number} | Block Hash: ${header.hash}")
+                        log.info("Processing traces -> Block Number: ${header.number} | Block Hash: ${header.hash}")
 
                         val trace = requireNotNull(blockReader.trace(hash)) { "Trace cannot be null, hash = $hash" }
 

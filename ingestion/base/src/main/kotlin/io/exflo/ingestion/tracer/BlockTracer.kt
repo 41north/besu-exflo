@@ -76,7 +76,6 @@ class BlockTracer(
                     TransactionTrace(
                         transaction,
                         result,
-                        tracer.traceFrames,
                         tracer.contractsCreated
                             .map { elem -> Triple(elem.frame, elem.pc, elem.event) }
                             .filter { (frame, pc, _) ->
@@ -117,7 +116,7 @@ class BlockTracer(
                         tracer.internalTransactions
                             .filter { result.isSuccessful && it.frame.state == MessageFrame.State.COMPLETED_SUCCESS && !it.event.amount.isZero }
                             .map { it.event.copy(transactionHash = transaction.hash) },
-                        touchedAccounts
+                        emptySet()
                     )
 
                 log.trace("Tracing -> Block: ${block.header.number} | Tx Hash: ${transaction.hash} | Tx Index: $txIndex | Contracts created: ${trace.contractsCreated.size} | Contracts destroyed: ${trace.contractsDestroyed.size} | Internal Txs: ${trace.internalTransactions.size} | Traced in $elapsedMs ms")

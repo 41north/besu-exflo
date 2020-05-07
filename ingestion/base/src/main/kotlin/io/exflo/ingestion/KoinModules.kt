@@ -40,6 +40,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem
 import org.hyperledger.besu.plugin.services.StorageService
 import org.hyperledger.besu.services.kvstore.LimitedInMemoryKeyValueStorage
 import org.koin.dsl.module
+import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockReplay as BesuBlockReplay
 
 object KoinModules {
     val eventsModule = module {
@@ -98,6 +99,8 @@ object KoinModules {
     }
 
     val stateModule = module {
+
+        single { BesuBlockReplay(get(), get(), get()) }
 
         single { BlockReplay(get(), get(), get()) }
 

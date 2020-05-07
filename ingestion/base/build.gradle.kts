@@ -35,6 +35,7 @@ dependencies {
     api(project(":domain"))
 
     api("org.hyperledger.besu.internal:besu")
+    api("org.hyperledger.besu.internal:api")
     api("org.hyperledger.besu.internal:config")
     api("org.hyperledger.besu.internal:metrics-core")
     api("org.hyperledger.besu.internal:plugins-rocksdb")
