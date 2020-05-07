@@ -118,6 +118,10 @@ class TransactionTraceParser(
                 // ignore as this is a normal transaction
             }
 
+            trace.type == "call" && trace.action.callType == "delegatecall" -> {
+                // ignore
+            }
+
             trace.type == "call" && trace.action.callType == "call" && traceAddress.isNotEmpty() ->
                 trace.toInternalTransaction(programCounter)
                     ?.apply {
