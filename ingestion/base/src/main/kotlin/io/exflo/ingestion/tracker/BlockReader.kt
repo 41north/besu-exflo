@@ -144,11 +144,6 @@ class BlockReader : KoinComponent {
     fun receipts(hash: Hash): List<TransactionReceipt>? =
         blockchainStorage.getTransactionReceipts(hash).orElse(null)
 
-    // fun trace(hash: Hash): BlockTrace? =
-    //     block(hash)
-    //         ?.let { block -> Pair(block, requireNotNull(receipts(hash)) { "receipts not found" }) }
-    //         ?.let { (block, receipts) -> blockTracer.trace(block, receipts) }
-
     fun trace(hash: Hash): BlockTrace? =
         block(hash)
             ?.let { block -> Pair(block, requireNotNull(receipts(hash)) { "receipts not found" }) }
@@ -171,10 +166,7 @@ class BlockReader : KoinComponent {
                 val feesByTransaction = feesByTransaction(block, receipts)
                 val transactionFees = totalTransactionFees(feesByTransaction)
 
-                // TODO capture the json trace output
-                // resultArrayNode.toString()
-
-                BlockTrace(block, rewardsMap, exfloTxTraces, feesByTransaction, transactionFees)
+                BlockTrace(block, rewardsMap, exfloTxTraces, feesByTransaction, transactionFees, resultArrayNode.toString())
             }
 
     private fun generateTracesFromTransactionTraceAndBlock(

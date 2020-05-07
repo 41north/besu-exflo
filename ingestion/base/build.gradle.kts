@@ -54,6 +54,9 @@ dependencies {
 
     api("io.reactivex.rxjava3:rxjava")
 
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
     implementation("com.google.guava:guava")
 
     implementation("com.tinder.statemachine:statemachine")

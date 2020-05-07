@@ -27,6 +27,7 @@ import io.exflo.ingestion.tracker.BlockReader
 import io.exflo.postgres.jooq.Tables
 import io.exflo.postgres.jooq.Tables.OMMER
 import io.exflo.postgres.jooq.tables.records.BlockHeaderRecord
+import io.exflo.postgres.jooq.tables.records.BlockTraceRecord
 import io.reactivex.rxjava3.core.Emitter
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -39,6 +40,7 @@ import org.apache.logging.log4j.LogManager
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Hash
 import org.jooq.Cursor
+import org.jooq.JSONB
 import org.jooq.Record4
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
@@ -110,7 +112,13 @@ class TraceImportTask(
                                         trace.contractsDestroyed.map { it.toContractDestroyedRecord(header) }
                                 }.flatten()
 
-                            accountRecords + contractRecords + deltaRecords
+                            val blockTraceRecord = BlockTraceRecord()
+                                .apply {
+                                    this.blockHash = header.hash
+                                    this.trace = JSONB.valueOf(trace.jsonTrace)
+                                }
+
+                            accountRecords + contractRecords + deltaRecords + blockTraceRecord
                         }
 
                         Pair(header, records)

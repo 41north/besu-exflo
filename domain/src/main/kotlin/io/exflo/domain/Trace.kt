@@ -70,7 +70,8 @@ data class BlockTrace(
     val rewards: Map<Hash, Wei>,
     val transactionTraces: List<TransactionTrace>,
     val feesByTransaction: Map<Transaction, Wei>,
-    val totalTransactionsFees: Wei
+    val totalTransactionsFees: Wei,
+    val jsonTrace: String
 ) {
 
     fun toRewardsFlatBuffer(bb: FlatBufferBuilder): Int {

@@ -7,6 +7,7 @@ package io.exflo.postgres.jooq;
 import io.exflo.postgres.jooq.tables.Account;
 import io.exflo.postgres.jooq.tables.BalanceDelta;
 import io.exflo.postgres.jooq.tables.BlockHeader;
+import io.exflo.postgres.jooq.tables.BlockTrace;
 import io.exflo.postgres.jooq.tables.ContractCreated;
 import io.exflo.postgres.jooq.tables.ContractDestroyed;
 import io.exflo.postgres.jooq.tables.ContractEvent;
@@ -46,7 +47,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = 180815961;
+    private static final long serialVersionUID = 49552753;
 
     /**
      * The reference instance of <code>public</code>
@@ -67,6 +68,11 @@ public class Public extends SchemaImpl {
      * The table <code>public.block_header</code>.
      */
     public final BlockHeader BLOCK_HEADER = io.exflo.postgres.jooq.tables.BlockHeader.BLOCK_HEADER;
+
+    /**
+     * The table <code>public.block_trace</code>.
+     */
+    public final BlockTrace BLOCK_TRACE = io.exflo.postgres.jooq.tables.BlockTrace.BLOCK_TRACE;
 
     /**
      * The table <code>public.contract_created</code>.
@@ -170,6 +176,7 @@ public class Public extends SchemaImpl {
             Account.ACCOUNT,
             BalanceDelta.BALANCE_DELTA,
             BlockHeader.BLOCK_HEADER,
+            BlockTrace.BLOCK_TRACE,
             ContractCreated.CONTRACT_CREATED,
             ContractDestroyed.CONTRACT_DESTROYED,
             ContractEvent.CONTRACT_EVENT,

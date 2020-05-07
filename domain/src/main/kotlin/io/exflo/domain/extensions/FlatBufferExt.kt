@@ -334,10 +334,13 @@ fun BesuBlockBody.toFlatBuffer(
         }
         .let { offsetArray -> createTransactionsVector(bb, offsetArray.toIntArray()) }
 
+    val jsonTraceOffset = trace?.let { bb.createString(it.jsonTrace) }
+
     startBlockBody(bb)
 
     addOmmers(bb, ommersVectorOffset)
     addTransactions(bb, transactionsVectorOffset)
+    jsonTraceOffset?.apply { addTrace(bb, this) }
 
     return endBlockBody(bb)
 }

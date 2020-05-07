@@ -161,7 +161,9 @@ class TransactionTraceParser(
                         touchedAccounts.add(this.refundAddress)
                     }
 
-            else -> throw IllegalStateException("Unhandled trace. Block hash = ${trace.blockHash}, tx hash = ${trace.transactionHash}, trace type = ${trace.type}")
+            else -> {
+                throw IllegalStateException("Unhandled trace. Block hash = ${trace.blockHash}, tx hash = ${trace.transactionHash}, trace type = ${trace.type}")
+            }
         }
     }
 }

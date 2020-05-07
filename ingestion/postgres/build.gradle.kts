@@ -36,9 +36,6 @@ dependencies {
     implementation("com.zaxxer:HikariCP")
     implementation("org.flywaydb:flyway-core")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
     runtimeOnly("org.apache.logging.log4j:log4j-core")
 
     testImplementation(project(":testutil"))

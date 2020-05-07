@@ -66,7 +66,8 @@ class BlockReplay(
                 rewards,
                 transactionTraces,
                 feesByTransaction,
-                transactionFees
+                transactionFees,
+                ""
             )
         }
 

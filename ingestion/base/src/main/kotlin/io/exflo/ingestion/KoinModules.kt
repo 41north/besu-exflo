@@ -16,6 +16,9 @@
 
 package io.exflo.ingestion
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.type.TypeFactory
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.exflo.ingestion.storage.KeyValueStores
 import io.exflo.ingestion.tracer.BlockReplay
 import io.exflo.ingestion.tracer.BlockTracer
@@ -51,6 +54,17 @@ object KoinModules {
     }
 
     val storageModule = module {
+
+        single {
+            val classLoader = get<ClassLoader>()
+            ObjectMapper()
+                .registerModule(KotlinModule())
+                .apply {
+                    this.typeFactory = TypeFactory
+                        .defaultInstance()
+                        .withClassLoader(classLoader)
+                }
+        }
 
         single {
             val context = get<BesuContext>()
