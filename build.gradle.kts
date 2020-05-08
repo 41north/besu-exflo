@@ -132,7 +132,7 @@ tasks {
     }
 
     register<IntellijRunConfiguratorTask>("generateIntellijRunConfigs") {
-        tasksDefinitions = File("intellij-run-configs.yml")
+        tasksDefinitions = File("intellij-run-configs.yaml")
     }
 
     withType<DependencyUpdatesTask> {

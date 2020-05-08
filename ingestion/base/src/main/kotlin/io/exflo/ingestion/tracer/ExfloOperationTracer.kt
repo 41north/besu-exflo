@@ -62,7 +62,8 @@ class ExfloOperationTracer(private val options: TraceOptions = TraceOptions()) :
     private val log = LogManager.getLogger()
 
     init {
-        log.debug("${ExfloOperationTracer::class.simpleName} enabled with following trace options -> $options")
+        // kotlin reflection does not use the plugin classloader for some reason so we use the java class
+        log.debug("${ExfloOperationTracer::class.java.simpleName} enabled with following trace options -> $options")
     }
 
     override fun traceExecution(
