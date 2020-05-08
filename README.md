@@ -139,7 +139,8 @@ Terminal:
 ```
 
 Intellij:
-![Kafka Intellij Run](.github/assets/ropsten-kafka-run.png)
+
+![Kafka Intellij Run](.github/assets/docker-kafka-run.png)
 </details>
 
 You can now check the logs or open your browser and navigate to [`http://localhost:8082`](http://localhost:8082) 
