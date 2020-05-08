@@ -64,6 +64,3 @@ docker run \
 # copy artifacts to output dir
 cp "${TMP_DIR}"/*.blocks "${OUTPUT_DIR}"
 cp "${TRUFFLE_DIR}"/truffle-report/truffle-report.json "${OUTPUT_DIR}"/test-report.json
-
-# stop besu
-docker stop stop exflo_test_export
