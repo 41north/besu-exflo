@@ -1,7 +1,9 @@
 ---
 application:
 
-  # Dev
+  # ------------------------------------------------------------------------------
+  # DEV
+  # ------------------------------------------------------------------------------
 
   - name: BESU | Dev | Kafka > Run
     filename: BESU__Dev__Kafka__Run.xml
@@ -39,7 +41,9 @@ application:
     mainClassName: org.hyperledger.besu.Besu
     module: exflo.ingestion.postgres.main
 
-  # Ropsten
+  # ------------------------------------------------------------------------------
+  # ROPSTEN
+  # ------------------------------------------------------------------------------
 
   - name: BESU | Ropsten | Kafka > Run
     filename: BESU__Ropsten__Kafka__Run.xml
@@ -75,7 +79,9 @@ application:
     mainClassName: org.hyperledger.besu.Besu
     module: exflo.ingestion.postgres.main
 
-  # Mainnet
+  # ------------------------------------------------------------------------------
+  # MAINNET
+  # ------------------------------------------------------------------------------
 
   - name: BESU | Mainnet | Kafka > Run
     filename: BESU__Mainnet__Kafka__Run.xml
