@@ -75,8 +75,7 @@ Clone the repository:
 git clone git@github.com:41north/exflo.git
 ```
 
-Generate Intellij run configurations (it will read from the file [`intellij-run-configs.yml`](intellij-run-configs.yml) and auto populate 
-configurations to ease common operations inside the IDE):
+Generate [Intellij's run configurations](https://www.jetbrains.com/help/idea/running-applications.html) (it will read from the file [`intellij-run-configs.yml`](intellij-run-configs.yml) and auto create XML configurations to ease common operations inside the IDE):
 
 ```bash
 ./gradlew generateIntellijRunConfigs
@@ -87,25 +86,44 @@ Decide which data store you want to run:
 <details>
 <summary>Postgres</summary>
 
+Terminal:
+
 ```bash
 docker-compose -f docker-compose.exflo-postgres.yml up
 ```
+
+Intellij:
+
+![Docker Intellij Run](.github/assets/docker-postgres-run.png)
 </details>
 
 <details>
 <summary>Kafka</summary>
 
+Terminal:
+
 ```bash
 docker-compose -f docker-compose.exflo-kafka.yml up
 ```
+
+Intellij:
+
+![Docker Intellij Run](.github/assets/docker-kafka.png)
 </details>
 
-Wait for each docker service to be properly initialized (being those Postgres or Kafka respectively). 
+Wait for each docker service to be properly initialized (being those related to Postgres or Kafka respectively). 
 
-After that, inside Intellij, execute accordingly the Run config (there are other networks available, so select whichever you like):
+After that, you can start processing with Exflo:
 
 <details>
 <summary>Postgres</summary>
+
+Terminal:
+
+```bash
+```
+
+Intellij:
 
 ![Postgres Intellij Run](.github/assets/ropsten-postgres-run.png)
 </details>
@@ -113,11 +131,18 @@ After that, inside Intellij, execute accordingly the Run config (there are other
 <details>
 <summary>Kafka</summary>
 
+
+Terminal:
+
+```bash
+```
+
+Intellij:
 ![Kafka Intellij Run](.github/assets/ropsten-kafka-run.png)
 </details>
 
-Exflo will start processing. You can now check the logs or open your browser and navigate to [`http://localhost:8082`](http://localhost:8082) 
-and you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively.
+You can now check the logs or open your browser and navigate to [`http://localhost:8082`](http://localhost:8082) 
+and you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively. Exflo will start processing inmediately!
 
 ## Usage with Besu
 
@@ -126,7 +151,7 @@ There are two possible ways of running Exflo with Besu. Choose whatever method s
 ### Bundled docker images
 
 We offer bundled docker images with Besu to make your life easier. This is the recommended way of running Exflo as you don't need to 
-worry about placing the plugin for Besu. Below there's an example using `docker-compose` syntax:
+worry about placing the plugin in the correct path for Besu. Below there's an example using `docker-compose` syntax:
 
 ```yaml
 version: '3.7'
@@ -219,13 +244,12 @@ Majority of people will find very useful to externalise the internal information
 are well-known data store technologies (each of one serving different purposes and necessities) that are often used to perform
 better queries or real-time analytics.
 
-Having said that. Yes, we thought originally on Exflo to be easily extendable so, if you find another possible use-case let us know!
+Having said that, yes, we thought originally on Exflo to be easily extendable so, if you find another possible use-case let us know!
 
 ### Can we replace RocksDB storage engine that Besu uses with the Postgres' one inside Exflo?
 
 As far as we know, Besu originally had planned support to add Postgres directly as a storage plugin. To us, Exflo is considered a 
-second class storage to Besu that complements and adds more meaning, so we don't see it replacing RocksDB (for multiple obvious reasons and 
-one of them being performance).
+second class storage processor that complements and adds more meaning to existing data, so we don't see it replacing RocksDB for multiple obvious reasons (one of them being performance).
 
 ## 📬 Get in touch
 
