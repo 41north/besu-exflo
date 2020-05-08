@@ -9,7 +9,7 @@ TMP_DIR="${TRUFFLE_DIR}/tmp"
 ROOT_DIR="$(cd "${TRUFFLE_DIR}"/.. && pwd)"
 
 # Override as necessary
-BESU_VERSION=${BESU_VERSION:-"1.2.4"}
+BESU_VERSION=${BESU_VERSION:-"1.4.4"}
 OUTPUT_DIR=${OUTPUT_DIR:-"${ROOT_DIR}"/testutil/src/main/resources/exflo/}
 
 # install or update dependencies first

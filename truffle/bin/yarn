@@ -5,6 +5,9 @@ SRC_DIR="$(cd "$SCRIPT_DIR"/.. && pwd)"
 
 docker run \
   --rm \
+  --interactive \
+  --tty \
+  --rm \
   --volume "${SRC_DIR}":/truffle \
   --network host \
   --workdir /truffle \
