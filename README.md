@@ -108,7 +108,7 @@ docker-compose -f docker-compose.exflo-kafka.yml up
 
 Intellij:
 
-![Docker Intellij Run](.github/assets/docker-kafka.png)
+![Docker Intellij Run](.github/assets/docker-kafka-run.png)
 </details>
 
 Wait for each docker service to be properly initialized (being those related to Postgres or Kafka respectively). 
@@ -121,6 +121,7 @@ After that, you can start processing with Exflo:
 Terminal:
 
 ```bash
+./gradlew runPostgres
 ```
 
 Intellij:
@@ -131,10 +132,10 @@ Intellij:
 <details>
 <summary>Kafka</summary>
 
-
 Terminal:
 
 ```bash
+./gradlew runKafka
 ```
 
 Intellij:
@@ -142,7 +143,8 @@ Intellij:
 </details>
 
 You can now check the logs or open your browser and navigate to [`http://localhost:8082`](http://localhost:8082) 
-and you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively. Exflo will start processing inmediately!
+and you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively. 
+Exflo will start processing immediately!
 
 ## Usage with Besu
 
@@ -151,7 +153,7 @@ There are two possible ways of running Exflo with Besu. Choose whatever method s
 ### Bundled docker images
 
 We offer bundled docker images with Besu to make your life easier. This is the recommended way of running Exflo as you don't need to 
-worry about placing the plugin in the correct path for Besu. Below there's an example using `docker-compose` syntax:
+worry about placing the plugin in the correct folder path for Besu. Below there's an example using `docker-compose` syntax:
 
 ```yaml
 version: '3.7'
@@ -249,7 +251,8 @@ Having said that, yes, we thought originally on Exflo to be easily extendable so
 ### Can we replace RocksDB storage engine that Besu uses with the Postgres' one inside Exflo?
 
 As far as we know, Besu originally had planned support to add Postgres directly as a storage plugin. To us, Exflo is considered a 
-second class storage processor that complements and adds more meaning to existing data, so we don't see it replacing RocksDB for multiple obvious reasons (one of them being performance).
+second class storage processor that complements and adds more meaning to existing data, so we don't see it replacing RocksDB 
+for multiple obvious reasons (one of them being performance).
 
 ## 📬 Get in touch
 
