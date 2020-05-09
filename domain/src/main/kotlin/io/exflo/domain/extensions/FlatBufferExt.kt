@@ -120,8 +120,8 @@ fun Address.toFlatBuffer(bb: FlatBufferBuilder): Int {
 
 fun BesuSignature.toFlatBuffer(bb: FlatBufferBuilder): Int {
 
-    val rOffset = r.toUInt256().toFlatBuffer(bb)
-    val sOffset = s.toUInt256().toFlatBuffer(bb)
+    val rOffset = BesuUInt256.valueOf(r).toFlatBuffer(bb)
+    val sOffset = BesuUInt256.valueOf(s).toFlatBuffer(bb)
 
     startSignature(bb)
 
@@ -216,7 +216,7 @@ fun BesuTransaction.toFlatBuffer(
     val feeOffset = fee.toFlatBuffer(bb)
     val traceOffset = trace?.toFlatBuffer(bb)
     val toOffset: Int? = to.map { it.toFlatBuffer(bb) }.orElse(null)
-    val chainIdOffset: Int? = chainId.map { it.toUInt256().toFlatBuffer(bb) }.orElse(null)
+    val chainIdOffset: Int? = chainId.map { BesuUInt256.valueOf(it).toFlatBuffer(bb) }.orElse(null)
     val contractAddressOffset: Int? = contractAddress().map { it.toFlatBuffer(bb) }.orElse(null)
 
     startTransaction(bb)

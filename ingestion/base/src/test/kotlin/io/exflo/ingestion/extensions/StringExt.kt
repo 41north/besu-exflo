@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.exflo.domain.extensions
+package io.exflo.ingestion.extensions
 
 import org.hyperledger.besu.ethereum.core.Address
 
