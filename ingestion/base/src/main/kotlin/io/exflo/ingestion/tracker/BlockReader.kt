@@ -19,7 +19,6 @@ package io.exflo.ingestion.tracker
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import io.exflo.domain.BlockTrace
-import io.exflo.domain.TransactionTrace as ExfloTransactionTrace
 import io.exflo.ingestion.core.FullBlock
 import io.exflo.ingestion.extensions.toBalanceDeltas
 import io.exflo.ingestion.extensions.touchedAccounts
@@ -28,10 +27,8 @@ import org.apache.logging.log4j.LogManager
 import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.cli.config.EthNetworkConfig
 import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.TransactionTrace
-import org.hyperledger.besu.ethereum.api.jsonrpc.internal.results.tracing.Trace
 import org.hyperledger.besu.ethereum.api.jsonrpc.internal.results.tracing.flat.FlatTrace
 import org.hyperledger.besu.ethereum.api.jsonrpc.internal.results.tracing.flat.FlatTraceGenerator
-import org.hyperledger.besu.ethereum.api.jsonrpc.internal.results.tracing.flat.RewardTraceGenerator
 import org.hyperledger.besu.ethereum.chain.BlockchainStorage
 import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.core.Block
@@ -48,8 +45,9 @@ import org.hyperledger.besu.ethereum.vm.DebugOperationTracer
 import org.hyperledger.besu.ethereum.worldstate.WorldStateArchive
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockTracer as BesuBlockTracer
+import io.exflo.domain.TransactionTrace as ExfloTransactionTrace
 import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockReplay as BesuBlockReplay
+import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockTracer as BesuBlockTracer
 
 class BlockReader : KoinComponent {
 
@@ -151,8 +149,10 @@ class BlockReader : KoinComponent {
 
                 val resultArrayNode = objectMapper.createArrayNode()
 
+                val traceOptions = TraceOptions(false, false, true)
+
                 val exfloTxTraces = BesuBlockTracer(besuBlockReplay)
-                    .trace(hash, DebugOperationTracer(TraceOptions.DEFAULT))
+                    .trace(hash, DebugOperationTracer(traceOptions))
                     .orElse(null)
                     ?.let { blockTrace ->
 
@@ -226,29 +226,6 @@ class BlockReader : KoinComponent {
             }
 
         return rewards
-    }
-
-    private fun generateRewardsFromBlock(
-        block: Block,
-        resultArrayNode: ArrayNode
-    ): Map<Hash, Wei> {
-        var rewardsMap = mapOf<Hash, Wei>()
-
-        RewardTraceGenerator.generateFromBlock(protocolSchedule, block)
-            .forEachOrdered { trace: Trace ->
-                resultArrayNode.addPOJO(trace)
-
-                val flatTrace = trace as FlatTrace
-                require(flatTrace.type == "reward")
-                require(flatTrace.action.rewardType == "uncle" || flatTrace.action.rewardType == "block")
-
-                val author = Hash.fromHexString(flatTrace.action.author)
-                val reward = Wei.fromHexString(requireNotNull(flatTrace.action.value))
-
-                rewardsMap = rewardsMap + (author to (rewardsMap.getOrDefault(author, Wei.ZERO).plus(reward)))
-            }
-
-        return rewardsMap
     }
 
     private fun feesByTransaction(block: Block, receipts: List<TransactionReceipt>): Map<Transaction, Wei> {
