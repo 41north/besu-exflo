@@ -17,6 +17,6 @@
 package io.exflo.domain.extensions
 
 import java.math.BigInteger
-import org.apache.tuweni.units.bigints.UInt256 as BesuUInt256
+import org.apache.tuweni.units.bigints.UInt256
 
-fun BigInteger.toBesuUInt256(): BesuUInt256 = BesuUInt256.valueOf(this)
+fun BigInteger.toUInt256(): UInt256 = UInt256.valueOf(this)

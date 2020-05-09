@@ -14,40 +14,39 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion
+package io.exflo.ingestion.tokens.detectors
 
-import io.exflo.ingestion.TruffleSpecs.Tokens.ERC165.ERC165Contract
-import io.exflo.ingestion.TruffleSpecs.Tokens.ERC165.NonERC165
-import io.exflo.ingestion.tokens.detectors.ERC165Detector
-import io.exflo.ingestion.tokens.precompiled.ERC165DetectorPrecompiledContract
+import io.exflo.ingestion.TruffleSpecs.Tokens.ERC777.InvalidERC777
+import io.exflo.ingestion.TruffleSpecs.Tokens.ERC777.MinimalERC777
+import io.exflo.ingestion.tokens.precompiled.ERC777DetectorPrecompiledContract
 import io.exflo.testutil.ExfloTestCase
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 
-class ERC165DetectorSpec : AbstractDetectorSpec() {
+class ERC777DetectorSpec : AbstractTokenDetectorSpec() {
 
     init {
 
         context("given a generic contract") {
 
-            val detector = detectorFor(NonERC165.shouldDeployTheContract)
+            val detector = detectorFor(InvalidERC777.shouldDeployTheContract)
 
-            test("we should not detect an ERC165 interface") {
-                detector.hasERC165Interface() ?: false shouldBe false
+            test("we should not detect any interfaces") {
+                detector.hasERC777Interface() ?: false shouldBe false
             }
         }
 
-        context("given a contract that implements ERC165") {
+        context("given a minimal ERC777 contract") {
 
-            val detector = detectorFor(ERC165Contract.shouldDeployTheContract)
+            val detector = detectorFor(MinimalERC777.shouldDeployTheContract)
 
-            test("we should detect an ERC165 interface") {
-                detector.hasERC165Interface() shouldBe true
+            test("we should detect ERC777 interface") {
+                detector.hasERC777Interface() ?: false shouldBe true
             }
         }
     }
 
-    private fun detectorFor(testCase: ExfloTestCase): ERC165Detector {
+    private fun detectorFor(testCase: ExfloTestCase): ERC777Detector {
         // Gather data
         val block = testHelper.blocksFor(testCase).first()
 
@@ -60,9 +59,9 @@ class ERC165DetectorSpec : AbstractDetectorSpec() {
         contractAddress shouldNotBe null
 
         // create detector
-        return ERC165Detector(
+        return ERC777Detector(
             transactionSimulator,
-            ERC165DetectorPrecompiledContract.ADDRESS,
+            ERC777DetectorPrecompiledContract.ADDRESS,
             contractAddress,
             block.hash
         )

@@ -31,9 +31,6 @@ contract MetadataERC721 is ERC721Metadata {
     }
 }
 
-contract EnumerableERC721 is ERC721Enumerable {
-}
-
 contract FullERC721 is ERC721Full {
     constructor() ERC721Full("ERC721 Full", "E721") public {
     }

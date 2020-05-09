@@ -20,23 +20,29 @@ public final class BlockBody extends Table {
   public Transaction transactions(int j) { return transactions(new Transaction(), j); }
   public Transaction transactions(Transaction obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int transactionsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
+  public String trace() { int o = __offset(8); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer traceAsByteBuffer() { return __vector_as_bytebuffer(8, 1); }
+  public ByteBuffer traceInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 1); }
 
   public static int createBlockBody(FlatBufferBuilder builder,
       int ommersOffset,
-      int transactionsOffset) {
-    builder.startObject(2);
+      int transactionsOffset,
+      int traceOffset) {
+    builder.startObject(3);
+    BlockBody.addTrace(builder, traceOffset);
     BlockBody.addTransactions(builder, transactionsOffset);
     BlockBody.addOmmers(builder, ommersOffset);
     return BlockBody.endBlockBody(builder);
   }
 
-  public static void startBlockBody(FlatBufferBuilder builder) { builder.startObject(2); }
+  public static void startBlockBody(FlatBufferBuilder builder) { builder.startObject(3); }
   public static void addOmmers(FlatBufferBuilder builder, int ommersOffset) { builder.addOffset(0, ommersOffset, 0); }
   public static int createOmmersVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startOmmersVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static void addTransactions(FlatBufferBuilder builder, int transactionsOffset) { builder.addOffset(1, transactionsOffset, 0); }
   public static int createTransactionsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startTransactionsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static void addTrace(FlatBufferBuilder builder, int traceOffset) { builder.addOffset(2, traceOffset, 0); }
   public static int endBlockBody(FlatBufferBuilder builder) {
     int o = builder.endObject();
     return o;

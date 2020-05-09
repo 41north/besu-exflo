@@ -16,9 +16,10 @@
 
 package io.exflo.ingestion
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.type.TypeFactory
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.exflo.ingestion.storage.KeyValueStores
-import io.exflo.ingestion.tracer.BlockReplay
-import io.exflo.ingestion.tracer.BlockTracer
 import io.exflo.ingestion.tracker.BlockReader
 import org.hyperledger.besu.ethereum.chain.Blockchain
 import org.hyperledger.besu.ethereum.chain.BlockchainStorage
@@ -40,6 +41,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem
 import org.hyperledger.besu.plugin.services.StorageService
 import org.hyperledger.besu.services.kvstore.LimitedInMemoryKeyValueStorage
 import org.koin.dsl.module
+import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockReplay as BesuBlockReplay
 
 object KoinModules {
     val eventsModule = module {
@@ -50,6 +52,17 @@ object KoinModules {
     }
 
     val storageModule = module {
+
+        single {
+            val classLoader = get<ClassLoader>()
+            ObjectMapper()
+                .registerModule(KotlinModule())
+                .apply {
+                    this.typeFactory = TypeFactory
+                        .defaultInstance()
+                        .withClassLoader(classLoader)
+                }
+        }
 
         single {
             val context = get<BesuContext>()
@@ -99,9 +112,7 @@ object KoinModules {
 
     val stateModule = module {
 
-        single { BlockReplay(get(), get(), get()) }
-
-        single { BlockTracer(get(), get()) }
+        single { BesuBlockReplay(get(), get(), get()) }
 
         single { TransactionSimulator(get(), get(), get()) }
 

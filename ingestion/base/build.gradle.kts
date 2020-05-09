@@ -35,6 +35,7 @@ dependencies {
     api(project(":domain"))
 
     api("org.hyperledger.besu.internal:besu")
+    api("org.hyperledger.besu.internal:api")
     api("org.hyperledger.besu.internal:config")
     api("org.hyperledger.besu.internal:metrics-core")
     api("org.hyperledger.besu.internal:plugins-rocksdb")
@@ -52,6 +53,9 @@ dependencies {
     api("org.web3j:utils")
 
     api("io.reactivex.rxjava3:rxjava")
+
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("com.google.guava:guava")
 

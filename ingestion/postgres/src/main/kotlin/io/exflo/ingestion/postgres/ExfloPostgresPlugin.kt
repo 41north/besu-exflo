@@ -16,8 +16,6 @@
 
 package io.exflo.ingestion.postgres
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.type.TypeFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.exflo.ingestion.ExfloCliDefaultOptions
@@ -39,7 +37,6 @@ import org.koin.dsl.module
 import org.postgresql.Driver
 import picocli.CommandLine
 import javax.sql.DataSource
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 
@@ -51,18 +48,8 @@ class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
         module {
 
             single { options }
-            single<ExfloCliOptions> { options }
 
-            single {
-                val classLoader = get<ClassLoader>()
-                ObjectMapper()
-                    .registerModule(KotlinModule())
-                    .apply {
-                    this.typeFactory = TypeFactory
-                        .defaultInstance()
-                        .withClassLoader(classLoader)
-                }
-            }
+            single<ExfloCliOptions> { options }
 
             single<DataSource> {
                 val dataSourceConfig = HikariConfig()

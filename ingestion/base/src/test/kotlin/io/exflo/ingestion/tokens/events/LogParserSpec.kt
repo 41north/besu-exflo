@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion
+package io.exflo.ingestion.tokens.events
 
 import io.exflo.domain.ContractEvents
 import io.exflo.domain.extensions.hexToAddress
+import io.exflo.ingestion.KoinTestIngestionModules
 import io.exflo.ingestion.TruffleSpecs.Tokens.TokenEvents.ERC1155Events
 import io.exflo.ingestion.TruffleSpecs.Tokens.TokenEvents.ERC20Events
 import io.exflo.ingestion.TruffleSpecs.Tokens.TokenEvents.ERC721Events
@@ -47,7 +48,7 @@ class LogParserSpec : FunSpec(), KoinTest {
 
     override fun beforeSpecClass(spec: Spec, tests: List<TopLevelTest>) {
         startKoin {
-            modules(KoinTestIngestionModules.defaultModuleList)
+            modules(KoinTestIngestionModules())
         }
 
         // import test blocks
