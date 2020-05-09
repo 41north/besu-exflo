@@ -64,14 +64,14 @@ fun FlatTrace.toInternalTransaction(programCounter: Int): InternalTransaction? {
 
     val value = Wei.fromHexString(action.value)
 
-    return if (value === Wei.ZERO) {
+    return if (value == Wei.ZERO) {
         null
     } else {
         InternalTransaction(
             Hash.fromHexString(transactionHash),
             Address.fromHexString(action.from),
             Address.fromHexString(action.to),
-            Wei.fromHexString(action.value),
+            value,
             programCounter
         )
     }

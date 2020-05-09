@@ -348,7 +348,7 @@ class TransactionTraceParserSpec : FunSpec(), KoinTest {
 
                 test("should destroy and refund self (which triggers the destroy of ether)") {
 
-                    val block = testHelper.blocksFor(SelfDestruct.shouldDestroyTheContractAndRefundTheSender).first()
+                    val block = testHelper.blocksFor(SelfDestruct.shouldDestroyAndRefundSelf).first()
 
                     val trace = blockReader.trace(block.hash)
                     trace shouldNotBe null
