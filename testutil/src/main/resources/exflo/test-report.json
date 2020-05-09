@@ -1,13 +1,13 @@
 {
   "stats": {
-    "suites": 21,
-    "tests": 24,
-    "passes": 24,
+    "suites": 22,
+    "tests": 25,
+    "passes": 25,
     "pending": 0,
     "failures": 0,
-    "start": "2020-05-09T11:13:07.395Z",
-    "end": "2020-05-09T11:15:17.385Z",
-    "duration": 129990
+    "start": "2020-05-09T12:22:39.471Z",
+    "end": "2020-05-09T12:24:47.516Z",
+    "duration": 128045
   },
   "results": [
     {
@@ -21,8 +21,8 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 43,
-                "blockHash": "0x86721a67a9a51367e919ab5a976f57b58f1d4bf22e591208c5a6428d3d182489",
+                "blockNumber": 45,
+                "blockHash": "0xc3f0967bb430ffeb616057634c0daad7a9d845bb38826971db63904eca2adda0",
                 "txHash": "0x91bd73578c2cec18128a4810883015e6874a5e3b9cf1a43f74d45f8fe3c5fc9a",
                 "txStatus": true
               }
@@ -35,8 +35,8 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 45,
-                "blockHash": "0x87e4cee3a24ef266199181e3ee80650bb00d57d02ee2efe9e8946d1f3b1ac1c2",
+                "blockNumber": 47,
+                "blockHash": "0x97d9189e717310e5d45af170d169535dc8dc189df8903431d9ecc06938b5fce7",
                 "txHash": "0xec41312c0d4276d3f6385f96de15d166d5779fcc0ce3c27f7a12775abb9eca78",
                 "txStatus": true
               }
@@ -56,8 +56,8 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 50,
-                "blockHash": "0x4e8bf39ca6da904e11287b36083070df31f75eab0e6b2b48d8658365a6e8576f",
+                "blockNumber": 53,
+                "blockHash": "0xf2445639c94d045470473c8e9e6768874c0abdda8b4969307b2e84e04747005e",
                 "txHash": "0x33a4cbbac3f55e8ef29ad3705a3c2e1031f201d333efb82d22862ba9e51da49d",
                 "txStatus": true
               }
@@ -70,8 +70,8 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 53,
-                "blockHash": "0xf57201334392d1bf6db3ca3939fea60e4ff75c64f39239ea9bb42a585cb9e57d",
+                "blockNumber": 56,
+                "blockHash": "0x166dc6d6e9734c6eda885b7a5596c1d33e8183b85d3a471f6072b192193cbc57",
                 "txHash": "0xa62e2c87fe4c2f36e96d3d3ab5157596e86c23e1447704dd2d28c3b5ef54b05e",
                 "txStatus": true
               }
@@ -84,9 +84,30 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 57,
-                "blockHash": "0xa6ace4c1c0f6e460e623a3438f7c3787c23339c0c403390b99bea457c9209feb",
+                "blockNumber": 58,
+                "blockHash": "0x06c00c522068e42c740e8aeaf71a60f9a2a635823f6dc199e41c666ede6e8025",
                 "txHash": "0xc0d183d75b4fa063c4f34e20808390a080061d4f4ce1799780c8f8b879173d60",
+                "txStatus": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "6c7c544b-e536-5a24-902a-8738c32b4b8f",
+      "title": "SelfDestructInConstructor",
+      "file": "/test/selfdestruct.js",
+      "tests": [
+        {
+          "uuid": "43105c0b-51fb-5432-b38d-52257ec3b21f",
+          "description": "should create and destroy itself on contract deploy",
+          "web3": {
+            "summaries": [
+              {
+                "blockNumber": 63,
+                "blockHash": "0x8bb0d3d886773b1abdef464ee715c8ffd9788de5ed86cbe6271bb8f4df48c4e3",
+                "txHash": "0x2f6600db19993de7eafdbecac78d1537bc18270e664410ff1ffd02fa172f84ee",
                 "txStatus": true
               }
             ]
@@ -105,9 +126,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 64,
-                "blockHash": "0x38691213d762325d687b52491c51052fd852040f2ebe71b1e2e9c22148b4d183",
-                "txHash": "0xf8e9585f9c2419bfe682f645aa99a572d9ddcf6b11334cb39c07d15fa47f801b",
+                "blockNumber": 68,
+                "blockHash": "0x98368854d6429265be7f2f4ad48221b1c6aef7c2ac9f6991343daec6cc85231c",
+                "txHash": "0x272f8427b32293854e30473fb5c32bf8d99b49a344f7c2deba072282d4206f76",
                 "txStatus": true
               }
             ]
@@ -126,9 +147,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 69,
-                "blockHash": "0x5dce87937afb306fc3b7fd1c7798f89d28755b47adb13c17d239edb5184da0b9",
-                "txHash": "0x2d53f9738506b2a09150d2de2265cf95064d283322b735b50199e38278227666",
+                "blockNumber": 74,
+                "blockHash": "0x38488a8f69dafdba093d3b89f989dfb21fc1eb636a84f64cef8ae7b2c5c7f59f",
+                "txHash": "0x5a481f11142176eaee3cd1a76201f4bcf5dde484666e6d3815c58837377ebf85",
                 "txStatus": true
               }
             ]
@@ -147,9 +168,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 75,
-                "blockHash": "0x230187d997b843848daba46de6b9cb44e2723e72adf932a0f0e93b43c9c6164d",
-                "txHash": "0x76d4d77e039709a8999f7e7eb5b7a484235b22e48414d3dc24a7e541aa2805d3",
+                "blockNumber": 78,
+                "blockHash": "0x261ade19cd90106359f75553a8ba401138afcefe76b17c6a47ba7e1c8c8f18eb",
+                "txHash": "0x5bcfe0ced599f9b6fff2387e76d2f19a054fc2cf399864443972ab69024cc46d",
                 "txStatus": true
               }
             ]
@@ -168,9 +189,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 80,
-                "blockHash": "0x48eafdfb6ccb9978e0ccb373161d0d584c080fcf7eba10eb2eed64b96e0df6b6",
-                "txHash": "0x6b3d7c4d07313d70942d135479cbfe4b33b3e5e08bf77b1ce45f1cd12f8c71ef",
+                "blockNumber": 83,
+                "blockHash": "0xff2cdb1664573f231f098ac8b9de1145734bda44f5daf03b99edb5193cbe28bc",
+                "txHash": "0x55830d454a568b5b6ba3401a1833454021c20a00a2a8f3ae146f66c92f3fbf40",
                 "txStatus": true
               }
             ]
@@ -189,9 +210,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 87,
-                "blockHash": "0x860e4d77ff0c7f47a569a9e549f04bb45761b52154e880cfd49dada72c775c42",
-                "txHash": "0x72f69236447749e2a12d8dc54425470e3a8cb0a6212225ced81795a04ef63af8",
+                "blockNumber": 90,
+                "blockHash": "0xe80cb768f0ff1ec8db2e37fb2fdec5a291972c1e223ebf4846dc1d00182e75b2",
+                "txHash": "0x3b5d4597e713db9419a2ab04035676b64e9a3307c5b4bdc27dc55ba523aef004",
                 "txStatus": true
               }
             ]
@@ -210,9 +231,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 93,
-                "blockHash": "0xf271dd78221a77562807ca04b23e6b41dc87e572ad9c58d9524e40094aa57896",
-                "txHash": "0x9a7a61ef2bed2065992b6ae9065282892f472b65d13770433c03d2ad1f1d4c09",
+                "blockNumber": 98,
+                "blockHash": "0x47ef704556eea48f60f05f9709bdb0dcb69d1d0e1d5e7bec0b92bab23a1cda08",
+                "txHash": "0x3ad71ef1e182b66c185a714f2f131f3ae8765bcd33aa886fe0eed19cd79e898d",
                 "txStatus": true
               }
             ]
@@ -231,9 +252,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 99,
-                "blockHash": "0x167d93624a3622a270fd53b2443909fd3f43b8fd6e66a394838c7a9de2c8bdbb",
-                "txHash": "0x0fcfbd1cca441396dcee2de62dc9d7d015dc6e44fecc37069fb890be50966ec9",
+                "blockNumber": 104,
+                "blockHash": "0x9362b7eb667afc5eab031c2b0419e9e0f0c476ac968667b7fc067a569af547d3",
+                "txHash": "0x4c824fd3bb2b90a46a6cafb349698e0b318c9cb2e0125348faf6ca55c9548b17",
                 "txStatus": true
               }
             ]
@@ -252,9 +273,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 104,
-                "blockHash": "0x07117903f6e131cfd534a8b45998fa3791765ae11b184409d6af1a7296ae6b56",
-                "txHash": "0xea20b514f290372c36a8c086b11e74d95a9a6a200b03091a10fb79646dfcc8ca",
+                "blockNumber": 109,
+                "blockHash": "0xb4319ee6fad546a4b12f452ba27ba3f44b15eb9a2e28b92c25ee2909b121f26d",
+                "txHash": "0xa7d306295ac8b8ade113735baa0f14aec785dd2d060dfc52ce89b4508b8707a9",
                 "txStatus": true
               }
             ]
@@ -273,9 +294,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 109,
-                "blockHash": "0x7db4d4d01276c77464e6bd15cf0c0bc4dc6784bb2bdd6a1f1b293792ad18e9a6",
-                "txHash": "0xbe80fb9de1a0629ac6cea4c23375cf25421464044fff8ffc435d65d92c1f35ef",
+                "blockNumber": 113,
+                "blockHash": "0xc62998486dd84955f89cfc7514f9201d99462cc9a7e8766da37c9abc69d37792",
+                "txHash": "0x44ba82a1314024e7b2841afecf7f8ea1e9ce6a339a952d298470ad12705f0d23",
                 "txStatus": true
               }
             ]
@@ -294,9 +315,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 116,
-                "blockHash": "0xd25cdd37785c94de11d620f8485e023c2f7fa98832f576f908a1098b580b061e",
-                "txHash": "0x910655af084fbc838e5d5c4cefa730f788b4211ab61df90af2a93d7cbe67281c",
+                "blockNumber": 118,
+                "blockHash": "0xa5b5090f957ee0179183136465c34311dd735e29c2462473c2fbc6b8bc0254f0",
+                "txHash": "0xff58e7c388ffa247001ddb0f464bb2f4c3b59434dc2e86160eca32076cc4509a",
                 "txStatus": true
               }
             ]
@@ -316,8 +337,8 @@
             "summaries": [
               {
                 "blockNumber": 122,
-                "blockHash": "0xcff87fc2b108b2cd0ade80808c2887cdb4642ed8cd83be706b327e489c2e6705",
-                "txHash": "0x5cc16ca27d10fb895781cb664c5d73e7e62e0da380631993b874c560a1dfdbd4",
+                "blockHash": "0xc1d4417e467956f6402cff2c06c2ef16ee2dad92edaffd87a63e73effdba9b62",
+                "txHash": "0x71eb2313794c834b6567a47cee166072bc4c2237a38f84c5de9303476c6bd499",
                 "txStatus": true
               }
             ]
@@ -336,9 +357,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 127,
-                "blockHash": "0xeeab362dec23af6e47cfc53ba938e59fd093d8e4b951c849e3c1556a4efadbaf",
-                "txHash": "0xc8a9a5a4f5f3a0d4bf117cc8bdb5341a179587fe0b04f3a1fb07a8e23c8ee4f8",
+                "blockNumber": 126,
+                "blockHash": "0x85a684bd8e6c7521f287deabf7336ca23b74132f9c19160ad834039423d60105",
+                "txHash": "0x13e244328fce6055a1916826ad76bc44913345080508efe58cf1285b5fc720f1",
                 "txStatus": true
               }
             ]
@@ -357,9 +378,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 132,
-                "blockHash": "0x550437d497927a0a26f0cb01553c13e706c74df06f97e05d9413604075640730",
-                "txHash": "0xe8e5d5b8e2efdf87c161b92ecebdf1484b61c28035c7e0fa5c7cdf5ff18d40f8",
+                "blockNumber": 130,
+                "blockHash": "0x65aad9356cdfd6ef13243534ad7f4aab8e1aea2d2281a14512c1fd9137ffdb7f",
+                "txHash": "0xe9dbc437c75ac02b7d10535f170436c3111ff8a3134912e3331bb44803f80bc6",
                 "txStatus": true
               }
             ]
@@ -378,9 +399,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 136,
-                "blockHash": "0xd4525e1e6408aaa15c59849dbdbfb7434a275e1edcdaa103f53a3c83cf938ff1",
-                "txHash": "0xa47d73d15b58a512dc4c4fc4d1057625c32e007af984fb89d9b43bf97496b561",
+                "blockNumber": 137,
+                "blockHash": "0xdd43509bc2b31317a1a831684eb5172e5149bbd6db8888bacfd81550c90587d3",
+                "txHash": "0x88d07451837bc2b369095de60318cc6e59c985c511d91faaf5e8876dac36796f",
                 "txStatus": true
               }
             ]
@@ -399,9 +420,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 142,
-                "blockHash": "0x4aac229391a2875284ce148c72d8f8a03a7d79a3edad982cbba8f3ade55c9442",
-                "txHash": "0xe8e32c06eab8c3a6bde1e077fd3451efed95bb2da85637ad3b9f302e9cb34a41",
+                "blockNumber": 143,
+                "blockHash": "0x030f4ac10a4cd1de3c97c2d506cd42b5bab559906616ad3bc3362ec26f2f36d2",
+                "txHash": "0x6a9885b4acd0afc395d1054bac1facfd591a13a5f63e500608664cd24ddb78f1",
                 "txStatus": true
               }
             ]
@@ -420,9 +441,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 149,
-                "blockHash": "0xd34ef4f6a3b89b64e17524a088e4dd17a85a9373a76856d979f68fa79e2038b4",
-                "txHash": "0x4c8d0900c37c9ded91fadf3091912f65c00ab2a66cec79671b43c0dfa56f23cc",
+                "blockNumber": 148,
+                "blockHash": "0x8b2760fe6a92c41ece6a02bdd49981e469650929733184353f272508b25976d6",
+                "txHash": "0x3d2fa673d52b17b87a20ea860d3ec4ff3fe1fa24bc714fbe259e59f908bed771",
                 "txStatus": true
               }
             ]
@@ -441,9 +462,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 155,
-                "blockHash": "0xb62f17a219650c2a511804751108a02836c9c06e8ea5ecbf213c7f39ac5e2323",
-                "txHash": "0x4144101ba5035514d69b607064970b6b8c514aa1541be9d318e25b1375d79069",
+                "blockNumber": 152,
+                "blockHash": "0x61ea797cd30b3ce28124bc5f844e2ec3d4fdfd6cecc1b5c413dcd0f51dfe92d5",
+                "txHash": "0x6168c843a3c9ea6b4102c2e4ecfbc3cbc63a9e99502f74cb2c7eada7ccc73b6d",
                 "txStatus": true
               }
             ]
@@ -462,9 +483,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 161,
-                "blockHash": "0xf9b2be5aae45071aac2071ce6231ae458b0dd4e9dca0e076074e2dbee1d6b484",
-                "txHash": "0x30fcae9bab5b807b790f41b764afe335616dfa1ebcf60b3e4872cc1007716133",
+                "blockNumber": 157,
+                "blockHash": "0x78cf031be0a6cccfcdc562cec6631403d78615544515a845cfe61709cd4a6d01",
+                "txHash": "0x5ba64ab912c415f8fee58fdd6be4022403b7944e9d303ef915d7adb3c0c137bb",
                 "txStatus": true
               }
             ]
@@ -483,33 +504,33 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 165,
-                "blockHash": "0x6ad25b4bbd2329ba69944071df45c9ab47808997252eef2257b87ef7eeb9e45f",
-                "txHash": "0x16e284750e03f86803af6fec43a5917ad8945cf30eda564694546896cd97b7fd",
+                "blockNumber": 164,
+                "blockHash": "0xc50a4e5bfc093195215ee2fbfa9266db84703e5023688e8308b787a0a65f5f61",
+                "txHash": "0xd151cf4b45e2b3af09f1761779218ad4995dafd4ce293ec0348a672dd684401e",
                 "txStatus": true
               },
               {
                 "blockNumber": 166,
-                "blockHash": "0x9c463cd4f6141809d9aa73bec5f9b50020838657f319e878636c70a1b7bfee49",
-                "txHash": "0x819b76578bf9b044f4577f4eb7e54d0daff49d322e4b177f3b47c72cbce1b024",
+                "blockHash": "0x16b0896fd2a23d5b7b37545c40d4bdbb34a39971b5d7945794eb943402427682",
+                "txHash": "0x146a1889563f44af0e58446a947c4219653e0ba8d725cab78895b52c61973055",
                 "txStatus": true
               },
               {
-                "blockNumber": 168,
-                "blockHash": "0xecb678dc543a7f6adfc05d81d345e1f2c966b9327476196954d884c0dff0e14f",
-                "txHash": "0xbab7e16f6cc8b3ebc74f4c878ca86ec70a7f3d6bb2f5f4b69f4a8ea02869e9d3",
+                "blockNumber": 167,
+                "blockHash": "0xf71ab2e68fd65c8f580d6831c4949a11c19f693c85a2bddc6c8e4f1de38740cb",
+                "txHash": "0xce40d62866f343d7f8d7489f8f7e8297fcc244dba00addca557f6bf3492f1bb9",
                 "txStatus": true
               },
               {
                 "blockNumber": 169,
-                "blockHash": "0xe78508fc4364898b4b7ee6c3da93d6b0f63fd91eb6334a7fab6028739fcf4f31",
-                "txHash": "0x404bbe2e892481781cf9fbcfe343732fbe42ebf864b0e24f84120ca8da03369e",
+                "blockHash": "0xfcd82bb3fdff7b00680dfa590710340d933dbee59b8c0c48b1b1514b2f9881ec",
+                "txHash": "0x8ca90f9ad09a72348bc06ba950571c245d20a57175c11f0710f70c5bbf1d7922",
                 "txStatus": true
               },
               {
                 "blockNumber": 170,
-                "blockHash": "0x5691f82a7620ba3c14404c4eacefd9299e4c76734e13e79e2793e1945e10e981",
-                "txHash": "0xa5762e561e112132e5d5807008350df92acdda86e20cd256ae42b2f47e828290",
+                "blockHash": "0xea8d70d59acc9625bb1b6fb38260b9c0b5324f7eb8acaa1253aa4f9f0421d684",
+                "txHash": "0xb53fad9b28e081048e0a01236faf7114218b68e8eb1f2b19a1d700eeb0ad9b37",
                 "txStatus": true
               }
             ]

@@ -21,6 +21,7 @@ import io.exflo.domain.ContractType
 import io.exflo.ingestion.KoinTestIngestionModules
 import io.exflo.ingestion.TruffleSpecs.SelfDestructs.SelfDestruct
 import io.exflo.ingestion.TruffleSpecs.SelfDestructs.SelfDestructDelegatingCalls
+import io.exflo.ingestion.TruffleSpecs.SelfDestructs.SelfDestructInConstructor
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.CappedERC20
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.DetailedERC20
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.InvalidERC20
@@ -320,7 +321,7 @@ class TransactionTraceParserSpec : FunSpec(), KoinTest {
             }
         }
 
-        context("SelfDestruct") {
+        context("Self-Destructs") {
 
             context("with SelfDestruct contract") {
 
@@ -453,6 +454,31 @@ class TransactionTraceParserSpec : FunSpec(), KoinTest {
                             destroyedEvent.refundAddress.size() shouldBe 20
                             destroyedEvent.contractAddress.size() shouldBe 20
                             destroyedEvent.refundAmount shouldBe Wei.of(refundAmount)
+                        }
+                }
+            }
+
+            context("with SelfDestructInConstructor contract") {
+
+                test("should create and destroy itself on contract deploy") {
+
+                    val block = testHelper.blocksFor(SelfDestructInConstructor.shouldCreateAndDestroyItselfOnContractDeploy).first()
+
+                    val traces = blockReader.trace(block.hash)
+                    traces shouldNotBe null
+
+                    val transactionTrace = traces!!.transactionTraces.first()
+
+                    transactionTrace shouldNotBe null
+                    transactionTrace.contractsCreated.size shouldBe 1
+                    transactionTrace.contractsDestroyed.size shouldBe 1
+                    transactionTrace.internalTransactions.size shouldBe 0
+
+                    transactionTrace.contractsCreated
+                        .zip(transactionTrace.contractsDestroyed)
+                        .forEach { (createdEvent, destroyedEvent) ->
+                            createdEvent.contractAddress shouldBe destroyedEvent.contractAddress
+                            createdEvent.amount shouldBe destroyedEvent.refundAmount
                         }
                 }
             }

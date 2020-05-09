@@ -73,3 +73,10 @@ contract SelfDestructDelegatingCalls {
         selfdestruct(msg.sender);
     }
 }
+
+contract SelfDestructInConstructor {
+
+    constructor() public payable {
+        selfdestruct(msg.sender);
+    }
+}

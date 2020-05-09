@@ -197,5 +197,12 @@ object TruffleSpecs {
                 override val description = "should create self destroying contracts and self destruct itself"
             }
         }
+
+        object SelfDestructInConstructor : ExfloTestSuite() {
+
+            val shouldCreateAndDestroyItselfOnContractDeploy = object : ExfloTestCase(this) {
+                override val description = "should create and destroy itself on contract deploy"
+            }
+        }
     }
 }
