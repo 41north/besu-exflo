@@ -17,7 +17,7 @@
 package io.exflo.ingestion.core
 
 import io.exflo.ingestion.extensions.hexToLong
-import io.exflo.ingestion.extensions.toBalance
+import io.exflo.ingestion.extensions.toWei
 import org.apache.tuweni.bytes.Bytes
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.units.bigints.UInt256
@@ -76,7 +76,7 @@ class InMemoryAccount(
 
             val nonce = allocation.nonce.hexToLong()
             val address = Address.fromHexString(allocation.address)
-            val balance = allocation.balance.toBalance()
+            val balance = allocation.balance.toWei()
             val code = allocation.code?.let { Bytes.fromHexString(it) }
 
             return InMemoryAccount(address, balance, nonce, code, null)

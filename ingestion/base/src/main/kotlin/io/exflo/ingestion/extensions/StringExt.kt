@@ -16,7 +16,6 @@
 
 package io.exflo.ingestion.extensions
 
-import org.apache.tuweni.bytes.Bytes
 import org.hyperledger.besu.ethereum.core.Wei
 import java.math.BigInteger
 import java.util.Locale
@@ -29,12 +28,9 @@ fun String.hexToLong(): Long {
     return lowercase.toLong(16)
 }
 
-fun String.toBalance(): Wei {
-    val value =
-        if (this.startsWith("0x")) {
-            BigInteger(1, Bytes.fromHexStringLenient(this).toArray())
-        } else {
-            BigInteger(this)
-        }
-    return Wei.of(value)
-}
+fun String.toWei(): Wei =
+    if (this.startsWith("0x")) {
+        Wei.fromHexString(this)
+    } else {
+        Wei.of(BigInteger(this))
+    }
