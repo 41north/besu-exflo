@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-contract('SelfDestructIntegration', function(accounts) {
+contract('SelfDestruct', function(accounts) {
   const [ownerAccount, refundAccount] = accounts
-  const SelfDestructIntegration = artifacts.require('SelfDestructIntegration')
+  const SelfDestruct = artifacts.require('SelfDestruct')
 
   it('should destroy the contract and refund the sender', async function() {
     // deploy contract
-    const instance = await SelfDestructIntegration.new({ from: ownerAccount, value: 1000000000000000000 })
+    const instance = await SelfDestruct.new({ from: ownerAccount, value: 1000000000000000000 })
 
     // trigger self destruct
     const result = await instance.destroyAndRefundSender({ from: refundAccount })
@@ -39,7 +39,7 @@ contract('SelfDestructIntegration', function(accounts) {
 
   it('should destroy and refund self (which triggers the destroy of ether)', async function() {
     // deploy contract
-    const instance = await SelfDestructIntegration.new({ from: ownerAccount, value: 1000000000000000000 })
+    const instance = await SelfDestruct.new({ from: ownerAccount, value: 1000000000000000000 })
 
     // trigger self destruct
     const result = await instance.destroyAndRefundSelf()
@@ -57,13 +57,13 @@ contract('SelfDestructIntegration', function(accounts) {
   })
 })
 
-contract('SelfDestructDelegatingCallsIntegration', function(accounts) {
+contract('SelfDestructDelegatingCalls', function(accounts) {
   const [ownerAccount] = accounts
-  const SelfDestructDelegatingCallsIntegration = artifacts.require('SelfDestructDelegatingCallsIntegration')
+  const SelfDestructDelegatingCalls = artifacts.require('SelfDestructDelegatingCalls')
 
   it('should send ether to contract after self referencing destroy', async function() {
     // deploy contract
-    const instance = await SelfDestructDelegatingCallsIntegration.new({ from: ownerAccount, value: 10000000000000000000 })
+    const instance = await SelfDestructDelegatingCalls.new({ from: ownerAccount, value: 10000000000000000000 })
 
     // trigger self destruct
     const result = await instance.sendEtherToContractAfterSelfReferencingDestroy()
@@ -82,7 +82,7 @@ contract('SelfDestructDelegatingCallsIntegration', function(accounts) {
 
   it('should produce a cascading destroy and refund sender', async function() {
     // deploy contract
-    const instance = await SelfDestructDelegatingCallsIntegration.new({ from: ownerAccount, value: 10000000000000000000 })
+    const instance = await SelfDestructDelegatingCalls.new({ from: ownerAccount, value: 10000000000000000000 })
 
     // trigger self destruct
     const result = await instance.cascadingDestroyAndRefundSender({ from: ownerAccount })
@@ -101,7 +101,7 @@ contract('SelfDestructDelegatingCallsIntegration', function(accounts) {
 
   it('should create self destroying contracts and self destruct itself', async function() {
     // deploy contract
-    const instance = await SelfDestructDelegatingCallsIntegration.new({ from: ownerAccount, value: 10000000000000000000 })
+    const instance = await SelfDestructDelegatingCalls.new({ from: ownerAccount, value: 10000000000000000000 })
 
     // trigger self destruct
     const result = await instance.createSelfDestroyingContractsAndSelfDestructItself({ from: ownerAccount })

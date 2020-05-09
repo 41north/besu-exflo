@@ -16,7 +16,7 @@
 
 pragma solidity >=0.4.25 <0.6.0;
 
-contract SelfDestructIntegration {
+contract SelfDestruct {
 
     constructor() public payable {}
 
@@ -33,18 +33,18 @@ contract SelfDestructIntegration {
     }
 }
 
-contract SelfDestructDelegatingCallsIntegration {
+contract SelfDestructDelegatingCalls {
 
-    SelfDestructIntegration private one;
-    SelfDestructIntegration private two;
-    SelfDestructIntegration private three;
+    SelfDestruct private one;
+    SelfDestruct private two;
+    SelfDestruct private three;
 
     constructor() public payable {
         require(msg.value >= 10 ether);
 
-        one = (new SelfDestructIntegration).value(1 ether)();
-        two = (new SelfDestructIntegration).value(2 ether)();
-        three = (new SelfDestructIntegration).value(3 ether)();
+        one = (new SelfDestruct).value(1 ether)();
+        two = (new SelfDestruct).value(2 ether)();
+        three = (new SelfDestruct).value(3 ether)();
     }
 
     function sendEtherToContractAfterSelfReferencingDestroy() public payable {
@@ -62,9 +62,9 @@ contract SelfDestructDelegatingCallsIntegration {
     }
 
     function createSelfDestroyingContractsAndSelfDestructItself() public payable {
-        SelfDestructIntegration first = (new SelfDestructIntegration).value(10 wei)();
-        SelfDestructIntegration second = (new SelfDestructIntegration).value(20 wei)();
-        SelfDestructIntegration third = (new SelfDestructIntegration).value(30 wei)();
+        SelfDestruct first = (new SelfDestruct).value(10 wei)();
+        SelfDestruct second = (new SelfDestruct).value(20 wei)();
+        SelfDestruct third = (new SelfDestruct).value(30 wei)();
 
         first.destroyAndRefundSender();
         second.destroyAndRefundSelf();

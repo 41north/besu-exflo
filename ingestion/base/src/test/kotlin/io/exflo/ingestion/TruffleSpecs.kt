@@ -34,157 +34,6 @@ object TruffleSpecs {
         }
     }
 
-    object Tracing {
-
-        object Integration {
-
-            object CreateIntegration : ExfloTestSuite() {
-
-                val shouldCreateADummyContractWhenCreateDummyContractMethodIsCalled = object : ExfloTestCase(this) {
-                    override val description =
-                        "should create a DummyContract when \"createDummyContract\" method is called"
-                }
-
-                val shouldNotCreateADummyOutOfGasContractWhenCreateDummyOutOfGasContractMethodIsCalled =
-                    object : ExfloTestCase(this) {
-                        override val description =
-                            "should NOT create DummyOutOfGasContract when \"createDummyOutOfGasContract\" method is called"
-                    }
-
-                val shouldNotCreateDummyBadOpCodeContractWhenCreateDummyBadOpCodeContractMethodIsCalled =
-                    object : ExfloTestCase(this) {
-                        override val description =
-                            "should NOT create DummyBadOpCodeContract when \"createDummyBadOpCodeContract\" method is called"
-                    }
-
-                val shouldNotCreateADummyRevertContractWhenCreateDummyRevertContractMethodIsCalled =
-                    object : ExfloTestCase(this) {
-                        override val description =
-                            "should NOT create a DummyRevertContract when \"createDummyRevertContract\" method is called"
-                    }
-
-                val shouldCreateACreateNestedIntegrationContractWhenCreateNestedDummyContractsMethodIsCalled =
-                    object : ExfloTestCase(this) {
-                        override val description =
-                            "should create a CreateNestedIntegration contract when \"createNestedDummyContracts\" method is called"
-                    }
-            }
-
-            object CreateDestroyIntegration : ExfloTestSuite() {
-
-                val shouldCreateAndDestroyItselfOnContractDeploy = object : ExfloTestCase(this) {
-                    override val description = "should create and destroy itself on contract deploy"
-                }
-            }
-
-            object CallEtherSenderIntegration : ExfloTestSuite() {
-
-                val shouldSendEtherSuccessfully = object : ExfloTestCase(this) {
-                    override val description = "should send ether successfully"
-                }
-
-                val shouldTransferEtherSuccessfully = object : ExfloTestCase(this) {
-                    override val description = "should transfer ether successfully"
-                }
-
-                val shouldTransferEtherSuccessfullyViaAFallbackFunction = object : ExfloTestCase(this) {
-                    override val description = "should transfer ether successfully via a fallback function"
-                }
-
-                val shouldFailToSendEtherWhenGasIsTooLow = object : ExfloTestCase(this) {
-                    override val description = "should fail to transfer ether when gas is too low"
-                }
-
-                val shouldFailToTransferEtherViaAFallbackFunctionWhenGasIsTooLow = object : ExfloTestCase(this) {
-                    override val description =
-                        "should fail to transfer ether via a fallback function when gas is too low"
-                }
-            }
-
-            object SelfDestructIntegration : ExfloTestSuite() {
-
-                val shouldDestroyTheContractAndRefundTheSender = object : ExfloTestCase(this) {
-                    override val description = "should destroy the contract and refund the sender"
-                }
-
-                val shouldDestroyAndRefundSelfWhichTriggersTheDestroyOfEther = object : ExfloTestCase(this) {
-                    override val description = "should destroy and refund self (which triggers the destroy of ether)"
-                }
-            }
-
-            object SelfDestructDelegatingCallsIntegration : ExfloTestSuite() {
-
-                val shouldSendEtherToContractAfterSelfReferencingDestroy = object : ExfloTestCase(this) {
-                    override val description = "should send ether to contract after self referencing destroy"
-                }
-
-                val shouldProduceACascadingDestroyAndRefundSender = object : ExfloTestCase(this) {
-                    override val description = "should produce a cascading destroy and refund sender"
-                }
-
-                val shouldCreateSelfDestroyingContractsAndSelfDestructItself = object : ExfloTestCase(this) {
-                    override val description = "should create self destroying contracts and self destruct itself"
-                }
-            }
-        }
-
-        object Unit {
-
-            object CreateOpCodeUnit : ExfloTestSuite() {
-
-                val shouldCreateANewSmartContractWithValidCodeAndWithEtherAssociated = object : ExfloTestCase(this) {
-                    override val description =
-                        "should create a new smart contract with valid code and with ether associated"
-                }
-
-                val shouldCreateANewSmartContractWithValidCodeAndWithoutEtherAssociated = object : ExfloTestCase(this) {
-                    override val description =
-                        "should create a new smart contract with valid code and without ether associated"
-                }
-
-                val shouldCreateANewSmartContractWithoutCodeAndWithoutEtherAssociated = object : ExfloTestCase(this) {
-                    override val description =
-                        "should create a new smart contract without code and without ether associated"
-                }
-
-                val shouldCreateANewSmartContractWithInvalidCodeAndWithoutEtherAssociated =
-                    object : ExfloTestCase(this) {
-                        override val description =
-                            "should create a new smart contract with invalid code and without ether associated"
-                    }
-
-                val shouldCreateTwoNewSmartContractsWithValidCodeAndWithEtherAssociated = object : ExfloTestCase(this) {
-                    override val description =
-                        "should create two new smart contracts with valid code and with ether associated"
-                }
-
-                val shouldCreateTwoNewSmartContractsWithValidAndInvalidCodeAndWithEtherAssociated =
-                    object : ExfloTestCase(this) {
-                        override val description =
-                            "should create two new smart contracts with valid and invalid code and with ether associated"
-                    }
-            }
-
-            object Create2OpCodeUnit : ExfloTestSuite() {
-
-                val shouldCreateANewSmartContractWithAnEmptySource = object : ExfloTestCase(this) {
-                    override val description = "should create a new smart contract with an empty source"
-                }
-            }
-
-            object SelfDestructOpCodeUnit : ExfloTestSuite() {
-
-                val shouldDestroyTheContractAndRefundTheSender = object : ExfloTestCase(this) {
-                    override val description = "should destroy the contract and refund the sender"
-                }
-
-                val shouldDestroyAndRefundSelfWhileDestroyingEther = object : ExfloTestCase(this) {
-                    override val description = "should destroy and refund self while 'destroying' ether"
-                }
-            }
-        }
-    }
-
     object Tokens {
 
         object ERC20 {
@@ -317,6 +166,35 @@ object TruffleSpecs {
                 val shouldDeployTheContract = object : ExfloTestCase(this) {
                     override val description = "should deploy the contract"
                 }
+            }
+        }
+    }
+
+    object SelfDestructs {
+
+        object SelfDestruct : ExfloTestSuite() {
+
+            val shouldDestroyTheContractAndRefundTheSender = object : ExfloTestCase(this) {
+                override val description = "should destroy the contract and refund the sender"
+            }
+
+            val shouldDestroyAndRefundSelf = object : ExfloTestCase(this) {
+                override val description = "should destroy and refund self (which triggers the destroy of ether)"
+            }
+        }
+
+        object SelfDestructDelegatingCalls : ExfloTestSuite() {
+
+            val shouldSendEtherToContractAfterSelfReferencingDestroy = object : ExfloTestCase(this) {
+                override val description = "should send ether to contract after self referencing destroy"
+            }
+
+            val shouldProduceACascadingDestroyAndRefundSender = object : ExfloTestCase(this) {
+                override val description = "should produce a cascading destroy and refund sender"
+            }
+
+            val shouldCreateSelfDestroyingContractsAndSelfDestructItself = object : ExfloTestCase(this) {
+                override val description = "should create self destroying contracts and self destruct itself"
             }
         }
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion
+package io.exflo.ingestion.tokens.detectors
 /*
  * Copyright (c) 2019 41North.
  *
@@ -31,6 +31,7 @@ package io.exflo.ingestion
  * limitations under the License.
  */
 
+import io.exflo.ingestion.KoinTestIngestionModules
 import io.exflo.ingestion.tokens.precompiled.PrecompiledContractsFactory
 import io.exflo.testutil.ExfloTestCaseHelper
 import io.exflo.testutil.TestChainLoader
@@ -47,7 +48,7 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 
-abstract class AbstractDetectorSpec : FunSpec(), KoinTest {
+abstract class AbstractTokenDetectorSpec : FunSpec(), KoinTest {
 
     protected val testChainLoader: TestChainLoader by inject()
     protected val testHelper: ExfloTestCaseHelper by inject()
@@ -57,7 +58,7 @@ abstract class AbstractDetectorSpec : FunSpec(), KoinTest {
 
     override fun beforeSpecClass(spec: Spec, tests: List<TopLevelTest>) {
         startKoin {
-            modules(KoinTestIngestionModules.defaultModuleList)
+            modules(KoinTestIngestionModules())
         }
 
         // import test blocks

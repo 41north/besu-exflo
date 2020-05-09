@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-['MinimalERC721', 'FullERC721', 'WeirdNameCharsERC721', 'InvalidERC721']
+['MinimalERC721', 'FullERC721', 'WeirdNameCharsERC721', 'InvalidERC721', 'MetadataERC721']
   .forEach(contractName => {
 
     contract(contractName, function (accounts) {

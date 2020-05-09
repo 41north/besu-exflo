@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion
+package io.exflo.ingestion.tokens.detectors
 
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC721.FullERC721
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC721.InvalidERC721
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC721.MinimalERC721
-import io.exflo.ingestion.tokens.detectors.ERC721Detector
 import io.exflo.ingestion.tokens.precompiled.ERC721DetectorPrecompiledContract
 import io.exflo.testutil.ExfloTestCase
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 
-class ERC721DetectorSpec : AbstractDetectorSpec() {
+class ERC721DetectorSpec : AbstractTokenDetectorSpec() {
 
     init {
 

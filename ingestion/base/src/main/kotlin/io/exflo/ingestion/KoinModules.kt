@@ -20,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.exflo.ingestion.storage.KeyValueStores
-import io.exflo.ingestion.tracer.BlockReplay
-import io.exflo.ingestion.tracer.BlockTracer
 import io.exflo.ingestion.tracker.BlockReader
 import org.hyperledger.besu.ethereum.chain.Blockchain
 import org.hyperledger.besu.ethereum.chain.BlockchainStorage
@@ -115,10 +113,6 @@ object KoinModules {
     val stateModule = module {
 
         single { BesuBlockReplay(get(), get(), get()) }
-
-        single { BlockReplay(get(), get(), get()) }
-
-        single { BlockTracer(get(), get()) }
 
         single { TransactionSimulator(get(), get(), get()) }
 

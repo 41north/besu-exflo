@@ -86,6 +86,5 @@ contract ERC1155Events {
     event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
     event URI(string _value, uint256 indexed _id);
 
-
 }
 
