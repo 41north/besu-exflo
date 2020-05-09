@@ -38,18 +38,3 @@ fun String.toBalance(): Wei {
         }
     return Wei.of(value)
 }
-
-fun String?.sanitize() =
-    this
-        // removes NUL chars
-        ?.replace("\u0000", "")
-        // removes backslash+u0000
-        ?.replace("\\u0000", "")
-        // strips off all non-ASCII characters
-        ?.replace("[^\\x00-\\x7F]", "")
-        // erases all the ASCII control characters
-        ?.replace("[\\p{Cntrl}&&[^\r\n\t]]", "")
-        // removes non-printable characters from Unicode
-        ?.replace("\\p{C}", "")
-        // removes extra spaces
-        ?.trim()
