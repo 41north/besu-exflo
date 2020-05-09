@@ -23,7 +23,7 @@ import io.exflo.domain.ContractCreated
 import io.exflo.domain.ContractDestroyed
 import io.exflo.domain.ContractEvents
 import io.exflo.domain.ContractType
-import io.exflo.ingestion.extensions.bigDecimal
+import io.exflo.ingestion.extensions.toBigDecimal
 import io.exflo.ingestion.extensions.contractEvents
 import io.exflo.postgres.jooq.enums.ContractEventType
 import io.exflo.postgres.jooq.tables.records.AccountRecord
@@ -57,7 +57,7 @@ fun BlockHeader.toBlockHeaderRecord(totalDifficulty: UInt256): BlockHeaderRecord
             this.transactionsRoot = header.transactionsRoot.toHexString()
             this.coinbase = header.coinbase.toHexString()
             this.difficulty = header.difficulty.toBigInteger().toBigDecimal()
-            this.totalDifficulty = totalDifficulty.bigDecimal()
+            this.totalDifficulty = totalDifficulty.toBigDecimal()
             header.extraData?.let { this.setExtraData(*(it.toArray())) }
             this.gasLimit = header.gasLimit
             this.gasUsed = header.gasUsed
@@ -106,12 +106,12 @@ fun Transaction.toTransactionRecord(header: BlockHeaderRecord, index: Int): Tran
             this.nonce = tx.nonce
             this.from = tx.sender.toHexString()
             this.to = tx.to.orElse(null)?.toHexString()
-            this.value = tx.value.bigDecimal()
-            this.gasPrice = tx.gasPrice.bigDecimal()
+            this.value = tx.value.toBigDecimal()
+            this.gasPrice = tx.gasPrice.toBigDecimal()
             this.gasLimit = tx.gasLimit
             tx.payload?.let { this.setPayload(*(it.toArray())) }
             tx.chainId.orElse(null)?.let { setChainId(it.toBigDecimal()) }
-            this.fee = tx.gasPrice.multiply(tx.gasLimit).bigDecimal()
+            this.fee = tx.gasPrice.multiply(tx.gasLimit).toBigDecimal()
             this.recId = tx.signature.recId.toShort()
             this.r = tx.signature.r.toBigDecimal()
             this.s = tx.signature.s.toBigDecimal()
@@ -174,7 +174,7 @@ fun TransactionReceipt.toEventRecords(
                             this.type = ContractEventType.fungible_approval
                             this.ownerAddress = event.owner.toHexString()
                             this.spenderAddress = event.spender.toHexString()
-                            this.value = event.value.bigDecimal()
+                            this.value = event.value.toBigDecimal()
                         }
                 }
 
@@ -188,7 +188,7 @@ fun TransactionReceipt.toEventRecords(
                             this.type = ContractEventType.fungible_transfer
                             this.fromAddress = event.from.toHexString()
                             this.toAddress = event.to.toHexString()
-                            this.value = event.value.bigDecimal()
+                            this.value = event.value.toBigDecimal()
                         }
                 }
 
@@ -202,7 +202,7 @@ fun TransactionReceipt.toEventRecords(
                             this.type = ContractEventType.non_fungible_approval
                             this.ownerAddress = event.owner.toHexString()
                             this.approvedAddress = event.approved.toHexString()
-                            this.tokenId = event.tokenId.bigDecimal()
+                            this.tokenId = event.tokenId.toBigDecimal()
                         }
                 }
 
@@ -230,7 +230,7 @@ fun TransactionReceipt.toEventRecords(
                             this.type = ContractEventType.non_fungible_transfer
                             this.fromAddress = event.from.toHexString()
                             this.toAddress = event.to.toHexString()
-                            this.tokenId = event.tokenId.bigDecimal()
+                            this.tokenId = event.tokenId.toBigDecimal()
                         }
                 }
 
@@ -244,7 +244,7 @@ fun TransactionReceipt.toEventRecords(
                             this.type = ContractEventType.sent
                             this.fromAddress = event.from.toHexString()
                             this.toAddress = event.to.toHexString()
-                            this.amount = event.amount.bigDecimal()
+                            this.amount = event.amount.toBigDecimal()
                             this.setData(*event.data.toArray())
                             this.setOperatorData(*event.operatorData.toArray())
                         }
@@ -259,7 +259,7 @@ fun TransactionReceipt.toEventRecords(
                             this.contractAddress = event.contract.toHexString()
                             this.type = ContractEventType.minted
                             this.toAddress = event.to.toHexString()
-                            this.amount = event.amount.bigDecimal()
+                            this.amount = event.amount.toBigDecimal()
                             this.setData(*event.data.toArray())
                             this.setOperatorData(*event.operatorData.toArray())
                         }
@@ -274,7 +274,7 @@ fun TransactionReceipt.toEventRecords(
                             this.contractAddress = event.contract.toHexString()
                             this.type = ContractEventType.burned
                             this.toAddress = event.to.toHexString()
-                            this.amount = event.amount.bigDecimal()
+                            this.amount = event.amount.toBigDecimal()
                             this.setData(*event.data.toArray())
                             this.setOperatorData(*event.operatorData.toArray())
                         }
@@ -317,8 +317,8 @@ fun TransactionReceipt.toEventRecords(
                             this.operatorAddress = event.operator.toHexString()
                             this.fromAddress = event.from.toHexString()
                             this.toAddress = event.to.toHexString()
-                            this.id = event.id.bigDecimal()
-                            this.value = event.value.bigDecimal()
+                            this.id = event.id.toBigDecimal()
+                            this.value = event.value.toBigDecimal()
                         }
                 }
 
@@ -347,7 +347,7 @@ fun TransactionReceipt.toEventRecords(
                             this.contractAddress = event.contract.toHexString()
                             this.type = ContractEventType.uri
                             this.valueStr = event.value
-                            this.id = event.id.bigDecimal()
+                            this.id = event.id.toBigDecimal()
                         }
                 }
 
@@ -363,7 +363,7 @@ fun Account.toAccountRecord(header: BlockHeaderRecord): AccountRecord =
             this.blockNumber = header.number
             this.blockHash = header.hash
             this.nonce = this@toAccountRecord.nonce
-            this.balance = this@toAccountRecord.balance.bigDecimal()
+            this.balance = this@toAccountRecord.balance.toBigDecimal()
         }
 
 fun ContractType.toContractTypeRecord() = io.exflo.postgres.jooq.enums.ContractType.valueOf(name)
@@ -382,10 +382,10 @@ fun ContractCreated.toContractCreatedRecord(header: BlockHeaderRecord): Contract
             )
             this.name = metadata?.name
             this.symbol = metadata?.symbol
-            this.totalSupply = metadata?.totalSupply?.bigDecimal()
+            this.totalSupply = metadata?.totalSupply?.toBigDecimal()
             this.decimals = metadata?.decimals?.toShort()
-            this.granularity = metadata?.granularity?.bigDecimal()
-            this.cap = metadata?.cap?.bigDecimal()
+            this.granularity = metadata?.granularity?.toBigDecimal()
+            this.cap = metadata?.cap?.toBigDecimal()
             this.blockHash = header.hash
             this.blockNumber = header.number
             this.timestamp = header.timestamp
@@ -397,7 +397,7 @@ fun ContractDestroyed.toContractDestroyedRecord(header: BlockHeaderRecord): Cont
         .apply {
             this.address = contractAddress.toHexString()
             this.refundAddress = this@toContractDestroyedRecord.refundAddress.toHexString()
-            this.refundAmount = this@toContractDestroyedRecord.refundAmount.bigDecimal()
+            this.refundAmount = this@toContractDestroyedRecord.refundAmount.toBigDecimal()
             this.blockHash = header.hash
             this.blockNumber = header.number
             this.timestamp = header.timestamp
@@ -411,8 +411,8 @@ fun BalanceDelta.toBalanceDeltaRecord(blockHeader: BlockHeaderRecord): BalanceDe
             this.contractAddress = this@toBalanceDeltaRecord.contractAddress?.toHexString()
             this.from = this@toBalanceDeltaRecord.from?.toHexString()
             this.to = this@toBalanceDeltaRecord.to?.toHexString()
-            this.amount = this@toBalanceDeltaRecord.amount?.bigDecimal()
-            this.tokenId = this@toBalanceDeltaRecord.tokenId?.bigDecimal()
+            this.amount = this@toBalanceDeltaRecord.amount?.toBigDecimal()
+            this.tokenId = this@toBalanceDeltaRecord.tokenId?.toBigDecimal()
             this.blockNumber = blockHeader.number
             this.blockHash = blockHeader.hash
             this.blockTimestamp = blockHeader.timestamp
