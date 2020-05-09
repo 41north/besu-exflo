@@ -21,7 +21,6 @@ import io.exflo.domain.ContractType
 import io.exflo.ingestion.KoinTestIngestionModules
 import io.exflo.ingestion.TruffleSpecs.SelfDestructs.SelfDestruct
 import io.exflo.ingestion.TruffleSpecs.SelfDestructs.SelfDestructDelegatingCalls
-import io.exflo.ingestion.TruffleSpecs.SelfDestructs.SelfDestructInConstructor
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.CappedERC20
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.DetailedERC20
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.InvalidERC20
