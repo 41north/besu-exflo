@@ -16,30 +16,22 @@
 
 package io.exflo.domain
 
+import io.exflo.domain.fb.Block
 import org.apache.tuweni.units.bigints.UInt256
-import org.hyperledger.besu.ethereum.core.Address
-import org.hyperledger.besu.ethereum.core.Hash
-import org.hyperledger.besu.ethereum.core.Wei
+import org.hyperledger.besu.ethereum.core.Account
+import org.hyperledger.besu.ethereum.core.BlockBody
+import org.hyperledger.besu.ethereum.core.BlockHeader
+import org.hyperledger.besu.ethereum.core.TransactionReceipt
 
-data class BalanceDelta(
-    val deltaType: DeltaType,
-    val pc: Int,
-    val transactionHash: Hash? = null,
-    val transactionIndex: Int? = null,
-    val contractAddress: Address? = null,
-    val from: Address? = null,
-    val to: Address? = null,
-    val amount: Wei? = null,
-    val tokenId: UInt256? = null
+/**
+ * Data class that stores different computed information related to a [Block].
+ */
+data class FullBlock(
+    val header: BlockHeader?,
+    val body: BlockBody?,
+    val receipts: List<TransactionReceipt>,
+    val totalDifficulty: UInt256?,
+    val trace: BlockTrace?,
+    val touchedAccounts: List<Account>?,
+    val balanceDeltas: List<BalanceDelta>?
 )
-
-enum class DeltaType {
-    BLOCK_REWARD,
-    OMMER_REWARD,
-    TX,
-    TX_FEE,
-    INTERNAL_TX,
-    TOKEN_TRANSFER,
-    CONTRACT_CREATION,
-    CONTRACT_DESTRUCTION
-}

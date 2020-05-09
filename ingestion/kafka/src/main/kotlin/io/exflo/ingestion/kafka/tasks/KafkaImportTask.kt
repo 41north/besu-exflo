@@ -17,12 +17,14 @@
 package io.exflo.ingestion.kafka.tasks
 
 import com.google.flatbuffers.FlatBufferBuilder
+import io.exflo.domain.serialization.toFlatBuffer
 import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity.BODY
 import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity.HEADER
 import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity.RECEIPTS
 import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity.TRACES
 import io.exflo.ingestion.core.ImportTask
 import io.exflo.ingestion.kafka.ExfloKafkaCliOptions
+import io.exflo.ingestion.tokens.events.LogParser
 import io.exflo.ingestion.tracker.BlockReader
 import io.kcache.KafkaCache
 import io.kcache.KafkaCacheConfig
@@ -163,7 +165,7 @@ class BlockImportTask : ImportTask, KoinComponent {
             ?.let { block ->
                 FlatBufferBuilder(1024)
                     .let { bb ->
-                        val root = block.toFlatBuffer(bb)
+                        val root = block.toFlatBuffer(LogParser::parse, bb)
                         bb.finish(root)
                         bb.dataBuffer()
                     }

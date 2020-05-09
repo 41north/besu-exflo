@@ -19,7 +19,7 @@ package io.exflo.ingestion.tracker
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import io.exflo.domain.BlockTrace
-import io.exflo.ingestion.core.FullBlock
+import io.exflo.domain.FullBlock
 import io.exflo.ingestion.extensions.toBalanceDeltas
 import io.exflo.ingestion.extensions.touchedAccounts
 import io.exflo.ingestion.tracer.TransactionTraceParser
