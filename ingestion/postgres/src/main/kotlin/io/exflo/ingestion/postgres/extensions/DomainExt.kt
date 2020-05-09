@@ -23,7 +23,6 @@ import io.exflo.domain.ContractCreated
 import io.exflo.domain.ContractDestroyed
 import io.exflo.domain.ContractEvents
 import io.exflo.domain.ContractType
-import io.exflo.ingestion.extensions.toBigDecimal
 import io.exflo.ingestion.extensions.contractEvents
 import io.exflo.postgres.jooq.enums.ContractEventType
 import io.exflo.postgres.jooq.tables.records.AccountRecord

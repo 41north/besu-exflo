@@ -16,8 +16,6 @@
 
 package io.exflo.ingestion.core
 
-import io.exflo.ingestion.extensions.hexToLong
-import io.exflo.ingestion.extensions.toWei
 import org.apache.tuweni.bytes.Bytes
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.units.bigints.UInt256
@@ -27,6 +25,8 @@ import org.hyperledger.besu.ethereum.core.AccountStorageEntry
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.Wei
+import java.math.BigInteger
+import java.util.Locale
 import java.util.NavigableMap
 
 /**
@@ -74,12 +74,27 @@ class InMemoryAccount(
 
         fun fromGenesisAllocation(allocation: GenesisAllocation): InMemoryAccount {
 
-            val nonce = allocation.nonce.hexToLong()
+            val nonce = toUnsignedLong(allocation.nonce)
             val address = Address.fromHexString(allocation.address)
-            val balance = allocation.balance.toWei()
+            val balance = toWei(allocation.balance)
             val code = allocation.code?.let { Bytes.fromHexString(it) }
 
             return InMemoryAccount(address, balance, nonce, code, null)
         }
+
+        private fun toUnsignedLong(s: String): Long {
+            var value = s.toLowerCase(Locale.US)
+            if (value.startsWith("0x")) {
+                value = value.substring(2)
+            }
+            return java.lang.Long.parseUnsignedLong(value, 16)
+        }
+
+        private fun toWei(s: String): Wei =
+            if (s.startsWith("0x")) {
+                Wei.fromHexString(s)
+            } else {
+                Wei.of(BigInteger(s))
+            }
     }
 }

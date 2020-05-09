@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion.extensions
+package io.exflo.ingestion.postgres.extensions
 
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.ethereum.core.Wei
-import java.math.BigInteger
-import java.util.Locale
 
-fun String.hexToLong(): Long {
-    var lowercase = this.toLowerCase(Locale.US)
-    if (lowercase.startsWith("0x")) {
-        lowercase = lowercase.substring(2)
-    }
-    return lowercase.toLong(16)
-}
+fun UInt256.toBigDecimal() = toBigInteger().toBigDecimal()
 
-fun String.toWei(): Wei =
-    if (this.startsWith("0x")) {
-        Wei.fromHexString(this)
-    } else {
-        Wei.of(BigInteger(this))
-    }
+fun Wei.toBigDecimal() = this.toBigInteger().toBigDecimal()
