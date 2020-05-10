@@ -14,9 +14,24 @@
  * limitations under the License.
  */
 
-package io.exflo.domain.extensions
+package io.exflo.domain
 
-import java.math.BigInteger
+import io.exflo.domain.fb.Block
 import org.apache.tuweni.units.bigints.UInt256
+import org.hyperledger.besu.ethereum.core.Account
+import org.hyperledger.besu.ethereum.core.BlockBody
+import org.hyperledger.besu.ethereum.core.BlockHeader
+import org.hyperledger.besu.ethereum.core.TransactionReceipt
 
-fun BigInteger.toUInt256(): UInt256 = UInt256.valueOf(this)
+/**
+ * Data class that stores different computed information related to a [Block].
+ */
+data class FullBlock(
+    val header: BlockHeader?,
+    val body: BlockBody?,
+    val receipts: List<TransactionReceipt>,
+    val totalDifficulty: UInt256?,
+    val trace: BlockTrace?,
+    val touchedAccounts: List<Account>?,
+    val balanceDeltas: List<BalanceDelta>?
+)

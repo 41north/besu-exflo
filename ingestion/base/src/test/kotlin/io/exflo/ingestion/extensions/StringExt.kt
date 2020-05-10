@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion.postgres.extensions
+package io.exflo.ingestion.extensions
 
-import java.math.BigInteger
+import org.hyperledger.besu.ethereum.core.Address
 
-val ByteArray.bigInteger: BigInteger
-    get() = BigInteger(this)
+fun String.hexToAddress(): Address = Address.fromHexString(this)

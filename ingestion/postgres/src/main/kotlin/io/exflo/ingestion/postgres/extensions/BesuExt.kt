@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package io.exflo.domain.extensions
+package io.exflo.ingestion.postgres.extensions
 
-import org.hyperledger.besu.ethereum.core.Address
+import org.apache.tuweni.units.bigints.UInt256
+import org.hyperledger.besu.ethereum.core.Wei
 
-fun String.hexToAddress(): Address = Address.fromHexString(this)
+fun UInt256.toBigDecimal() = toBigInteger().toBigDecimal()
+
+fun Wei.toBigDecimal() = this.toBigInteger().toBigDecimal()

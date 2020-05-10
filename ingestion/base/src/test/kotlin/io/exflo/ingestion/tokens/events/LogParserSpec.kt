@@ -17,7 +17,7 @@
 package io.exflo.ingestion.tokens.events
 
 import io.exflo.domain.ContractEvents
-import io.exflo.domain.extensions.hexToAddress
+import io.exflo.ingestion.extensions.hexToAddress
 import io.exflo.ingestion.KoinTestIngestionModules
 import io.exflo.ingestion.TruffleSpecs.Tokens.TokenEvents.ERC1155Events
 import io.exflo.ingestion.TruffleSpecs.Tokens.TokenEvents.ERC20Events
