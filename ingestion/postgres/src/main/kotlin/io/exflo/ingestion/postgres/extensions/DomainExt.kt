@@ -120,10 +120,10 @@ fun Transaction.toTransactionRecord(header: BlockHeaderRecord, index: Int): Tran
 }
 
 fun TransactionReceipt.toTransactionReceiptRecord(
-    objectMapper: ObjectMapper,
-    blockHeader: BlockHeaderRecord,
-    transaction: TransactionRecord,
-    gasUsed: Long
+  objectMapper: ObjectMapper,
+  blockHeader: BlockHeaderRecord,
+  transaction: TransactionRecord,
+  gasUsed: Long
 ): TransactionReceiptRecord {
 
     val receipt = this
@@ -150,8 +150,8 @@ fun TransactionReceipt.toTransactionReceiptRecord(
 }
 
 fun TransactionReceipt.toEventRecords(
-    blockHeader: BlockHeaderRecord,
-    transaction: TransactionRecord
+  blockHeader: BlockHeaderRecord,
+  transaction: TransactionRecord
 ): List<TableRecord<*>> {
 
     val blockNumber = blockHeader.number

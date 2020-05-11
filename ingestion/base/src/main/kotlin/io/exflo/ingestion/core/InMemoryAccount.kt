@@ -35,11 +35,11 @@ import java.util.NavigableMap
  * It's used for generating synthetic [GenesisAllocation] accounts for genesis block.
  */
 class InMemoryAccount(
-    private val address: Address,
-    private val balance: Wei,
-    private val nonce: Long,
-    private val code: Bytes?,
-    private val codeHash: Hash?
+  private val address: Address,
+  private val balance: Wei,
+  private val nonce: Long,
+  private val code: Bytes?,
+  private val codeHash: Hash?
 ) : Account {
 
     override fun getBalance(): Wei = balance

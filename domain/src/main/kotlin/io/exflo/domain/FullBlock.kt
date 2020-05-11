@@ -27,11 +27,11 @@ import org.hyperledger.besu.ethereum.core.TransactionReceipt
  * Data class that stores different computed information related to a [Block].
  */
 data class FullBlock(
-    val header: BlockHeader?,
-    val body: BlockBody?,
-    val receipts: List<TransactionReceipt>,
-    val totalDifficulty: UInt256?,
-    val trace: BlockTrace?,
-    val touchedAccounts: List<Account>?,
-    val balanceDeltas: List<BalanceDelta>?
+  val header: BlockHeader?,
+  val body: BlockBody?,
+  val receipts: List<TransactionReceipt>,
+  val totalDifficulty: UInt256?,
+  val trace: BlockTrace?,
+  val touchedAccounts: List<Account>?,
+  val balanceDeltas: List<BalanceDelta>?
 )

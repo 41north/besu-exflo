@@ -19,6 +19,6 @@ package io.exflo.testutil
 import org.hyperledger.besu.ethereum.chain.GenesisState
 
 data class TestChainSummary(
-    val genesisState: GenesisState,
-    val head: Long
+  val genesisState: GenesisState,
+  val head: Long
 )

@@ -43,7 +43,7 @@ object KeyValueStores {
  * Factory for creating intercepting key-value storage instances.
  */
 class InterceptingKeyValueStorageFactory(
-    private val factory: KeyValueStorageFactory
+  private val factory: KeyValueStorageFactory
 ) : KeyValueStorageFactory {
 
     override fun getName(): String = factory.name
@@ -52,9 +52,9 @@ class InterceptingKeyValueStorageFactory(
 
     @Throws(StorageException::class)
     override fun create(
-        segment: SegmentIdentifier,
-        configuration: BesuConfiguration,
-        metricsSystem: MetricsSystem
+      segment: SegmentIdentifier,
+      configuration: BesuConfiguration,
+      metricsSystem: MetricsSystem
     ): KeyValueStorage {
         val storage = factory.create(segment, configuration, metricsSystem)
         KeyValueStores[segment] = storage
@@ -69,7 +69,7 @@ class InterceptingKeyValueStorageFactory(
  * Factory for creating intercepting key-value storage instances.
  */
 class InterceptingPrivacyKeyValueStorageFactory(
-    private val factory: PrivacyKeyValueStorageFactory
+  private val factory: PrivacyKeyValueStorageFactory
 ) : PrivacyKeyValueStorageFactory {
 
     override fun getVersion(): Int = factory.version
@@ -78,9 +78,9 @@ class InterceptingPrivacyKeyValueStorageFactory(
 
     @Throws(StorageException::class)
     override fun create(
-        segment: SegmentIdentifier,
-        configuration: BesuConfiguration,
-        metricsSystem: MetricsSystem
+      segment: SegmentIdentifier,
+      configuration: BesuConfiguration,
+      metricsSystem: MetricsSystem
     ): KeyValueStorage {
         val storage = factory.create(segment, configuration, metricsSystem)
         KeyValueStores[segment] = storage

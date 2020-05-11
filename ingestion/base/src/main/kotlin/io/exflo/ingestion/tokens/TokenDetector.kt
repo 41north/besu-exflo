@@ -71,10 +71,10 @@ import org.hyperledger.besu.ethereum.transaction.TransactionSimulator
  *
  */
 class TokenDetector(
-    private val transactionSimulator: TransactionSimulator,
-    private val blockHash: Hash,
-    private val contractAddress: Address,
-    private val contractCode: Bytes
+  private val transactionSimulator: TransactionSimulator,
+  private val blockHash: Hash,
+  private val contractAddress: Address,
+  private val contractCode: Bytes
 ) {
 
     private val logger = LogManager.getLogger()

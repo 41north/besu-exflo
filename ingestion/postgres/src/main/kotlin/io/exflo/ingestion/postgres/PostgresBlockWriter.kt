@@ -34,11 +34,11 @@ import java.util.concurrent.TimeUnit
 import javax.sql.DataSource
 
 class PostgresBlockWriter(
-    classLoader: ClassLoader,
-    objectMapper: ObjectMapper,
-    dataSource: DataSource,
-    blockReader: BlockReader,
-    cliOptions: ExfloPostgresCliOptions
+  classLoader: ClassLoader,
+  objectMapper: ObjectMapper,
+  dataSource: DataSource,
+  blockReader: BlockReader,
+  cliOptions: ExfloPostgresCliOptions
 ) : BlockWriter {
 
     private val executor = Executors.newCachedThreadPool {

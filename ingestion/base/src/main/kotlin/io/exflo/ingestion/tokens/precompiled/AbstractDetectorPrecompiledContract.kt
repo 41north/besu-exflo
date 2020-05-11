@@ -28,7 +28,7 @@ import org.hyperledger.besu.ethereum.vm.MessageFrame
 import org.hyperledger.besu.ethereum.vm.OperationTracer
 
 abstract class AbstractDetectorPrecompiledContract(
-    private val evm: EVM
+  private val evm: EVM
 ) : PrecompiledContract {
 
     abstract val code: Code
