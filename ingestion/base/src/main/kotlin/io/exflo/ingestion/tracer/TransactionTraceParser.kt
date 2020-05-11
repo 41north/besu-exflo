@@ -78,7 +78,7 @@ fun FlatTrace.toInternalTransaction(programCounter: Int): InternalTransaction? {
 }
 
 class TransactionTraceParser(
-    private val transactionSimulator: TransactionSimulator
+  private val transactionSimulator: TransactionSimulator
 ) {
 
     var programCounter = 0

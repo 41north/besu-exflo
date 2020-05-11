@@ -35,9 +35,9 @@ import org.web3j.abi.datatypes.generated.Uint8
  * This class in charge of extracting common metadata fields founds on Token standards like ERC20, ERC721, ERC777.
  */
 class ERCMetadataRetriever(
-    private val transactionSimulator: TransactionSimulator,
-    private val contractAddress: Address,
-    private val blockHash: Hash
+  private val transactionSimulator: TransactionSimulator,
+  private val contractAddress: Address,
+  private val blockHash: Hash
 ) {
 
     @Suppress("UNCHECKED_CAST")
@@ -150,9 +150,9 @@ class ERCMetadataRetriever(
     }
 
     private fun execute(
-        method: Bytes,
-        address: Address,
-        blockHash: Hash
+      method: Bytes,
+      address: Address,
+      blockHash: Hash
     ): TransactionSimulatorResult? = transactionSimulator.process(
         CallParameter(
             null,

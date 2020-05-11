@@ -26,49 +26,49 @@ import org.hyperledger.besu.ethereum.core.Wei
 import org.hyperledger.besu.ethereum.mainnet.TransactionProcessor
 
 data class BlockTrace(
-    val block: Block,
-    val rewards: Map<Hash, Wei>,
-    val transactionTraces: List<TransactionTrace>,
-    val feesByTransaction: Map<Transaction, Wei>,
-    val totalTransactionsFees: Wei,
-    val jsonTrace: String
+  val block: Block,
+  val rewards: Map<Hash, Wei>,
+  val transactionTraces: List<TransactionTrace>,
+  val feesByTransaction: Map<Transaction, Wei>,
+  val totalTransactionsFees: Wei,
+  val jsonTrace: String
 )
 
 data class TransactionTrace(
-    val transaction: Transaction,
-    val result: TransactionProcessor.Result,
-    val contractsCreated: List<ContractCreated>,
-    val contractsDestroyed: List<ContractDestroyed>,
-    val internalTransactions: List<InternalTransaction>,
-    val touchedAccounts: Set<Address>
+  val transaction: Transaction,
+  val result: TransactionProcessor.Result,
+  val contractsCreated: List<ContractCreated>,
+  val contractsDestroyed: List<ContractDestroyed>,
+  val internalTransactions: List<InternalTransaction>,
+  val touchedAccounts: Set<Address>
 )
 
 data class ContractCreated(
-    val transactionHash: Hash? = null,
-    val originatorAddress: Address,
-    val contractAddress: Address,
-    val code: Bytes,
-    val amount: Wei,
-    val type: ContractType? = null,
-    val capabilities: Set<ContractCapability>? = null,
-    val metadata: ContractMetadata? = null,
-    val pc: Int
+  val transactionHash: Hash? = null,
+  val originatorAddress: Address,
+  val contractAddress: Address,
+  val code: Bytes,
+  val amount: Wei,
+  val type: ContractType? = null,
+  val capabilities: Set<ContractCapability>? = null,
+  val metadata: ContractMetadata? = null,
+  val pc: Int
 )
 
 data class ContractDestroyed(
-    val transactionHash: Hash? = null,
-    val contractAddress: Address,
-    val refundAddress: Address,
-    val refundAmount: Wei,
-    val pc: Int
+  val transactionHash: Hash? = null,
+  val contractAddress: Address,
+  val refundAddress: Address,
+  val refundAmount: Wei,
+  val pc: Int
 )
 
 data class InternalTransaction(
-    val transactionHash: Hash? = null,
-    val fromAddress: Address,
-    val toAddress: Address,
-    val amount: Wei,
-    val pc: Int
+  val transactionHash: Hash? = null,
+  val fromAddress: Address,
+  val toAddress: Address,
+  val amount: Wei,
+  val pc: Int
 )
 
 enum class ContractType {
@@ -96,10 +96,10 @@ enum class ContractCapability {
 }
 
 data class ContractMetadata(
-    var name: String? = null,
-    var symbol: String? = null,
-    var decimals: Byte? = null,
-    var totalSupply: UInt256? = null,
-    var granularity: UInt256? = null,
-    var cap: UInt256? = null
+  var name: String? = null,
+  var symbol: String? = null,
+  var decimals: Byte? = null,
+  var totalSupply: UInt256? = null,
+  var granularity: UInt256? = null,
+  var cap: UInt256? = null
 )

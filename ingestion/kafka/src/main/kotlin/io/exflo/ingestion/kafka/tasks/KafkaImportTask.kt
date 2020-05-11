@@ -54,9 +54,9 @@ enum class HeaderType {
 }
 
 data class HeaderUpdate(
-    val type: HeaderType,
-    val header: BlockHeader,
-    val byteBuffer: ByteBuffer? = null
+  val type: HeaderType,
+  val header: BlockHeader,
+  val byteBuffer: ByteBuffer? = null
 )
 
 class BlockImportTask : ImportTask, KoinComponent {

@@ -46,9 +46,9 @@ import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 
 class TraceImportTask(
-    private val objectMapper: ObjectMapper,
-    private val blockReader: BlockReader,
-    dataSource: DataSource
+  private val objectMapper: ObjectMapper,
+  private val blockReader: BlockReader,
+  dataSource: DataSource
 ) : ImportTask {
 
     private val log = LogManager.getLogger()

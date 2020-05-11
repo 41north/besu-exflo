@@ -37,8 +37,8 @@ import org.web3j.abi.datatypes.generated.Uint256 as AbiUint256
 
 @Suppress("UNCHECKED_CAST")
 enum class ContractEventParsers(
-    private val web3Event: AbiEvent,
-    private val parser: (Address, List<AbiType<*>>) -> ContractEvent?
+  private val web3Event: AbiEvent,
+  private val parser: (Address, List<AbiType<*>>) -> ContractEvent?
 ) {
 
     FungibleApproval(

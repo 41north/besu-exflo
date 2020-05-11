@@ -128,9 +128,9 @@ object EVMFactory {
 
 internal object EVMRegistry {
     private fun registerFrontierOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int
+      registry: OperationRegistry,
+      gasCalculator: GasCalculator,
+      accountVersion: Int
     ) {
         registry.put(AddOperation(gasCalculator), accountVersion)
         registry.put(AddOperation(gasCalculator), accountVersion)
@@ -227,18 +227,18 @@ internal object EVMRegistry {
     }
 
     private fun registerHomesteadOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int
+      registry: OperationRegistry,
+      gasCalculator: GasCalculator,
+      accountVersion: Int
     ) {
         registerFrontierOpcodes(registry, gasCalculator, accountVersion)
         registry.put(DelegateCallOperation(gasCalculator), accountVersion)
     }
 
     private fun registerByzantiumOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int
+      registry: OperationRegistry,
+      gasCalculator: GasCalculator,
+      accountVersion: Int
     ) {
         registerHomesteadOpcodes(registry, gasCalculator, accountVersion)
         registry.put(ReturnDataCopyOperation(gasCalculator), accountVersion)
@@ -248,9 +248,9 @@ internal object EVMRegistry {
     }
 
     private fun registerConstantinopleOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int
+      registry: OperationRegistry,
+      gasCalculator: GasCalculator,
+      accountVersion: Int
     ) {
         registerByzantiumOpcodes(registry, gasCalculator, accountVersion)
         registry.put(Create2Operation(gasCalculator), accountVersion)
@@ -261,10 +261,10 @@ internal object EVMRegistry {
     }
 
     fun registerIstanbulOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int,
-        chainId: BigInteger
+      registry: OperationRegistry,
+      gasCalculator: GasCalculator,
+      accountVersion: Int,
+      chainId: BigInteger
     ) {
         registerConstantinopleOpcodes(registry, gasCalculator, accountVersion)
         registry.put(
