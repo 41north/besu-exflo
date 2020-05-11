@@ -20,7 +20,6 @@ import com.tinder.StateMachine
 import io.exflo.domain.ContractCapability
 import io.exflo.domain.ContractMetadata
 import io.exflo.domain.ContractType
-import io.exflo.ingestion.extensions.sanitize
 import io.exflo.ingestion.tokens.detectors.ERC1155Detector
 import io.exflo.ingestion.tokens.detectors.ERC165Detector
 import io.exflo.ingestion.tokens.detectors.ERC20Detector
@@ -179,8 +178,8 @@ class TokenDetector(
                 capabilities.add(ContractCapability.ERC777)
 
                 metadata = metadata.copy(
-                    name = metadataRetriever.name().sanitize(),
-                    symbol = metadataRetriever.symbol().sanitize(),
+                    name = sanitize(metadataRetriever.name()),
+                    symbol = sanitize(metadataRetriever.symbol()),
                     totalSupply = metadataRetriever.totalSupply(),
                     granularity = metadataRetriever.granularity()
                 )
@@ -245,8 +244,8 @@ class TokenDetector(
                     ?.apply {
                         capabilities.add(ContractCapability.ERC721_METADATA)
                         metadata = metadata.copy(
-                            name = metadataRetriever.name().sanitize(),
-                            symbol = metadataRetriever.symbol().sanitize()
+                            name = sanitize(metadataRetriever.name()),
+                            symbol = sanitize(metadataRetriever.symbol())
                         )
                     }
 
@@ -290,8 +289,8 @@ class TokenDetector(
                     ?.apply {
                         capabilities.add(ContractCapability.ERC20_DETAILED)
                         metadata = metadata.copy(
-                            name = metadataRetriever.name().sanitize(),
-                            symbol = metadataRetriever.symbol().sanitize(),
+                            name = sanitize(metadataRetriever.name()),
+                            symbol = sanitize(metadataRetriever.symbol()),
                             decimals = metadataRetriever.decimals()
                         )
                     }
@@ -341,6 +340,21 @@ class TokenDetector(
         stateMachine.transition(Event.OnCheckERC777)
         return Triple(type, capabilities.toSet(), metadata)
     }
+
+    private fun sanitize(s: String?): String? =
+        s
+            // removes NUL chars
+            ?.replace("\u0000", "")
+            // removes backslash+u0000
+            ?.replace("\\u0000", "")
+            // strips off all non-ASCII characters
+            ?.replace("[^\\x00-\\x7F]", "")
+            // erases all the ASCII control characters
+            ?.replace("[\\p{Cntrl}&&[^\r\n\t]]", "")
+            // removes non-printable characters from Unicode
+            ?.replace("\\p{C}", "")
+            // removes extra spaces
+            ?.trim()
 
     private sealed class State {
         object Initial : State()
