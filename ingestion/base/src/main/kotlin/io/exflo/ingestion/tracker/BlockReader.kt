@@ -67,19 +67,19 @@ class BlockReader : KoinComponent {
     fun chainHead(): Hash? = blockchainStorage.chainHead.orElse(null)
 
     fun fullBlock(
-        hash: Hash,
-        withHeader: Boolean = true,
-        withBody: Boolean = true,
-        withReceipts: Boolean = true,
-        withTrace: Boolean = true
+      hash: Hash,
+      withHeader: Boolean = true,
+      withBody: Boolean = true,
+      withReceipts: Boolean = true,
+      withTrace: Boolean = true
     ): FullBlock? = block(hash)?.let { fullBlock(it, withHeader, withBody, withReceipts, withTrace) }
 
     fun fullBlock(
-        block: Block,
-        withHeader: Boolean = true,
-        withBody: Boolean = true,
-        withReceipts: Boolean = true,
-        withTrace: Boolean = true
+      block: Block,
+      withHeader: Boolean = true,
+      withBody: Boolean = true,
+      withReceipts: Boolean = true,
+      withTrace: Boolean = true
     ): FullBlock? =
         block.let {
             val header = if (withHeader) it.header else null
@@ -170,9 +170,9 @@ class BlockReader : KoinComponent {
             }
 
     private fun generateTracesFromTransactionTraceAndBlock(
-        transactionTraces: List<TransactionTrace>,
-        block: Block,
-        resultArrayNode: ArrayNode
+      transactionTraces: List<TransactionTrace>,
+      block: Block,
+      resultArrayNode: ArrayNode
     ): List<ExfloTransactionTrace> =
         transactionTraces.map { txTrace ->
 

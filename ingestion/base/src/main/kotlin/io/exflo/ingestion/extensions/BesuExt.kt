@@ -35,10 +35,10 @@ import java.util.stream.Collectors
 fun TransactionReceipt.contractEvents(): List<ContractEvent> = LogParser.parse(this)
 
 fun BlockTrace.toBalanceDeltas(
-    blockHash: Hash,
-    coinbase: Address,
+  blockHash: Hash,
+  coinbase: Address,
     // map of ommer header hash to coinbase
-    ommerCoinbaseMap: Map<Hash, Address>
+  ommerCoinbaseMap: Map<Hash, Address>
 ): List<BalanceDelta> {
 
     // Rewards
@@ -158,8 +158,8 @@ fun BlockTrace.toBalanceDeltas(
 }
 
 fun BlockTrace.touchedAccounts(
-    networkConfig: EthNetworkConfig,
-    worldStateArchive: WorldStateArchive
+  networkConfig: EthNetworkConfig,
+  worldStateArchive: WorldStateArchive
 ): List<Account> {
 
     val block = this.block

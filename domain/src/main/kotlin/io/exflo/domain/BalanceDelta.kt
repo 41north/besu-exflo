@@ -22,15 +22,15 @@ import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.Wei
 
 data class BalanceDelta(
-    val deltaType: DeltaType,
-    val pc: Int,
-    val transactionHash: Hash? = null,
-    val transactionIndex: Int? = null,
-    val contractAddress: Address? = null,
-    val from: Address? = null,
-    val to: Address? = null,
-    val amount: Wei? = null,
-    val tokenId: UInt256? = null
+  val deltaType: DeltaType,
+  val pc: Int,
+  val transactionHash: Hash? = null,
+  val transactionIndex: Int? = null,
+  val contractAddress: Address? = null,
+  val from: Address? = null,
+  val to: Address? = null,
+  val amount: Wei? = null,
+  val tokenId: UInt256? = null
 )
 
 enum class DeltaType {

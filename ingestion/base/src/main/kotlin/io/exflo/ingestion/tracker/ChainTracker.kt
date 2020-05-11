@@ -31,11 +31,11 @@ import org.hyperledger.besu.plugin.data.SyncStatus
 import org.hyperledger.besu.plugin.services.BesuEvents
 
 class ChainTracker(
-    private val blockchain: Blockchain,
-    cliOptions: ExfloCliOptions,
-    networkConfig: EthNetworkConfig,
-    storeFactory: StoreFactory,
-    private val besuEvents: BesuEvents
+  private val blockchain: Blockchain,
+  cliOptions: ExfloCliOptions,
+  networkConfig: EthNetworkConfig,
+  storeFactory: StoreFactory,
+  private val besuEvents: BesuEvents
 ) {
 
     private val log = LogManager.getLogger()

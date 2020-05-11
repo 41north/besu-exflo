@@ -27,101 +27,101 @@ interface ContractEvent {
 object ContractEvents {
 
     data class FungibleApproval(
-        override val contract: Address,
-        val owner: Address,
-        val spender: Address,
-        val value: UInt256
+      override val contract: Address,
+      val owner: Address,
+      val spender: Address,
+      val value: UInt256
     ) : ContractEvent
 
     data class FungibleTransfer(
-        override val contract: Address,
-        val from: Address,
-        val to: Address,
-        val value: UInt256
+      override val contract: Address,
+      val from: Address,
+      val to: Address,
+      val value: UInt256
     ) : ContractEvent
 
     data class NonFungibleApproval(
-        override val contract: Address,
-        val owner: Address,
-        val approved: Address,
-        val tokenId: UInt256
+      override val contract: Address,
+      val owner: Address,
+      val approved: Address,
+      val tokenId: UInt256
     ) : ContractEvent
 
     data class ApprovalForAll(
-        override val contract: Address,
-        val owner: Address,
-        val operator: Address,
-        val approved: Boolean
+      override val contract: Address,
+      val owner: Address,
+      val operator: Address,
+      val approved: Boolean
     ) : ContractEvent
 
     data class NonFungibleTransfer(
-        override val contract: Address,
-        val from: Address,
-        val to: Address,
-        val tokenId: UInt256
+      override val contract: Address,
+      val from: Address,
+      val to: Address,
+      val tokenId: UInt256
     ) : ContractEvent
 
     data class Sent(
-        override val contract: Address,
-        val operator: Address,
-        val from: Address,
-        val to: Address,
-        val amount: UInt256,
-        val data: Bytes,
-        val operatorData: Bytes
+      override val contract: Address,
+      val operator: Address,
+      val from: Address,
+      val to: Address,
+      val amount: UInt256,
+      val data: Bytes,
+      val operatorData: Bytes
     ) : ContractEvent
 
     data class Minted(
-        override val contract: Address,
-        val operator: Address,
-        val to: Address,
-        val amount: UInt256,
-        val data: Bytes,
-        val operatorData: Bytes
+      override val contract: Address,
+      val operator: Address,
+      val to: Address,
+      val amount: UInt256,
+      val data: Bytes,
+      val operatorData: Bytes
     ) : ContractEvent
 
     data class Burned(
-        override val contract: Address,
-        val operator: Address,
-        val to: Address,
-        val amount: UInt256,
-        val data: Bytes,
-        val operatorData: Bytes
+      override val contract: Address,
+      val operator: Address,
+      val to: Address,
+      val amount: UInt256,
+      val data: Bytes,
+      val operatorData: Bytes
     ) : ContractEvent
 
     data class AuthorizedOperator(
-        override val contract: Address,
-        val operator: Address,
-        val holder: Address
+      override val contract: Address,
+      val operator: Address,
+      val holder: Address
     ) : ContractEvent
 
     data class RevokedOperator(
-        override val contract: Address,
-        val operator: Address,
-        val holder: Address
+      override val contract: Address,
+      val operator: Address,
+      val holder: Address
     ) : ContractEvent
 
     data class TransferSingle(
-        override val contract: Address,
-        val operator: Address,
-        val from: Address,
-        val to: Address,
-        val id: UInt256,
-        val value: UInt256
+      override val contract: Address,
+      val operator: Address,
+      val from: Address,
+      val to: Address,
+      val id: UInt256,
+      val value: UInt256
     ) : ContractEvent
 
     data class TransferBatch(
-        override val contract: Address,
-        val operator: Address,
-        val from: Address,
-        val to: Address,
-        val ids: List<UInt256>,
-        val values: List<UInt256>
+      override val contract: Address,
+      val operator: Address,
+      val from: Address,
+      val to: Address,
+      val ids: List<UInt256>,
+      val values: List<UInt256>
     ) : ContractEvent
 
     data class URI(
-        override val contract: Address,
-        val id: UInt256,
-        val value: String
+      override val contract: Address,
+      val id: UInt256,
+      val value: String
     ) : ContractEvent
 }

@@ -241,11 +241,11 @@ fun BesuTransactionReceipt.toFlatBuffer(bb: FlatBufferBuilder, logParser: (recei
 }
 
 fun BesuTransaction.toFlatBuffer(
-    bb: FlatBufferBuilder,
-    receipt: BesuTransactionReceipt,
-    fee: BesuWei,
-    trace: ExfloTransactionTrace?,
-    logParser: (receipt: BesuLog) -> ExfloContractEvent?
+  bb: FlatBufferBuilder,
+  receipt: BesuTransactionReceipt,
+  fee: BesuWei,
+  trace: ExfloTransactionTrace?,
+  logParser: (receipt: BesuLog) -> ExfloContractEvent?
 ): Int {
 
     val hashOffset = hash.toFlatBuffer(bb)
@@ -350,10 +350,10 @@ fun BesuBlockHeader.toFlatBuffer(bb: FlatBufferBuilder, totalDifficulty: BesuUIn
 }
 
 fun BesuBlockBody.toFlatBuffer(
-    bb: FlatBufferBuilder,
-    receipts: List<BesuTransactionReceipt>,
-    trace: ExfloBlockTrace?,
-    logParser: (receipt: BesuLog) -> ExfloContractEvent?
+  bb: FlatBufferBuilder,
+  receipts: List<BesuTransactionReceipt>,
+  trace: ExfloBlockTrace?,
+  logParser: (receipt: BesuLog) -> ExfloContractEvent?
 ): Int {
 
     val ommersVectorOffset = ommers

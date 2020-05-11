@@ -34,8 +34,8 @@ abstract class ExfloTestCase(val suite: ExfloTestSuite) {
 }
 
 class ExfloTestCaseHelper(
-    private val blockchain: Blockchain,
-    testReportStream: InputStream
+  private val blockchain: Blockchain,
+  testReportStream: InputStream
 ) {
 
     private val klaxon = Klaxon()
@@ -74,25 +74,25 @@ class ExfloTestCaseHelper(
 data class TruffleReport(val results: List<TestSuite>)
 
 data class TestSuite(
-    val uuid: String,
-    val title: String,
-    val file: String,
-    val tests: List<TestResult>
+  val uuid: String,
+  val title: String,
+  val file: String,
+  val tests: List<TestResult>
 )
 
 data class TestResult(
-    val uuid: String,
-    val description: String,
-    val web3: Web3TestResult
+  val uuid: String,
+  val description: String,
+  val web3: Web3TestResult
 )
 
 data class Web3TestResult(
-    val summaries: List<Web3TestResultSummary>
+  val summaries: List<Web3TestResultSummary>
 )
 
 data class Web3TestResultSummary(
-    val blockNumber: Long,
-    val blockHash: String,
-    val txHash: String,
-    val txStatus: Boolean
+  val blockNumber: Long,
+  val blockHash: String,
+  val txHash: String,
+  val txStatus: Boolean
 )
