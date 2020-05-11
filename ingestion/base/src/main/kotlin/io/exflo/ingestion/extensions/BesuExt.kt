@@ -22,7 +22,6 @@ import io.exflo.domain.ContractEvent
 import io.exflo.domain.DeltaType
 import io.exflo.ingestion.core.InMemoryAccount
 import io.exflo.ingestion.tokens.events.LogParser
-import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.cli.config.EthNetworkConfig
 import org.hyperledger.besu.config.GenesisConfigFile
 import org.hyperledger.besu.ethereum.core.Account
@@ -30,16 +29,10 @@ import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.BlockHeader
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.TransactionReceipt
-import org.hyperledger.besu.ethereum.core.Wei
 import org.hyperledger.besu.ethereum.worldstate.WorldStateArchive
 import java.util.stream.Collectors
 
-fun UInt256.bigDecimal() = toBigInteger().toBigDecimal()
-
-fun Wei.bigDecimal() = this.toBigInteger().toBigDecimal()
-
-fun TransactionReceipt.contractEvents(): List<ContractEvent> =
-    LogParser.parse(this)
+fun TransactionReceipt.contractEvents(): List<ContractEvent> = LogParser.parse(this)
 
 fun BlockTrace.toBalanceDeltas(
     blockHash: Hash,
@@ -174,24 +167,25 @@ fun BlockTrace.touchedAccounts(
     val body = block.body
     val transactionTraces = this.transactionTraces
 
+    val worldState = worldStateArchive.get(header.stateRoot).get()
+
     val txAccounts = when {
         // TODO handle hard forks
+
         block.header.number > BlockHeader.GENESIS_BLOCK_NUMBER -> transactionTraces
-            .flatMap { txTrace -> txTrace.touchedAccounts.map { account -> account.address to account } }
+            .flatMap { txTrace -> txTrace.touchedAccounts.map { address -> address to worldState[address] } }
             .toMap()
 
         // For genesis block we need to pull the pre allocations
         else -> GenesisConfigFile.fromConfig(networkConfig.genesisConfig)
             .streamAllocations()
-            .map<InMemoryAccount> { InMemoryAccount.fromGenesisAllocation(it) }
+            .map { InMemoryAccount.fromGenesisAllocation(it) }
             .collect(Collectors.toList())
             .map { inMemoryAccount -> inMemoryAccount.address to inMemoryAccount }
             .toMap()
     }
 
     val allAccounts = txAccounts.let { map ->
-        // need to add reward accounts
-        val worldState = worldStateArchive.get(header.stateRoot).get()
 
         // start with the coinbase
         val minersByHash = mutableMapOf(block.header.hash to block.header.coinbase)
@@ -208,6 +202,7 @@ fun BlockTrace.touchedAccounts(
 
     return allAccounts
         // Even if EIP158 is not enabled, we avoid serializing any empty / dead / unnecessary accounts
+        .filterValues { it != null }
         .filterNot { (_, acc) -> acc.isEmpty }
         .values
         .toList()

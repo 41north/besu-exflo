@@ -36,9 +36,6 @@ dependencies {
     implementation("com.zaxxer:HikariCP")
     implementation("org.flywaydb:flyway-core")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
     runtimeOnly("org.apache.logging.log4j:log4j-core")
 
     testImplementation(project(":testutil"))
@@ -93,6 +90,17 @@ jooqGenerator {
 }
 
 tasks {
+    register<JavaExec>("runPostgres") {
+        group = "run"
+        description = "Execute Exflo's Postgres plugin from Gradle"
+        classpath = sourceSets.main.get().runtimeClasspath
+        main = "org.hyperledger.besu.Besu"
+        // Customize args as required to test and execute Exflo from Gradle
+        // See https://github.com/41north/exflo/blob/develop/readme/.github/USAGE.md to customize params
+        // Otherwise it will take defined defaults
+        args = listOf("--plugin-exflo-postgres-enabled=true")
+    }
+
     withType<Test> {
         useJUnitPlatform()
     }

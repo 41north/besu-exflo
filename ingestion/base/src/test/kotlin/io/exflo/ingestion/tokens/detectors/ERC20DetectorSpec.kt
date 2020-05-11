@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion
+package io.exflo.ingestion.tokens.detectors
 
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.CappedERC20
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.DetailedERC20
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.InvalidERC20
 import io.exflo.ingestion.TruffleSpecs.Tokens.ERC20.MinimalERC20
-import io.exflo.ingestion.tokens.detectors.ERC20Detector
 import io.exflo.ingestion.tokens.precompiled.ERC20DetectorPrecompiledContract
 import io.exflo.testutil.ExfloTestCase
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 
-class ERC20DetectorSpec : AbstractDetectorSpec() {
+class ERC20DetectorSpec : AbstractTokenDetectorSpec() {
 
     init {
 

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2019 41North.
+ * Copyright (c) 2020 41North.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,25 +14,8 @@
  * limitations under the License.
  */
 
-pragma solidity >=0.4.25 <0.6.0;
+package io.exflo.ingestion.extensions
 
-contract SelfDestructOpCodeUnit {
+import org.hyperledger.besu.ethereum.core.Address
 
-    constructor() public payable {
-        require(msg.value >= 1 ether);
-    }
-
-    function destroyAndRefundSender() public {
-        address sender = msg.sender;
-        assembly {
-            selfdestruct(sender)
-        }
-    }
-
-    function destroyAndRefundSelf() public {
-        assembly {
-            selfdestruct(address)
-        }
-    }
-
-}
+fun String.hexToAddress(): Address = Address.fromHexString(this)

@@ -32,10 +32,10 @@
     "@babel/polyfill": "~7.6.0",
     "@babel/preset-env": "~7.6.3",
     "@babel/register": "~7.6.2",
-    "@truffle/hdwallet-provider": "1.0.18",
     "eslint": "~6.5.1",
     "prettier": "~1.18.2",
-    "truffle": "5.0.39"
+    "truffle": "~5.1.24",
+    "@truffle/hdwallet-provider": "~1.0.34"
   },
   "prettier": "@41north/prettier-config"
 }

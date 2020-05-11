@@ -7,6 +7,7 @@ package io.exflo.postgres.jooq;
 import io.exflo.postgres.jooq.tables.Account;
 import io.exflo.postgres.jooq.tables.BalanceDelta;
 import io.exflo.postgres.jooq.tables.BlockHeader;
+import io.exflo.postgres.jooq.tables.BlockTrace;
 import io.exflo.postgres.jooq.tables.ContractCreated;
 import io.exflo.postgres.jooq.tables.ContractDestroyed;
 import io.exflo.postgres.jooq.tables.ContractEvent;
@@ -51,6 +52,11 @@ public class Tables {
      * The table <code>public.block_header</code>.
      */
     public static final BlockHeader BLOCK_HEADER = BlockHeader.BLOCK_HEADER;
+
+    /**
+     * The table <code>public.block_trace</code>.
+     */
+    public static final BlockTrace BLOCK_TRACE = BlockTrace.BLOCK_TRACE;
 
     /**
      * The table <code>public.contract_created</code>.

@@ -16,7 +16,6 @@
 
 package io.exflo.testutil
 
-import java.nio.file.Path
 import org.hyperledger.besu.cli.config.EthNetworkConfig
 import org.hyperledger.besu.cli.config.NetworkName
 import org.hyperledger.besu.config.GenesisConfigFile
@@ -42,6 +41,7 @@ import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem
 import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage
 import org.hyperledger.besu.testutil.BlockTestUtil
 import org.koin.dsl.module
+import java.nio.file.Path
 
 @Suppress("MemberVisibilityCanBePrivate")
 object KoinTestModules {
