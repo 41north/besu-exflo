@@ -6,6 +6,7 @@ Possible command line arguments for `postgres` are described below:
 
 | Flag                                              | Description                                                                                           | Default                                                                 | Optional |
 | ------------------------------------------------- | :---------------------------------------------------------------------------------------------------: | ----------------------------------------------------------------------: | -------: |
+| `--plugin-exflo-postgres-enabled`                 | Enables the postgres exflo plugin                                                                     | false                                                                   | Yes      |
 | `--plugin-exflo-postgres-start-block-override`    | Block number from which to start publishing                                                           | Genesis block or from latest published block                            | Yes      |
 | `--plugin-exflo-postgres-max-fork-size`           | Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart | 192                                                                     | Yes      |
 | `--plugin-exflo-postgres-processing-level`        | Comma separated list of entities to include on import / ingest. Default is a predefined list          | HEADER, BODY, RECEIPTS, TRACES                                          | Yes      |
@@ -18,6 +19,7 @@ Possible command line arguments for `kafka` are described below:
 
 | Flag                                                   | Description                                                                                           | Default                                      | Optional |
 | ------------------------------------------------------ | :---------------------------------------------------------------------------------------------------: | -------------------------------------------: | -------: |
+| `--plugin-exflo-kafka-enabled`                         | Enables the kafka exflo plugin                                                                        | false                                        | Yes      |
 | `--plugin-exflo-kafka-start-block-override`            | Block number from which to start publishing                                                           | Genesis block or from latest published block | Yes      |
 | `--plugin-exflo-kafka-max-fork-size`                   | Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart | 192                                          | Yes      |
 | `--plugin-exflo-kafka-processing-entities`             | Comma separated list of entities to include on import / ingest. Default is a predefined list          | HEADER, BODY, RECEIPTS, TRACES               | Yes      |
