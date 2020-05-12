@@ -10,12 +10,12 @@ if the commands are optional or not.
 There are two possible ways of passing options to Exflo:
 
 - Environment variables
-- Command line arguments
+- Command-line arguments
 
-Both options are supported and the usage will depend on your necessities. Normally, if you are using docker to run Besu, environment
-variables are easier to use rather than a list of command line arguments.
+Both options are supported, and the usage will depend on your necessities. Normally, if you are using docker to run Besu, environment
+variables are more comfortable to use rather than a list of command-line arguments.
 
-Keep in mind for environment variables you need to prepend `BESU_PLUGIN_EXFLO_${COMMAND}` and for command line arguments `--plugin-exflo-${COMMAND}`
+Keep in mind for environment variables you need to prepend `BESU_PLUGIN_EXFLO_${COMMAND}` and for command-line arguments `--plugin-exflo-${COMMAND}`
 where `${COMMAND}` is the one of the possible values as described in each plugin section.
 
 By default, both plugins, Postgres and Kafka, are disabled. So, if you want to turn one of them on, you can set `--plugin-exflo-postgres-enabled`

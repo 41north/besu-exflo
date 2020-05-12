@@ -239,10 +239,10 @@ We chose Besu for several reasons:
 
 ### Why not use the Web3 interface that every Ethereum client has?
 
-If you have ever tried this you will quickly realise that extracting even just the basic information from an Ethereum client via the Web3
+If you have ever tried this, you will quickly realise that extracting even just the basic information from an Ethereum client via the Web3
 interface requires a lot of requests, and some non-trivial logic to do well. On top of that, depending on the client
-(we won't name anyone in particular) you may find that under heavy load, such as when syncing for the first time, your client may become
-unstable and periodically core dump. Maximising throughput whilst keeping the client happy quickly becomes a tedious exercise.
+(we won't name anyone in particular), you may find that under heavy load, such as when syncing for the first time, your client may become
+unstable and periodically core dump. Maximising throughput, whilst keeping the client happy, quickly becomes a tedious exercise.
 
 Put simply it has been our experience that pulling via the Web3 interface is sub-optimal for a variety reasons which are better explored
 in a blog post.
@@ -253,7 +253,7 @@ Majority of people will find very useful to externalise the internal information
 are well-known data store technologies (each of one serving different purposes and necessities) that are often used to perform
 better queries or real-time analytics.
 
-Having said that, yes, we thought originally on Exflo to be easily extendable so, if you find another possible use-case let us know!
+Having said that, yes, we thought originally on Exflo to be easily extendable so, if you find another possible use-case, let us know!
 
 ### Can we replace RocksDB storage engine that Besu uses with the Postgres' one inside Exflo?
 

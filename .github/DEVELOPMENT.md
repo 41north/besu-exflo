@@ -41,7 +41,6 @@ The codebase can be broken down as follows:
 │   ├── base          #   - Common logic to all plugins
 │   ├── kafka         #   - Specific logic related to Kafka implementation
 │   └── postgres      #   - Specific logic related to Postgres implementation
-├── intellij
 ├── plugin            # Common entry point plugin definitions for Besu
 ├── postman           # JSON RPC Postman collection to interact with the node
 ├── testutil          # Test utilities and helpers related to testing Exflo
