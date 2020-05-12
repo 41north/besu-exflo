@@ -38,7 +38,6 @@ dependencies {
     api("org.hyperledger.besu.internal:api")
     api("org.hyperledger.besu.internal:config")
     api("org.hyperledger.besu.internal:metrics-core")
-    api("org.hyperledger.besu.internal:plugins-rocksdb")
     api("org.hyperledger.besu.internal:kvstore")
 
     api("org.apache.tuweni:tuweni-bytes")
@@ -56,8 +55,6 @@ dependencies {
 
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-    implementation("com.google.guava:guava")
 
     implementation("com.tinder.statemachine:statemachine")
 

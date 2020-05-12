@@ -23,7 +23,6 @@ apply(plugin = "io.spring.dependency-management")
 apply(from = "${project.rootDir}/../gradle/versions.gradle")
 
 repositories {
-    mavenLocal()
     jcenter()
     maven(url = "https://dl.bintray.com/hyperledger-org/besu-repo/")
 }
@@ -47,5 +46,6 @@ dependencies {
     implementation("javax.activation:activation:1.1.1")
     implementation("javax.xml.bind:jaxb-api:2.3.0")
     implementation("com.sun.xml.bind:jaxb-core:2.3.0.1")
+
     runtimeOnly("com.sun.xml.bind:jaxb-impl:2.3.0.1")
 }

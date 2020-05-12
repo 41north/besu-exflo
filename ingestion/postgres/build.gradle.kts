@@ -21,7 +21,7 @@ plugins {
     kotlin("jvm")
     `maven-publish`
     id("org.jlleitschuh.gradle.ktlint")
-    id("org.flywaydb.flyway") version "6.2.0"
+    id("org.flywaydb.flyway") version "6.4.2"
     id("com.rohanprabhu.kotlin-dsl-jooq") version "0.4.5"
 }
 
