@@ -24,12 +24,12 @@ import me.qoomon.gradle.gitversioning.GitVersioningPluginConfig.*
 plugins {
     `maven-publish`
     distribution
-    id("org.jetbrains.kotlin.jvm") version "1.3.61"
-    id("org.jlleitschuh.gradle.ktlint") version "9.1.1" apply false
-    id("org.jlleitschuh.gradle.ktlint-idea") version "9.1.1" apply true
+    id("org.jetbrains.kotlin.jvm") version "1.3.72"
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1" apply false
+    id("org.jlleitschuh.gradle.ktlint-idea") version "9.2.1" apply true
     id("com.github.johnrengelman.shadow") version "5.2.0" apply true
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
-    id("com.github.ben-manes.versions") version "0.27.0"
+    id("com.github.ben-manes.versions") version "0.28.0"
     id("me.qoomon.git-versioning") version "3.0.0"
 }
 
@@ -78,12 +78,8 @@ allprojects {
     group = "io.exflo"
 
     repositories {
-        mavenLocal()
         jcenter()
-        maven(url = "https://jitpack.io")
         maven(url = "https://packages.confluent.io/maven/")
-        maven(url = "https://oss.sonatype.org/content/repositories/releases/")
-        maven(url = "https://dl.bintray.com/ethereum/maven/")
         maven(url = "https://dl.bintray.com/hyperledger-org/besu-repo/")
         maven(url = "https://dl.bintray.com/consensys/pegasys-repo/")
         maven(url = "https://repo.spring.io/libs-release")

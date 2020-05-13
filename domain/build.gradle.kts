@@ -28,11 +28,9 @@ dependencies {
     api("com.google.flatbuffers:flatbuffers-java")
 
     api("org.hyperledger.besu.internal:core")
-    api("org.hyperledger.besu.internal:util")
     api("org.hyperledger.besu.internal:crypto")
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5")
-    testImplementation("org.apache.commons:commons-lang3")
 }
 
 flatbuffers {
