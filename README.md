@@ -1,4 +1,6 @@
-<h1 align="center">Exflo</h1>
+<h1 align="center">
+  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/exflo-card.png"/>
+</h1>
 
 <p align="center">
   <a href="https://github.com/41north/exflo/workflows/build/badge.svg">
@@ -10,7 +12,7 @@
 </p>
 
 <p align="center">
-    A plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. <br/> Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
+    A plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. <br/><br /> Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
 </p>
 
 <p align="center"><b>⚠️ Warning</b>: This project is in alpha stage, and we are working actively!</p>
