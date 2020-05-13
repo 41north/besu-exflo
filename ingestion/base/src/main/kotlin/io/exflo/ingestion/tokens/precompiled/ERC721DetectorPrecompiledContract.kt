@@ -23,11 +23,11 @@ import org.hyperledger.besu.ethereum.vm.EVM
 
 class ERC721DetectorPrecompiledContract(evm: EVM) : AbstractDetectorPrecompiledContract(evm) {
 
-    override val code: Code = ERC721Detector.CODE
+  override val code: Code = ERC721Detector.CODE
 
-    override fun getName(): String = ERC721Detector::class.java.simpleName
+  override fun getName(): String = ERC721Detector::class.java.simpleName
 
-    companion object {
-        val ADDRESS: Address = Address.fromHexString("0xfffffffffffffffffffffffffffffffffffffffd")
-    }
+  companion object {
+    val ADDRESS: Address = Address.fromHexString("0xfffffffffffffffffffffffffffffffffffffffd")
+  }
 }

@@ -17,7 +17,6 @@
 package io.exflo.ingestion.tokens.precompiled
 
 import org.apache.tuweni.bytes.Bytes
-import java.util.ArrayDeque
 import org.hyperledger.besu.ethereum.core.Gas
 import org.hyperledger.besu.ethereum.mainnet.MainnetMessageCallProcessor
 import org.hyperledger.besu.ethereum.mainnet.PrecompileContractRegistry
@@ -26,55 +25,56 @@ import org.hyperledger.besu.ethereum.vm.Code
 import org.hyperledger.besu.ethereum.vm.EVM
 import org.hyperledger.besu.ethereum.vm.MessageFrame
 import org.hyperledger.besu.ethereum.vm.OperationTracer
+import java.util.ArrayDeque
 
 abstract class AbstractDetectorPrecompiledContract(
   private val evm: EVM
 ) : PrecompiledContract {
 
-    abstract val code: Code
+  abstract val code: Code
 
-    override fun compute(input: Bytes, frame: MessageFrame): Bytes {
-        // Create an empty MessageFrame to use in our disposable EVM
-        val messageFrameStack = ArrayDeque<MessageFrame>()
-        val updater = frame.worldState.updater()
+  override fun compute(input: Bytes, frame: MessageFrame): Bytes {
+    // Create an empty MessageFrame to use in our disposable EVM
+    val messageFrameStack = ArrayDeque<MessageFrame>()
+    val updater = frame.worldState.updater()
 
-        // Create the initial frame
-        @Suppress("UNUSED_LAMBDA_EXPRESSION")
-        val initialFrame = MessageFrame.builder()
-            .type(MessageFrame.Type.MESSAGE_CALL)
-            .messageFrameStack(messageFrameStack)
-            .blockchain(frame.blockchain)
-            .worldState(updater)
-            .initialGas(frame.remainingGas)
-            .address(frame.contractAddress)
-            .originator(frame.senderAddress)
-            .contract(frame.contractAddress)
-            .contractAccountVersion(frame.contractAccountVersion)
-            .gasPrice(frame.gasPrice)
-            .inputData(frame.inputData)
-            .sender(frame.senderAddress)
-            .value(frame.value)
-            .apparentValue(frame.apparentValue)
-            .code(code)
-            .blockHeader(frame.blockHeader)
-            .depth(0)
-            .completer { _ -> {} }
-            .miningBeneficiary(frame.miningBeneficiary)
-            .blockHashLookup(frame.blockHashLookup)
-            .maxStackSize(frame.maxStackSize)
-            .isPersistingPrivateState(false)
-            .build()
+    // Create the initial frame
+    @Suppress("UNUSED_LAMBDA_EXPRESSION")
+    val initialFrame = MessageFrame.builder()
+      .type(MessageFrame.Type.MESSAGE_CALL)
+      .messageFrameStack(messageFrameStack)
+      .blockchain(frame.blockchain)
+      .worldState(updater)
+      .initialGas(frame.remainingGas)
+      .address(frame.contractAddress)
+      .originator(frame.senderAddress)
+      .contract(frame.contractAddress)
+      .contractAccountVersion(frame.contractAccountVersion)
+      .gasPrice(frame.gasPrice)
+      .inputData(frame.inputData)
+      .sender(frame.senderAddress)
+      .value(frame.value)
+      .apparentValue(frame.apparentValue)
+      .code(code)
+      .blockHeader(frame.blockHeader)
+      .depth(0)
+      .completer { _ -> {} }
+      .miningBeneficiary(frame.miningBeneficiary)
+      .blockHashLookup(frame.blockHashLookup)
+      .maxStackSize(frame.maxStackSize)
+      .isPersistingPrivateState(false)
+      .build()
 
-        messageFrameStack.addFirst(initialFrame)
+    messageFrameStack.addFirst(initialFrame)
 
-        val executor = MainnetMessageCallProcessor(evm, PrecompileContractRegistry())
+    val executor = MainnetMessageCallProcessor(evm, PrecompileContractRegistry())
 
-        while (!messageFrameStack.isEmpty()) {
-            executor.process(messageFrameStack.peekFirst(), OperationTracer.NO_TRACING)
-        }
-
-        return initialFrame.outputData
+    while (!messageFrameStack.isEmpty()) {
+      executor.process(messageFrameStack.peekFirst(), OperationTracer.NO_TRACING)
     }
 
-    override fun gasRequirement(input: Bytes?): Gas = Gas.of(1L)
+    return initialFrame.outputData
+  }
+
+  override fun gasRequirement(input: Bytes?): Gas = Gas.of(1L)
 }

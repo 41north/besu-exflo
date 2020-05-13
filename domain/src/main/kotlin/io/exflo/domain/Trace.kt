@@ -72,27 +72,27 @@ data class InternalTransaction(
 )
 
 enum class ContractType {
-    ERC1155,
-    ERC777,
-    ERC721,
-    ERC20,
-    GENERIC
+  ERC1155,
+  ERC777,
+  ERC721,
+  ERC20,
+  GENERIC
 }
 
 enum class ContractCapability {
-    ERC1155,
-    ERC1155_TOKEN_RECEIVER,
-    ERC777,
-    ERC165,
-    ERC721,
-    ERC721_METADATA,
-    ERC721_ENUMERABLE,
-    ERC20,
-    ERC20_DETAILED,
-    ERC20_BURNABLE,
-    ERC20_MINTABLE,
-    ERC20_PAUSABLE,
-    ERC20_CAPPED
+  ERC1155,
+  ERC1155_TOKEN_RECEIVER,
+  ERC777,
+  ERC165,
+  ERC721,
+  ERC721_METADATA,
+  ERC721_ENUMERABLE,
+  ERC20,
+  ERC20_DETAILED,
+  ERC20_BURNABLE,
+  ERC20_MINTABLE,
+  ERC20_PAUSABLE,
+  ERC20_CAPPED
 }
 
 data class ContractMetadata(

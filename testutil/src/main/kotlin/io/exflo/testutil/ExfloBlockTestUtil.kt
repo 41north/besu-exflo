@@ -16,6 +16,8 @@
 
 package io.exflo.testutil
 
+import org.hyperledger.besu.testutil.BlockTestUtil
+import org.hyperledger.besu.testutil.BlockTestUtil.ChainResources
 import java.io.IOException
 import java.io.InputStream
 import java.net.URISyntaxException
@@ -25,44 +27,42 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import org.hyperledger.besu.testutil.BlockTestUtil
-import org.hyperledger.besu.testutil.BlockTestUtil.ChainResources
 
 object ExfloBlockTestUtil {
 
-    private val exfloTestChainSupplier: ChainResources by lazy {
-        supplyTestChainResources()
+  private val exfloTestChainSupplier: ChainResources by lazy {
+    supplyTestChainResources()
+  }
+
+  fun getTestChainResources(): ChainResources = exfloTestChainSupplier
+
+  fun getTestReportAsInputStream(): InputStream =
+    BlockTestUtil::class.java.getResource("/exflo/test-report.json").openStream()
+
+  private fun supplyTestChainResources(): ChainResources {
+    val genesisURL: URL = ensureFileUrl(BlockTestUtil::class.java.getResource("/exflo/testGenesis.json"))
+    val blocksURL: URL = ensureFileUrl(BlockTestUtil::class.java.getResource("/exflo/test.blocks"))
+
+    return ChainResources(genesisURL, blocksURL)
+  }
+
+  /** Take a resource URL and if needed copy it to a temp file and return that URL.  */
+  private fun ensureFileUrl(resource: URL?): URL {
+    checkNotNull(resource)
+    try {
+      try {
+        Paths.get(resource.toURI())
+      } catch (e: FileSystemNotFoundException) {
+        val target: Path = Files.createTempFile("exflo", null)
+        target.toFile().deleteOnExit()
+        Files.copy(resource.openStream(), target, StandardCopyOption.REPLACE_EXISTING)
+        return target.toUri().toURL()
+      }
+    } catch (e: IOException) {
+      throw RuntimeException(e)
+    } catch (e: URISyntaxException) {
+      throw RuntimeException(e)
     }
-
-    fun getTestChainResources(): ChainResources = exfloTestChainSupplier
-
-    fun getTestReportAsInputStream(): InputStream =
-        BlockTestUtil::class.java.getResource("/exflo/test-report.json").openStream()
-
-    private fun supplyTestChainResources(): ChainResources {
-        val genesisURL: URL = ensureFileUrl(BlockTestUtil::class.java.getResource("/exflo/testGenesis.json"))
-        val blocksURL: URL = ensureFileUrl(BlockTestUtil::class.java.getResource("/exflo/test.blocks"))
-
-        return ChainResources(genesisURL, blocksURL)
-    }
-
-    /** Take a resource URL and if needed copy it to a temp file and return that URL.  */
-    private fun ensureFileUrl(resource: URL?): URL {
-        checkNotNull(resource)
-        try {
-            try {
-                Paths.get(resource.toURI())
-            } catch (e: FileSystemNotFoundException) {
-                val target: Path = Files.createTempFile("exflo", null)
-                target.toFile().deleteOnExit()
-                Files.copy(resource.openStream(), target, StandardCopyOption.REPLACE_EXISTING)
-                return target.toUri().toURL()
-            }
-        } catch (e: IOException) {
-            throw RuntimeException(e)
-        } catch (e: URISyntaxException) {
-            throw RuntimeException(e)
-        }
-        return resource
-    }
+    return resource
+  }
 }

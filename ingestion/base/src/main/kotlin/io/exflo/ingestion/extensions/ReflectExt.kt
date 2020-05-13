@@ -17,7 +17,7 @@
 package io.exflo.ingestion.extensions
 
 inline fun <reified T : Any> reflektField(entity: Any, fieldName: String): T {
-    val field = checkNotNull(entity::class.java.declaredFields.find { it.name == fieldName })
-    if (!field.canAccess(entity)) field.isAccessible = true
-    return field.get(entity) as T
+  val field = checkNotNull(entity::class.java.declaredFields.find { it.name == fieldName })
+  if (!field.canAccess(entity)) field.isAccessible = true
+  return field.get(entity) as T
 }

@@ -17,23 +17,22 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    `java-library`
-    `maven-publish`
-    id("com.github.johnrengelman.shadow")
-    id("org.jlleitschuh.gradle.ktlint")
+  `java-library`
+  `maven-publish`
+  id("com.github.johnrengelman.shadow")
 }
 
 dependencies {
-    implementation(project(":ingestion:kafka"))
-    implementation(project(":ingestion:postgres"))
+  implementation(project(":ingestion:kafka"))
+  implementation(project(":ingestion:postgres"))
 }
 
 val build: DefaultTask by project.tasks
 build.dependsOn(tasks.shadowJar)
 
 tasks {
-    withType<ShadowJar> {
-        archiveBaseName.set(project.name)
-        archiveClassifier.set("")
-    }
+  withType<ShadowJar> {
+    archiveBaseName.set(project.name)
+    archiveClassifier.set("")
+  }
 }

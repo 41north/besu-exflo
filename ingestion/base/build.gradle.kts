@@ -21,81 +21,80 @@ import io.exflo.gradle.tasks.ClassVisibility
 import io.exflo.gradle.tasks.Web3KtCodegenTask
 
 plugins {
-    `java-library`
-    kotlin("jvm")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("dev.north.fortyone.solidity") version "0.1.1"
+  `java-library`
+  kotlin("jvm")
+  id("dev.north.fortyone.solidity") version "0.1.1"
 }
 
 dependencies {
 
-    api(kotlin("stdlib"))
-    api(kotlin("reflect"))
+  api(kotlin("stdlib"))
+  api(kotlin("reflect"))
 
-    api(project(":domain"))
+  api(project(":domain"))
 
-    api("org.hyperledger.besu.internal:besu")
-    api("org.hyperledger.besu.internal:api")
-    api("org.hyperledger.besu.internal:config")
-    api("org.hyperledger.besu.internal:metrics-core")
-    api("org.hyperledger.besu.internal:kvstore")
+  api("org.hyperledger.besu.internal:besu")
+  api("org.hyperledger.besu.internal:api")
+  api("org.hyperledger.besu.internal:config")
+  api("org.hyperledger.besu.internal:metrics-core")
+  api("org.hyperledger.besu.internal:kvstore")
 
-    api("org.apache.tuweni:tuweni-bytes")
-    api("org.apache.tuweni:tuweni-units")
+  api("org.apache.tuweni:tuweni-bytes")
+  api("org.apache.tuweni:tuweni-units")
 
-    api("info.picocli:picocli")
+  api("info.picocli:picocli")
 
-    api("org.koin:koin-core")
+  api("org.koin:koin-core")
 
-    api("org.web3j:core")
-    api("org.web3j:abi")
-    api("org.web3j:utils")
+  api("org.web3j:core")
+  api("org.web3j:abi")
+  api("org.web3j:utils")
 
-    api("io.reactivex.rxjava3:rxjava")
+  api("io.reactivex.rxjava3:rxjava")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("com.fasterxml.jackson.core:jackson-databind")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("com.tinder.statemachine:statemachine")
+  implementation("com.tinder.statemachine:statemachine")
 
-    runtimeOnly("org.apache.logging.log4j:log4j-core")
+  runtimeOnly("org.apache.logging.log4j:log4j-core")
 
-    testApi(project(":testutil"))
+  testApi(project(":testutil"))
 }
 
 ktlint {
-    filter {
-        exclude("**/tokens/detectors/**")
-    }
+  filter {
+    exclude("**/tokens/detectors/**")
+  }
 }
 
 solidity {
-    attachToBuild.set(false)
-    dockerSolidityImage.set("ethereum/solc:0.5.13")
-    evmVersion.set(ISTANBUL)
-    outputComponents.set(listOf(OutputComponent.BIN_RUNTIME, OutputComponent.ABI))
+  attachToBuild.set(false)
+  dockerSolidityImage.set("ethereum/solc:0.5.13")
+  evmVersion.set(ISTANBUL)
+  outputComponents.set(listOf(OutputComponent.BIN_RUNTIME, OutputComponent.ABI))
 }
 
 tasks {
-    register<Web3KtCodegenTask>("generateContractWrappers") {
-        dependsOn(project.tasks["compileSolidity"])
+  register<Web3KtCodegenTask>("generateContractWrappers") {
+    dependsOn(project.tasks["compileSolidity"])
 
-        group = "web3"
+    group = "web3"
 
-        solidityDir = "${project.buildDir.path}/resources/main/solidity"
-        basePackageName = "${project.group}.ingestion.tokens.detectors"
-        destinationDir = project.sourceSets.main.get().allJava.sourceDirectories.first { it.name.contains("kotlin") }.path
+    solidityDir = "${project.buildDir.path}/resources/main/solidity"
+    basePackageName = "${project.group}.ingestion.tokens.detectors"
+    destinationDir = project.sourceSets.main.get().allJava.sourceDirectories.first { it.name.contains("kotlin") }.path
 
-        contracts = listOf(
-            ClassOutput("ERC20Detector", ClassVisibility.ABSTRACT),
-            ClassOutput("ERC165Detector"),
-            ClassOutput("ERC721Detector"),
-            ClassOutput("ERC777Detector"),
-            ClassOutput("ERC1155Detector")
-        )
-    }
+    contracts = listOf(
+      ClassOutput("ERC20Detector", ClassVisibility.ABSTRACT),
+      ClassOutput("ERC165Detector"),
+      ClassOutput("ERC721Detector"),
+      ClassOutput("ERC777Detector"),
+      ClassOutput("ERC1155Detector")
+    )
+  }
 
-    withType<Test> {
-        useJUnitPlatform()
-    }
+  withType<Test> {
+    useJUnitPlatform()
+  }
 }

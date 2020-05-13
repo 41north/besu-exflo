@@ -39,54 +39,57 @@ import org.hyperledger.besu.ethereum.transaction.TransactionSimulator
  * See https://eips.ethereum.org/EIPS/eip-20 for more information about this ERC.
  */
 class ERC20Detector(
-    transactionSimulator: TransactionSimulator,
-    precompiledAddress: Address,
-    contractAddress: Address,
-    blockHash: Hash,
-    contractCode: Bytes
+  transactionSimulator: TransactionSimulator,
+  precompiledAddress: Address,
+  contractAddress: Address,
+  blockHash: Hash,
+  contractCode: Bytes
 ) : AbstractERC20Detector(
-    transactionSimulator,
-    precompiledAddress,
-    contractAddress,
-    blockHash
+  transactionSimulator,
+  precompiledAddress,
+  contractAddress,
+  blockHash
 ) {
 
-    private val code = contractCode.toArray()
+  private val code = contractCode.toArray()
 
-    fun hasERC20Interface(): Boolean = ERC20Signatures.erc20.find { code.indexOf(it) == -1 }?.let { false } ?: true
+  fun hasERC20Interface(): Boolean = ERC20Signatures.erc20.find { code.indexOf(it) == -1 }?.let { false } ?: true
 
-    fun hasERC20BurnableInterface(): Boolean = ERC20Signatures.erc20Burnable.find { code.indexOf(it) == -1 }?.let { false } ?: true
+  fun hasERC20BurnableInterface(): Boolean =
+    ERC20Signatures.erc20Burnable.find { code.indexOf(it) == -1 }?.let { false } ?: true
 
-    fun hasERC20MintableInterface(): Boolean = ERC20Signatures.erc20Mintable.find { code.indexOf(it) == -1 }?.let { false } ?: true
+  fun hasERC20MintableInterface(): Boolean =
+    ERC20Signatures.erc20Mintable.find { code.indexOf(it) == -1 }?.let { false } ?: true
 
-    fun hasERC20PausableInterface(): Boolean = ERC20Signatures.erc20Pausable.find { code.indexOf(it) == -1 }?.let { false } ?: true
+  fun hasERC20PausableInterface(): Boolean =
+    ERC20Signatures.erc20Pausable.find { code.indexOf(it) == -1 }?.let { false } ?: true
 }
 
 object ERC20Signatures {
 
-    val erc20 = listOf(
-        `4bytes`("totalSupply()"),
-        `4bytes`("balanceOf(address)"),
-        `4bytes`("transfer(address,uint256)"),
-        `4bytes`("allowance(address,address)"),
-        `4bytes`("approve(address,uint256)"),
-        `4bytes`("transferFrom(address,address,uint256)")
-    )
+  val erc20 = listOf(
+    `4bytes`("totalSupply()"),
+    `4bytes`("balanceOf(address)"),
+    `4bytes`("transfer(address,uint256)"),
+    `4bytes`("allowance(address,address)"),
+    `4bytes`("approve(address,uint256)"),
+    `4bytes`("transferFrom(address,address,uint256)")
+  )
 
-    val erc20Burnable = listOf(
-        `4bytes`("burn(uint256)"),
-        `4bytes`("burnFrom(address,uint256)")
-    )
+  val erc20Burnable = listOf(
+    `4bytes`("burn(uint256)"),
+    `4bytes`("burnFrom(address,uint256)")
+  )
 
-    val erc20Mintable = listOf(
-        `4bytes`("mint(address,uint256)")
-    )
+  val erc20Mintable = listOf(
+    `4bytes`("mint(address,uint256)")
+  )
 
-    val erc20Pausable = listOf(
-        `4bytes`("pause()"),
-        `4bytes`("unpause()")
-    )
+  val erc20Pausable = listOf(
+    `4bytes`("pause()"),
+    `4bytes`("unpause()")
+  )
 
-    @Suppress("FunctionName")
-    private fun `4bytes`(method: String) = keccak256(method.toByteArray().bytesValue).slice(0, 4).toArray()
+  @Suppress("FunctionName")
+  private fun `4bytes`(method: String) = keccak256(method.toByteArray().bytesValue).slice(0, 4).toArray()
 }

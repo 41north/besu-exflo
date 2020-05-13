@@ -7,22 +7,22 @@ import "./ERC777.sol";
 */
 contract ERC777Detector {
 
-    constructor() public {}
+  constructor() public {}
 
-    /**
-     * @dev Check ERC777 interface.
-     */
-    function hasERC777Interface(address _target) public view returns (bool) {
-        IERC777 c = IERC777(_target);
+  /**
+   * @dev Check ERC777 interface.
+   */
+  function hasERC777Interface(address _target) public view returns (bool) {
+    IERC777 c = IERC777(_target);
 
-        // Let's call these view methods directly to see if they throw or not
-        c.name();
-        c.symbol();
-        c.totalSupply();
-        c.granularity();
-        c.defaultOperators();
+    // Let's call these view methods directly to see if they throw or not
+    c.name();
+    c.symbol();
+    c.totalSupply();
+    c.granularity();
+    c.defaultOperators();
 
-        return true;
-    }
+    return true;
+  }
 
 }

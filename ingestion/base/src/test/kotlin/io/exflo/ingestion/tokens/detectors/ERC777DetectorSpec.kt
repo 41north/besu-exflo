@@ -25,45 +25,45 @@ import io.kotlintest.shouldNotBe
 
 class ERC777DetectorSpec : AbstractTokenDetectorSpec() {
 
-    init {
+  init {
 
-        context("given a generic contract") {
+    context("given a generic contract") {
 
-            val detector = detectorFor(InvalidERC777.shouldDeployTheContract)
+      val detector = detectorFor(InvalidERC777.shouldDeployTheContract)
 
-            test("we should not detect any interfaces") {
-                detector.hasERC777Interface() ?: false shouldBe false
-            }
-        }
-
-        context("given a minimal ERC777 contract") {
-
-            val detector = detectorFor(MinimalERC777.shouldDeployTheContract)
-
-            test("we should detect ERC777 interface") {
-                detector.hasERC777Interface() ?: false shouldBe true
-            }
-        }
+      test("we should not detect any interfaces") {
+        detector.hasERC777Interface() ?: false shouldBe false
+      }
     }
 
-    private fun detectorFor(testCase: ExfloTestCase): ERC777Detector {
-        // Gather data
-        val block = testHelper.blocksFor(testCase).first()
+    context("given a minimal ERC777 contract") {
 
-        // Gather transaction
-        val tx = block.body.transactions.first()
-        tx shouldNotBe null
+      val detector = detectorFor(MinimalERC777.shouldDeployTheContract)
 
-        // Gather contract address
-        val contractAddress = tx.contractAddress().orElse(null)
-        contractAddress shouldNotBe null
-
-        // create detector
-        return ERC777Detector(
-            transactionSimulator,
-            ERC777DetectorPrecompiledContract.ADDRESS,
-            contractAddress,
-            block.hash
-        )
+      test("we should detect ERC777 interface") {
+        detector.hasERC777Interface() ?: false shouldBe true
+      }
     }
+  }
+
+  private fun detectorFor(testCase: ExfloTestCase): ERC777Detector {
+    // Gather data
+    val block = testHelper.blocksFor(testCase).first()
+
+    // Gather transaction
+    val tx = block.body.transactions.first()
+    tx shouldNotBe null
+
+    // Gather contract address
+    val contractAddress = tx.contractAddress().orElse(null)
+    contractAddress shouldNotBe null
+
+    // create detector
+    return ERC777Detector(
+      transactionSimulator,
+      ERC777DetectorPrecompiledContract.ADDRESS,
+      contractAddress,
+      block.hash
+    )
+  }
 }

@@ -26,60 +26,60 @@ import io.kotlintest.shouldNotBe
 
 class ERC721DetectorSpec : AbstractTokenDetectorSpec() {
 
-    init {
+  init {
 
-        context("given a generic contract") {
+    context("given a generic contract") {
 
-            val detector = detectorFor(InvalidERC721.shouldDeployTheContract)
+      val detector = detectorFor(InvalidERC721.shouldDeployTheContract)
 
-            test("we should detect no ERC721 interfaces") {
-                detector.hasERC721Interface() ?: false shouldBe false
-                detector.hasERC721EnumerableInterface() ?: false shouldBe false
-                detector.hasERC721MetadataInterface() ?: false shouldBe false
-            }
-        }
-
-        context("given a minimal ERC721 contract") {
-
-            val detector = detectorFor(MinimalERC721.shouldDeployTheContract)
-
-            test("we should detect minimal interfaces") {
-                detector.hasERC721Interface() ?: false shouldBe true
-                detector.hasERC721EnumerableInterface() ?: false shouldBe false
-                detector.hasERC721MetadataInterface() ?: false shouldBe false
-            }
-        }
-
-        context("given a full ERC721 contract") {
-
-            val detector = detectorFor(FullERC721.shouldDeployTheContract)
-
-            test("we should detect all the ERC721 interfaces") {
-                detector.hasERC721Interface() ?: false shouldBe true
-                detector.hasERC721EnumerableInterface() ?: false shouldBe true
-                detector.hasERC721MetadataInterface() ?: false shouldBe true
-            }
-        }
+      test("we should detect no ERC721 interfaces") {
+        detector.hasERC721Interface() ?: false shouldBe false
+        detector.hasERC721EnumerableInterface() ?: false shouldBe false
+        detector.hasERC721MetadataInterface() ?: false shouldBe false
+      }
     }
 
-    private fun detectorFor(testCase: ExfloTestCase): ERC721Detector {
-        // Gather data
-        val block = testHelper.blocksFor(testCase).first()
+    context("given a minimal ERC721 contract") {
 
-        // Gather transaction
-        val tx = block.body.transactions.first()
-        tx shouldNotBe null
+      val detector = detectorFor(MinimalERC721.shouldDeployTheContract)
 
-        // Gather contract address
-        val contractAddress = tx.contractAddress().orElse(null)
-        contractAddress shouldNotBe null
-
-        // create detector
-        return ERC721Detector(
-            transactionSimulator,
-            ERC721DetectorPrecompiledContract.ADDRESS,
-            contractAddress,
-            block.hash
-        )
+      test("we should detect minimal interfaces") {
+        detector.hasERC721Interface() ?: false shouldBe true
+        detector.hasERC721EnumerableInterface() ?: false shouldBe false
+        detector.hasERC721MetadataInterface() ?: false shouldBe false
+      }
     }
+
+    context("given a full ERC721 contract") {
+
+      val detector = detectorFor(FullERC721.shouldDeployTheContract)
+
+      test("we should detect all the ERC721 interfaces") {
+        detector.hasERC721Interface() ?: false shouldBe true
+        detector.hasERC721EnumerableInterface() ?: false shouldBe true
+        detector.hasERC721MetadataInterface() ?: false shouldBe true
+      }
+    }
+  }
+
+  private fun detectorFor(testCase: ExfloTestCase): ERC721Detector {
+    // Gather data
+    val block = testHelper.blocksFor(testCase).first()
+
+    // Gather transaction
+    val tx = block.body.transactions.first()
+    tx shouldNotBe null
+
+    // Gather contract address
+    val contractAddress = tx.contractAddress().orElse(null)
+    contractAddress shouldNotBe null
+
+    // create detector
+    return ERC721Detector(
+      transactionSimulator,
+      ERC721DetectorPrecompiledContract.ADDRESS,
+      contractAddress,
+      block.hash
+    )
+  }
 }

@@ -48,154 +48,154 @@ import picocli.CommandLine
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
 
-    protected abstract val name: String
+  protected abstract val name: String
 
-    protected abstract val options: T
+  protected abstract val options: T
 
-    private lateinit var log: Logger
+  private lateinit var log: Logger
 
-    protected lateinit var context: BesuContext
+  protected lateinit var context: BesuContext
 
-    private lateinit var blockWriter: BlockWriter
+  private lateinit var blockWriter: BlockWriter
 
-    private lateinit var commandLine: CommandLine
+  private lateinit var commandLine: CommandLine
 
-    private lateinit var besuCommand: BesuCommand
+  private lateinit var besuCommand: BesuCommand
 
-    override fun register(context: BesuContext) {
+  override fun register(context: BesuContext) {
 
-        log = LogManager.getLogger(name)
+    log = LogManager.getLogger(name)
 
-        this.context = context
+    this.context = context
 
-        val cmdlineOptions = context.getService(PicoCLIOptions::class.java)
-        check(!cmdlineOptions.isEmpty) { "Expecting a PicoCLIO options to register CLI options with, but none found." }
+    val cmdlineOptions = context.getService(PicoCLIOptions::class.java)
+    check(!cmdlineOptions.isEmpty) { "Expecting a PicoCLIO options to register CLI options with, but none found." }
 
-        val cliOptions = cmdlineOptions.get()
-        cliOptions.addPicoCLIOptions(name, options)
+    val cliOptions = cmdlineOptions.get()
+    cliOptions.addPicoCLIOptions(name, options)
 
-        // TODO: Review with BESU devs how we can improve obtaining this info without resorting to reflection
-        commandLine = reflektField(cliOptions, "commandLine")
-        besuCommand = commandLine.commandSpec.userObject() as BesuCommand
+    // TODO: Review with BESU devs how we can improve obtaining this info without resorting to reflection
+    commandLine = reflektField(cliOptions, "commandLine")
+    besuCommand = commandLine.commandSpec.userObject() as BesuCommand
 
-        registerStorageInterceptors()
+    registerStorageInterceptors()
 
-        log.info("Plugin registered")
+    log.info("Plugin registered")
+  }
+
+  private fun registerStorageInterceptors() {
+
+    val storageService = context
+      .getService(StorageService::class.java)
+      .get()
+
+    // get the original factories registered by the rocks db plugin
+
+    val keyValueStorageFactory = storageService
+      .getByName("rocksdb")
+      .get()
+
+    val privacyKeyValueStorageFactory = storageService
+      .getByName("rocksdb-privacy")
+      .get()
+
+    // determine if another exflo plugin has already decorated the base storage factories and capture their
+    // references, otherwise register our intercepting factories
+
+    if (
+      keyValueStorageFactory is InterceptingKeyValueStorageFactory &&
+      privacyKeyValueStorageFactory is InterceptingPrivacyKeyValueStorageFactory
+    ) {
+      // we have already setup the interceptors in another exflo plugin
+      return
     }
 
-    private fun registerStorageInterceptors() {
+    val interceptingKeyValueStorageFactory =
+      InterceptingKeyValueStorageFactory(keyValueStorageFactory)
 
-        val storageService = context
-            .getService(StorageService::class.java)
-            .get()
+    val interceptingPrivacyKeyValueStorageFactory =
+      InterceptingPrivacyKeyValueStorageFactory(privacyKeyValueStorageFactory as PrivacyKeyValueStorageFactory)
 
-        // get the original factories registered by the rocks db plugin
+    storageService.registerKeyValueStorage(interceptingKeyValueStorageFactory)
+    storageService.registerKeyValueStorage(interceptingPrivacyKeyValueStorageFactory)
+  }
 
-        val keyValueStorageFactory = storageService
-            .getByName("rocksdb")
-            .get()
+  protected abstract fun implKoinModules(): List<Module>
 
-        val privacyKeyValueStorageFactory = storageService
-            .getByName("rocksdb-privacy")
-            .get()
+  protected open fun implStart(koinApp: KoinApplication) {}
 
-        // determine if another exflo plugin has already decorated the base storage factories and capture their
-        // references, otherwise register our intercepting factories
+  override fun start() {
 
-        if (
-            keyValueStorageFactory is InterceptingKeyValueStorageFactory &&
-            privacyKeyValueStorageFactory is InterceptingPrivacyKeyValueStorageFactory
-        ) {
-            // we have already setup the interceptors in another exflo plugin
-            return
-        }
-
-        val interceptingKeyValueStorageFactory =
-            InterceptingKeyValueStorageFactory(keyValueStorageFactory)
-
-        val interceptingPrivacyKeyValueStorageFactory =
-            InterceptingPrivacyKeyValueStorageFactory(privacyKeyValueStorageFactory as PrivacyKeyValueStorageFactory)
-
-        storageService.registerKeyValueStorage(interceptingKeyValueStorageFactory)
-        storageService.registerKeyValueStorage(interceptingPrivacyKeyValueStorageFactory)
+    if (!options.enabled) {
+      return
     }
 
-    protected abstract fun implKoinModules(): List<Module>
+    log.debug("Starting plugin")
 
-    protected open fun implStart(koinApp: KoinApplication) {}
+    try {
 
-    override fun start() {
+      val networkConfig = reflektField<EthNetworkConfig>(besuCommand, "ethNetworkConfig")
+      val genesisConfigFile = GenesisConfigFile.fromConfig(networkConfig.genesisConfig)
 
-        if (!options.enabled) {
-            return
-        }
+      log.debug("Network id: ${networkConfig.networkId} | Network Config: $networkConfig")
 
-        log.debug("Starting plugin")
+      val controller = besuCommand.controllerBuilder.build()
+      val protocolSchedule = controller.protocolSchedule
 
-        try {
+      // Register custom precompiled contracts
+      PrecompiledContractsFactory.register(protocolSchedule, networkConfig.networkId)
 
-            val networkConfig = reflektField<EthNetworkConfig>(besuCommand, "ethNetworkConfig")
-            val genesisConfigFile = GenesisConfigFile.fromConfig(networkConfig.genesisConfig)
+      val genesisState = GenesisState.fromConfig(genesisConfigFile, protocolSchedule)
 
-            log.debug("Network id: ${networkConfig.networkId} | Network Config: $networkConfig")
+      // create a module for injecting various basic context objects
+      val contextModule = module {
+        single { context }
+        // we capture the classloader as plugins are executed under a custom classloader and we need to
+        // specify this in some places to ensure behaviour
+        single<ClassLoader> { ExfloPlugin::class.java.classLoader }
+        single { networkConfig }
+        single { protocolSchedule }
+        single { genesisState }
+        single { ScheduleBasedBlockHeaderFunctions.create(get<ProtocolSchedule<Void>>()) }
+        single { ChainTracker(get(), get(), get(), get(), get()) }
+      }
 
-            val controller = besuCommand.controllerBuilder.build()
-            val protocolSchedule = controller.protocolSchedule
+      // implementation specific DI modules which we combine with other standard modules
+      val implKoinModules = implKoinModules()
 
-            // Register custom precompiled contracts
-            PrecompiledContractsFactory.register(protocolSchedule, networkConfig.networkId)
+      // start the DI system
+      val koinApp = startKoin {
+        if (log.isDebugEnabled) printLogger()
+        modules(
+          listOf(
+            contextModule,
+            eventsModule,
+            storageModule,
+            stateModule
+          ) + implKoinModules
+        )
+      }
 
-            val genesisState = GenesisState.fromConfig(genesisConfigFile, protocolSchedule)
+      // allow derived plugins to execute some start logic before we start publishing
+      implStart(koinApp)
 
-            // create a module for injecting various basic context objects
-            val contextModule = module {
-                single { context }
-                // we capture the classloader as plugins are executed under a custom classloader and we need to
-                // specify this in some places to ensure behaviour
-                single<ClassLoader> { ExfloPlugin::class.java.classLoader }
-                single { networkConfig }
-                single { protocolSchedule }
-                single { genesisState }
-                single { ScheduleBasedBlockHeaderFunctions.create(get<ProtocolSchedule<Void>>()) }
-                single { ChainTracker(get(), get(), get(), get(), get()) }
-            }
+      blockWriter = koinApp.koin.get()
+      blockWriter.start()
+    } catch (ex: Exception) {
+      log.error("Failed to start", ex)
+    }
+  }
 
-            // implementation specific DI modules which we combine with other standard modules
-            val implKoinModules = implKoinModules()
+  override fun stop() {
 
-            // start the DI system
-            val koinApp = startKoin {
-                if (log.isDebugEnabled) printLogger()
-                modules(
-                    listOf(
-                        contextModule,
-                        eventsModule,
-                        storageModule,
-                        stateModule
-                    ) + implKoinModules
-                )
-            }
-
-            // allow derived plugins to execute some start logic before we start publishing
-            implStart(koinApp)
-
-            blockWriter = koinApp.koin.get()
-            blockWriter.start()
-        } catch (ex: Exception) {
-            log.error("Failed to start", ex)
-        }
+    if (!options.enabled) {
+      return
     }
 
-    override fun stop() {
-
-        if (!options.enabled) {
-            return
-        }
-
-        log.debug("Stopping plugin")
-        blockWriter.stop()
-        stopKoin()
-    }
+    log.debug("Stopping plugin")
+    blockWriter.stop()
+    stopKoin()
+  }
 }
 
 /**
@@ -203,23 +203,23 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
  */
 interface ExfloCliOptions {
 
-    var enabled: Boolean
+  var enabled: Boolean
 
-    var startBlockOverride: Long?
+  var startBlockOverride: Long?
 
-    var maxForkSize: Int
+  var maxForkSize: Int
 
-    enum class ProcessableEntity {
-        HEADER,
-        BODY,
-        RECEIPTS,
-        TRACES
-    }
+  enum class ProcessableEntity {
+    HEADER,
+    BODY,
+    RECEIPTS,
+    TRACES
+  }
 }
 
 object ExfloCliDefaultOptions {
-    const val EXFLO_POSTGRES_PLUGIN_ID: String = "exflo-postgres"
-    const val EXFLO_KAFKA_PLUGIN_ID: String = "exflo-kafka"
+  const val EXFLO_POSTGRES_PLUGIN_ID: String = "exflo-postgres"
+  const val EXFLO_KAFKA_PLUGIN_ID: String = "exflo-kafka"
 
-    const val MAX_FORK_SIZE: Int = 192
+  const val MAX_FORK_SIZE: Int = 192
 }
