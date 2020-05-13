@@ -17,7 +17,7 @@
 package io.exflo.ingestion
 
 import io.exflo.ingestion.tracker.ChainTracker
-import io.exflo.testutil.KoinTestModules.defaultModuleList
+import io.exflo.testutil.KoinTestModules
 import io.exflo.testutil.TestChainLoader
 import io.exflo.testutil.TestChainSummary
 import io.kotlintest.Spec
@@ -75,7 +75,7 @@ class ChainTrackerSpec : FunSpec(), KoinTest {
             }
         }
 
-        startKoin { modules(defaultModuleList + configModule) }
+        startKoin { modules(KoinTestModules() + configModule) }
 
         // import test blocks
         testChainLoader.load()

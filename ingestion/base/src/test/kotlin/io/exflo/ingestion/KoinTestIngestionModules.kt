@@ -41,5 +41,5 @@ object KoinTestIngestionModules {
         single { ObjectMapper().registerModule(KotlinModule()) }
     })
 
-    operator fun invoke() = KoinTestModules.defaultModuleList + ingestion
+    operator fun invoke() = KoinTestModules() + ingestion
 }
