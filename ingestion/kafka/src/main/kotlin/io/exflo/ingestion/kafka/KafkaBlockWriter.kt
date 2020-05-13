@@ -21,30 +21,30 @@ import io.exflo.ingestion.tracker.BlockWriter
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
-import org.koin.core.KoinComponent
 
-class KafkaBlockWriter : BlockWriter, KoinComponent {
+class KafkaBlockWriter(classLoader: ClassLoader) : BlockWriter {
 
-    private val executor = Executors.newCachedThreadPool {
-        val factory = Executors.defaultThreadFactory()
-        val thread = factory.newThread(it)
-        thread.name = "ExfloExecutorThread-%d"
-        thread
-    }
+  private val executor = Executors.newCachedThreadPool {
+    val factory = Executors.defaultThreadFactory()
+    val thread = factory.newThread(it)
+    thread.contextClassLoader = classLoader
+    thread.name = "ExfloExecutorThread-%d"
+    thread
+  }
 
-    private val tasks = listOf(
-        BlockImportTask()
-    )
+  private val tasks = listOf(
+    BlockImportTask()
+  )
 
-    private lateinit var futures: List<Future<*>>
+  private lateinit var futures: List<Future<*>>
 
-    override fun start() {
-        futures = tasks.map { executor.submit(it) }
-    }
+  override fun start() {
+    futures = tasks.map { executor.submit(it) }
+  }
 
-    override fun stop() {
-        tasks.forEach { it.stop() }
-        futures.forEach { it.get(60, TimeUnit.SECONDS) }
-        executor.shutdownNow()
-    }
+  override fun stop() {
+    tasks.forEach { it.stop() }
+    futures.forEach { it.get(60, TimeUnit.SECONDS) }
+    executor.shutdownNow()
+  }
 }

@@ -16,18 +16,18 @@
 
 package io.exflo.ingestion.core
 
-import io.exflo.ingestion.extensions.hexToLong
-import io.exflo.ingestion.extensions.toBalance
-import java.util.NavigableMap
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.bytes.Bytes32
+import org.apache.tuweni.units.bigints.UInt256
 import org.hyperledger.besu.config.GenesisAllocation
 import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.core.AccountStorageEntry
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.Wei
-import org.hyperledger.besu.util.bytes.Bytes32
-import org.hyperledger.besu.util.bytes.BytesValue
-import org.hyperledger.besu.util.uint.UInt256
+import java.math.BigInteger
+import java.util.Locale
+import java.util.NavigableMap
 
 /**
  * Implementation of [Account] that holds its data as properties.
@@ -35,51 +35,66 @@ import org.hyperledger.besu.util.uint.UInt256
  * It's used for generating synthetic [GenesisAllocation] accounts for genesis block.
  */
 class InMemoryAccount(
-    private val address: Address,
-    private val balance: Wei,
-    private val nonce: Long,
-    private val code: BytesValue?,
-    private val codeHash: Hash?
+  private val address: Address,
+  private val balance: Wei,
+  private val nonce: Long,
+  private val code: Bytes?,
+  private val codeHash: Hash?
 ) : Account {
 
-    override fun getBalance(): Wei = balance
+  override fun getBalance(): Wei = balance
 
-    override fun getStorageValue(key: UInt256?): UInt256 {
-        throw UnsupportedOperationException("not implemented")
+  override fun getStorageValue(key: UInt256?): UInt256 {
+    throw UnsupportedOperationException("not implemented")
+  }
+
+  override fun getAddressHash(): Hash = Hash.fromHexString(address.toHexString())
+
+  override fun getOriginalStorageValue(key: UInt256?): UInt256 {
+    throw UnsupportedOperationException("not implemented")
+  }
+
+  override fun getAddress(): Address = address
+
+  override fun getVersion(): Int {
+    throw UnsupportedOperationException("not implemented")
+  }
+
+  override fun storageEntriesFrom(startKeyHash: Bytes32?, limit: Int): NavigableMap<Bytes32, AccountStorageEntry> {
+    throw UnsupportedOperationException("not implemented")
+  }
+
+  override fun getCode(): Bytes = code ?: Bytes.EMPTY
+
+  override fun getNonce(): Long = nonce
+
+  override fun getCodeHash(): Hash = codeHash ?: Hash.EMPTY
+
+  companion object {
+
+    fun fromGenesisAllocation(allocation: GenesisAllocation): InMemoryAccount {
+
+      val nonce = toUnsignedLong(allocation.nonce)
+      val address = Address.fromHexString(allocation.address)
+      val balance = toWei(allocation.balance)
+      val code = allocation.code?.let { Bytes.fromHexString(it) }
+
+      return InMemoryAccount(address, balance, nonce, code, null)
     }
 
-    override fun getAddressHash(): Hash = Hash.fromHexString(address.hexString)
-
-    override fun getOriginalStorageValue(key: UInt256?): UInt256 {
-        throw UnsupportedOperationException("not implemented")
+    private fun toUnsignedLong(s: String): Long {
+      var value = s.toLowerCase(Locale.US)
+      if (value.startsWith("0x")) {
+        value = value.substring(2)
+      }
+      return java.lang.Long.parseUnsignedLong(value, 16)
     }
 
-    override fun getAddress(): Address = address
-
-    override fun getVersion(): Int {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun storageEntriesFrom(startKeyHash: Bytes32?, limit: Int): NavigableMap<Bytes32, AccountStorageEntry> {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun getCode(): BytesValue = code ?: BytesValue.EMPTY
-
-    override fun getNonce(): Long = nonce
-
-    override fun getCodeHash(): Hash = codeHash ?: Hash.EMPTY
-
-    companion object {
-
-        fun fromGenesisAllocation(allocation: GenesisAllocation): InMemoryAccount {
-
-            val nonce = allocation.nonce.hexToLong()
-            val address = Address.fromHexString(allocation.address)
-            val balance = allocation.balance.toBalance()
-            val code = allocation.code?.let { BytesValue.fromHexString(it) }
-
-            return InMemoryAccount(address, balance, nonce, code, null)
-        }
-    }
+    private fun toWei(s: String): Wei =
+      if (s.startsWith("0x")) {
+        Wei.fromHexString(s)
+      } else {
+        Wei.of(BigInteger(s))
+      }
+  }
 }

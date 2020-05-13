@@ -26,22 +26,22 @@ import org.hyperledger.besu.ethereum.util.RawBlockIterator
  * Reads test blocks from file and imports them to the test Blockchain.
  */
 class TestChainLoader(
-    private val protocolSchedule: ProtocolSchedule<Void>,
-    private val protocolContext: ProtocolContext<Void>,
-    private val blockIterator: RawBlockIterator
+  private val protocolSchedule: ProtocolSchedule<Void>,
+  private val protocolContext: ProtocolContext<Void>,
+  private val blockIterator: RawBlockIterator
 ) {
 
-    fun load() {
+  fun load() {
 
-        blockIterator.forEach { block ->
-            if (block.header.number == BlockHeader.GENESIS_BLOCK_NUMBER) {
-                return@forEach
-            }
+    blockIterator.forEach { block ->
+      if (block.header.number == BlockHeader.GENESIS_BLOCK_NUMBER) {
+        return@forEach
+      }
 
-            val protocolSpec = protocolSchedule.getByBlockNumber(block.header.number)
-            val blockImporter = protocolSpec.blockImporter
-            val result = blockImporter.importBlock(protocolContext, block, HeaderValidationMode.FULL)
-            check(result) { "Unable to import block " + block.header.number }
-        }
+      val protocolSpec = protocolSchedule.getByBlockNumber(block.header.number)
+      val blockImporter = protocolSpec.blockImporter
+      val result = blockImporter.importBlock(protocolContext, block, HeaderValidationMode.FULL)
+      check(result) { "Unable to import block " + block.header.number }
     }
+  }
 }

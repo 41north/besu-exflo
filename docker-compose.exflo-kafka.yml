@@ -18,7 +18,7 @@ volumes:
 services:
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.3.1
+    image: confluentinc/cp-zookeeper:5.5.0
     restart: unless-stopped
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data
@@ -34,7 +34,7 @@ services:
       ZOOKEEPER_JMX_PORT: 9585
 
   kafka:
-    image: confluentinc/cp-kafka:5.3.1
+    image: confluentinc/cp-kafka:5.5.0
     restart: unless-stopped
     hostname: kafka
     depends_on:
@@ -70,8 +70,8 @@ services:
     networks:
       - net
     ports:
-      - 8080:8080
-    links:
+      - 8082:8080
+    depends_on:
       - kafka
     environment:
       KAFKAHQ_CONFIGURATION: |

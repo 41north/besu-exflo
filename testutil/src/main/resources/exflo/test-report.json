@@ -1,15 +1,120 @@
 {
   "stats": {
-    "suites": 27,
-    "tests": 48,
-    "passes": 48,
+    "suites": 22,
+    "tests": 25,
+    "passes": 25,
     "pending": 0,
     "failures": 0,
-    "start": "2019-12-22T16:52:53.364Z",
-    "end": "2019-12-22T16:56:29.508Z",
-    "duration": 216144
+    "start": "2020-05-09T12:22:39.471Z",
+    "end": "2020-05-09T12:24:47.516Z",
+    "duration": 128045
   },
   "results": [
+    {
+      "uuid": "74aea8c3-5418-59de-9106-86578f501f9e",
+      "title": "SelfDestruct",
+      "file": "/test/selfdestruct.js",
+      "tests": [
+        {
+          "uuid": "cde6d58f-ff94-598f-af0a-bc7939fceb10",
+          "description": "should destroy the contract and refund the sender",
+          "web3": {
+            "summaries": [
+              {
+                "blockNumber": 45,
+                "blockHash": "0xc3f0967bb430ffeb616057634c0daad7a9d845bb38826971db63904eca2adda0",
+                "txHash": "0x91bd73578c2cec18128a4810883015e6874a5e3b9cf1a43f74d45f8fe3c5fc9a",
+                "txStatus": true
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "97e70043-aed7-5fcb-b63d-ac2687f246cd",
+          "description": "should destroy and refund self (which triggers the destroy of ether)",
+          "web3": {
+            "summaries": [
+              {
+                "blockNumber": 47,
+                "blockHash": "0x97d9189e717310e5d45af170d169535dc8dc189df8903431d9ecc06938b5fce7",
+                "txHash": "0xec41312c0d4276d3f6385f96de15d166d5779fcc0ce3c27f7a12775abb9eca78",
+                "txStatus": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "24c0375b-f98e-5bc3-90e1-cf4369d7a36d",
+      "title": "SelfDestructDelegatingCalls",
+      "file": "/test/selfdestruct.js",
+      "tests": [
+        {
+          "uuid": "692ac088-5d58-5102-b381-4ed325047ec1",
+          "description": "should send ether to contract after self referencing destroy",
+          "web3": {
+            "summaries": [
+              {
+                "blockNumber": 53,
+                "blockHash": "0xf2445639c94d045470473c8e9e6768874c0abdda8b4969307b2e84e04747005e",
+                "txHash": "0x33a4cbbac3f55e8ef29ad3705a3c2e1031f201d333efb82d22862ba9e51da49d",
+                "txStatus": true
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "60784b63-3d8c-5dca-b116-273e6f77f8e8",
+          "description": "should produce a cascading destroy and refund sender",
+          "web3": {
+            "summaries": [
+              {
+                "blockNumber": 56,
+                "blockHash": "0x166dc6d6e9734c6eda885b7a5596c1d33e8183b85d3a471f6072b192193cbc57",
+                "txHash": "0xa62e2c87fe4c2f36e96d3d3ab5157596e86c23e1447704dd2d28c3b5ef54b05e",
+                "txStatus": true
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "3e8a19b0-c9f5-5bea-a6f2-0109897ae49e",
+          "description": "should create self destroying contracts and self destruct itself",
+          "web3": {
+            "summaries": [
+              {
+                "blockNumber": 58,
+                "blockHash": "0x06c00c522068e42c740e8aeaf71a60f9a2a635823f6dc199e41c666ede6e8025",
+                "txHash": "0xc0d183d75b4fa063c4f34e20808390a080061d4f4ce1799780c8f8b879173d60",
+                "txStatus": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "6c7c544b-e536-5a24-902a-8738c32b4b8f",
+      "title": "SelfDestructInConstructor",
+      "file": "/test/selfdestruct.js",
+      "tests": [
+        {
+          "uuid": "43105c0b-51fb-5432-b38d-52257ec3b21f",
+          "description": "should create and destroy itself on contract deploy",
+          "web3": {
+            "summaries": [
+              {
+                "blockNumber": 63,
+                "blockHash": "0x8bb0d3d886773b1abdef464ee715c8ffd9788de5ed86cbe6271bb8f4df48c4e3",
+                "txHash": "0x2f6600db19993de7eafdbecac78d1537bc18270e664410ff1ffd02fa172f84ee",
+                "txStatus": true
+              }
+            ]
+          }
+        }
+      ]
+    },
     {
       "uuid": "2637472b-72d6-5494-99a6-fd795dced340",
       "title": "NonERC165",
@@ -21,9 +126,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 56,
-                "blockHash": "0x938e0e989fef1bb145cc63d76575774afd3262cf7895a8fd9e31a6bc30dcb0da",
-                "txHash": "0xacbc7f802e9f2b4e2fba8f86524d46f7a71e59ac52a599c775f17dbf9f81eea6",
+                "blockNumber": 68,
+                "blockHash": "0x98368854d6429265be7f2f4ad48221b1c6aef7c2ac9f6991343daec6cc85231c",
+                "txHash": "0x272f8427b32293854e30473fb5c32bf8d99b49a344f7c2deba072282d4206f76",
                 "txStatus": true
               }
             ]
@@ -42,9 +147,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 60,
-                "blockHash": "0xd37321b7f6268633cb66450688dacf7a00eab8810b750635ccd7f7a17b02930f",
-                "txHash": "0x2ccb9235da8a443aaf5796c798357a3ecb1e50bb112f5205774b55fe2d884317",
+                "blockNumber": 74,
+                "blockHash": "0x38488a8f69dafdba093d3b89f989dfb21fc1eb636a84f64cef8ae7b2c5c7f59f",
+                "txHash": "0x5a481f11142176eaee3cd1a76201f4bcf5dde484666e6d3815c58837377ebf85",
                 "txStatus": true
               }
             ]
@@ -63,9 +168,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 70,
-                "blockHash": "0x8daa940219aaca7ec43ff1f4756fd68b54b235e952f5afb098eedf828be5e773",
-                "txHash": "0x536371b6e065f8a94256fcb924a2b3897f000b1c45c3ce45747c3066f326be30",
+                "blockNumber": 78,
+                "blockHash": "0x261ade19cd90106359f75553a8ba401138afcefe76b17c6a47ba7e1c8c8f18eb",
+                "txHash": "0x5bcfe0ced599f9b6fff2387e76d2f19a054fc2cf399864443972ab69024cc46d",
                 "txStatus": true
               }
             ]
@@ -84,9 +189,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 75,
-                "blockHash": "0xdd4369786deb1e43682b3736f0a750e7ae203f21fa24f75d06e43d4b998b3221",
-                "txHash": "0x72315e7a7208f6920581e45981a2c06dd80b4c90abce91fccc88490daf0f3131",
+                "blockNumber": 83,
+                "blockHash": "0xff2cdb1664573f231f098ac8b9de1145734bda44f5daf03b99edb5193cbe28bc",
+                "txHash": "0x55830d454a568b5b6ba3401a1833454021c20a00a2a8f3ae146f66c92f3fbf40",
                 "txStatus": true
               }
             ]
@@ -105,9 +210,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 80,
-                "blockHash": "0xe79dfd9d82201772d224d0f6c9901be823dcc09cb5cf0db9c34e022defd9fc0b",
-                "txHash": "0xe6d094bf3a2a81ddd27710f89e084f4361582f714c421ecd96a474faf9dee3f9",
+                "blockNumber": 90,
+                "blockHash": "0xe80cb768f0ff1ec8db2e37fb2fdec5a291972c1e223ebf4846dc1d00182e75b2",
+                "txHash": "0x3b5d4597e713db9419a2ab04035676b64e9a3307c5b4bdc27dc55ba523aef004",
                 "txStatus": true
               }
             ]
@@ -126,9 +231,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 86,
-                "blockHash": "0xa484358cabe7c1574958ad7f4db3f5383731ac34b3cb7ab9a3d2b2ed453cfaac",
-                "txHash": "0x60513e0359607b163a5171465619ae7a59a46bf64bbd87ffd870d3816c54060d",
+                "blockNumber": 98,
+                "blockHash": "0x47ef704556eea48f60f05f9709bdb0dcb69d1d0e1d5e7bec0b92bab23a1cda08",
+                "txHash": "0x3ad71ef1e182b66c185a714f2f131f3ae8765bcd33aa886fe0eed19cd79e898d",
                 "txStatus": true
               }
             ]
@@ -147,9 +252,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 92,
-                "blockHash": "0x6102dba43fffcb121ceab7925a7b0f96fafb2a7a0811b9b436611db01a86736f",
-                "txHash": "0x169cba2d6dd2206fd2dce0ae5bc5720d447ae166eee12420a06324c1ae25ad2b",
+                "blockNumber": 104,
+                "blockHash": "0x9362b7eb667afc5eab031c2b0419e9e0f0c476ac968667b7fc067a569af547d3",
+                "txHash": "0x4c824fd3bb2b90a46a6cafb349698e0b318c9cb2e0125348faf6ca55c9548b17",
                 "txStatus": true
               }
             ]
@@ -168,9 +273,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 97,
-                "blockHash": "0x69a834305f5fe2232da20ce65fb7dd3cf19f6b99d8ea623de2685d366818936b",
-                "txHash": "0x28d793b3d6450af684f89efe890d95dbd7dd7371c38ca7d8415322bcc2427a72",
+                "blockNumber": 109,
+                "blockHash": "0xb4319ee6fad546a4b12f452ba27ba3f44b15eb9a2e28b92c25ee2909b121f26d",
+                "txHash": "0xa7d306295ac8b8ade113735baa0f14aec785dd2d060dfc52ce89b4508b8707a9",
                 "txStatus": true
               }
             ]
@@ -189,9 +294,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 102,
-                "blockHash": "0xc3095c1146eb292f3c0a0d68be46cf758d3a8ccbe20d679553b2c0747339a5d4",
-                "txHash": "0x54189f851e02d3a02295c0e473035a44175029864ad47b763c6b2d6493592e3c",
+                "blockNumber": 113,
+                "blockHash": "0xc62998486dd84955f89cfc7514f9201d99462cc9a7e8766da37c9abc69d37792",
+                "txHash": "0x44ba82a1314024e7b2841afecf7f8ea1e9ce6a339a952d298470ad12705f0d23",
                 "txStatus": true
               }
             ]
@@ -210,9 +315,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 108,
-                "blockHash": "0xd7cc846635f7e2408ddb7da5c6d54f95ee5b0ad572528c13ed6a4ac0e60d0aff",
-                "txHash": "0x235565a57db8cfe9195898b9c8e282041a8022fe69f7b4186b437d44d498af9b",
+                "blockNumber": 118,
+                "blockHash": "0xa5b5090f957ee0179183136465c34311dd735e29c2462473c2fbc6b8bc0254f0",
+                "txHash": "0xff58e7c388ffa247001ddb0f464bb2f4c3b59434dc2e86160eca32076cc4509a",
                 "txStatus": true
               }
             ]
@@ -231,9 +336,30 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 113,
-                "blockHash": "0xf404379d1ccfc7269f50ac29918a93413a22b31513fe9de6c1746f0441ade1ab",
-                "txHash": "0xd385a01d4e741a433aca0a082e028a77b7b049c313661b9e03d6cec27e5df132",
+                "blockNumber": 122,
+                "blockHash": "0xc1d4417e467956f6402cff2c06c2ef16ee2dad92edaffd87a63e73effdba9b62",
+                "txHash": "0x71eb2313794c834b6567a47cee166072bc4c2237a38f84c5de9303476c6bd499",
+                "txStatus": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "368d0916-0017-5ffa-aebc-59264ac3405c",
+      "title": "MetadataERC721",
+      "file": "/test/tokens/erc721.js",
+      "tests": [
+        {
+          "uuid": "f8e45104-6203-5a40-b449-107235315f8b",
+          "description": "should deploy the contract",
+          "web3": {
+            "summaries": [
+              {
+                "blockNumber": 126,
+                "blockHash": "0x85a684bd8e6c7521f287deabf7336ca23b74132f9c19160ad834039423d60105",
+                "txHash": "0x13e244328fce6055a1916826ad76bc44913345080508efe58cf1285b5fc720f1",
                 "txStatus": true
               }
             ]
@@ -252,9 +378,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 119,
-                "blockHash": "0x44e17a5ad1af7677d5e8f799a307d3f185614ab39dddae6a038cea56269b35af",
-                "txHash": "0x88fb55af1b1d5f527ba27aaacff05f6a255d1aea2359f86dc6148ad817bde13a",
+                "blockNumber": 130,
+                "blockHash": "0x65aad9356cdfd6ef13243534ad7f4aab8e1aea2d2281a14512c1fd9137ffdb7f",
+                "txHash": "0xe9dbc437c75ac02b7d10535f170436c3111ff8a3134912e3331bb44803f80bc6",
                 "txStatus": true
               }
             ]
@@ -273,9 +399,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 124,
-                "blockHash": "0x60ec6845390212e2c454fbae24b12d0fc6cc88ea43ea15529fe4d7633ed02cbc",
-                "txHash": "0x9ee18c44bbb01f4a6e013ef7df6e6cede8d411580f6b8d1bbb9f88cf7e0de112",
+                "blockNumber": 137,
+                "blockHash": "0xdd43509bc2b31317a1a831684eb5172e5149bbd6db8888bacfd81550c90587d3",
+                "txHash": "0x88d07451837bc2b369095de60318cc6e59c985c511d91faaf5e8876dac36796f",
                 "txStatus": true
               }
             ]
@@ -294,9 +420,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 129,
-                "blockHash": "0xd1c03fcf499c3237c604d3d059d43255d13dec09fd45de2609802da6d80e76e1",
-                "txHash": "0x37d235d7a5d48baf9443e718552f2e8080ba1ed94c749b53df3cca8e9bb01793",
+                "blockNumber": 143,
+                "blockHash": "0x030f4ac10a4cd1de3c97c2d506cd42b5bab559906616ad3bc3362ec26f2f36d2",
+                "txHash": "0x6a9885b4acd0afc395d1054bac1facfd591a13a5f63e500608664cd24ddb78f1",
                 "txStatus": true
               }
             ]
@@ -315,9 +441,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 135,
-                "blockHash": "0xe977678b1ce6ff42ea9b781baab2ecea1b434be5d8fb067872a6ff0593c55f08",
-                "txHash": "0x076f72985f49277db7f112779c095bb26f412b94e77bc8f306be8da06b91ad54",
+                "blockNumber": 148,
+                "blockHash": "0x8b2760fe6a92c41ece6a02bdd49981e469650929733184353f272508b25976d6",
+                "txHash": "0x3d2fa673d52b17b87a20ea860d3ec4ff3fe1fa24bc714fbe259e59f908bed771",
                 "txStatus": true
               }
             ]
@@ -336,9 +462,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 139,
-                "blockHash": "0x3af289656c63befa041759b1ed8a1803a92d495afb4981f6087dbcec920c6b42",
-                "txHash": "0x930ca2a03c0d51fff0217a3ed8f540c90d711407d83c772b71a894bad6f43d5e",
+                "blockNumber": 152,
+                "blockHash": "0x61ea797cd30b3ce28124bc5f844e2ec3d4fdfd6cecc1b5c413dcd0f51dfe92d5",
+                "txHash": "0x6168c843a3c9ea6b4102c2e4ecfbc3cbc63a9e99502f74cb2c7eada7ccc73b6d",
                 "txStatus": true
               }
             ]
@@ -357,457 +483,9 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 144,
-                "blockHash": "0xd31dcda7b26fb7e69d486124d1d88b919e8eb8cbeb665e9a2785fd076ae98543",
-                "txHash": "0x6b9d95d9189d046b6a2e771f88226e8b7001b05d632ce34ede2b42785dbb6ca2",
-                "txStatus": true
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "a7af44c3-096a-5174-8953-cf3843187f5d",
-      "title": "CallEtherSenderIntegration",
-      "file": "/test/tracing/integration/call.js",
-      "tests": [
-        {
-          "uuid": "898d58d7-b561-5ccf-b9ff-cdecacefa81a",
-          "description": "should send ether successfully",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 151,
-                "blockHash": "0x87298690292772f6ef0065ca03e79b8da176ebd0f5fc6950528907dd08589ec3",
-                "txHash": "0x6e60ec524908402bc92f13cd3490657ca8e3c2c8c87441987c25214054d428c3",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "c85e5fac-09a7-53b5-8168-a40346d5ecc1",
-          "description": "should transfer ether successfully",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 152,
-                "blockHash": "0xcbaaa10d2bcc66d4767e1ea7be11f980057f0852370f7150a9734315cfaf1abd",
-                "txHash": "0x14e84f1e87d336d380976e01d7a100651dbec36f0f3f7034e9f2212ff43d4bb2",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "b1cb1a93-4dea-59a0-8844-877342a91460",
-          "description": "should transfer ether successfully via a fallback function",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 154,
-                "blockHash": "0x5de7868e69725e26b0d097c3bee8e3bb7ab6c508860f16a92754befbd26a022a",
-                "txHash": "0x44fd72e852db42728d1205ce6842b0bef8aa14f4c31f59897c491a9b49969a12",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "5e805323-a250-58ff-a7f0-d0055e9dd9ca",
-          "description": "should fail to send ether when gas is too low",
-          "web3": {
-            "summaries": []
-          }
-        },
-        {
-          "uuid": "5a43f8e6-bc50-5fdc-af41-0e9b10710bdf",
-          "description": "should fail to transfer ether when gas is too low",
-          "web3": {
-            "summaries": []
-          }
-        },
-        {
-          "uuid": "eb6a310c-694e-5040-b7e6-16e03efa9e2a",
-          "description": "should fail to transfer ether via a fallback function when gas is too low",
-          "web3": {
-            "summaries": []
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "5062e7d9-23df-5dd7-a133-d50721e88de1",
-      "title": "CallNestedEtherSenderIntegration",
-      "file": "/test/tracing/integration/call.js",
-      "tests": [
-        {
-          "uuid": "adaec933-249e-579d-a6b6-5c01fde730ba",
-          "description": "should send ether to a nested child contract",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 163,
-                "blockHash": "0x540645c406ec95e3a87f8e984f1ab37b581e5daf4ecd0b4fdb6ca61413732dfe",
-                "txHash": "0xc4331f1167a2d8510db1fca5c1a3cf65ec967cada050e7a3bd36724641d82e04",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "7a3816c4-0320-5f2d-bd55-699daca302fc",
-          "description": "should transfer ether to a nested child contract",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 165,
-                "blockHash": "0xc7d5084f8b168777529462fa7bf2f799252972bf0b80fdacc422604a378aea29",
-                "txHash": "0xcbe1b119fe576134a8f948f22e340d50c088324ec8b9ff56204bf2f2b2887720",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "e740bafa-73d6-51ea-8e7c-308ca59888da",
-          "description": "should fail to send ether to a nested child contract when value is too low",
-          "web3": {
-            "summaries": []
-          }
-        },
-        {
-          "uuid": "cfd433d4-7c28-50d3-89a6-1d1da272de28",
-          "description": "should fail to transfer ether to a nested child contract when value is too low",
-          "web3": {
-            "summaries": []
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "7a57ae4b-a835-5f8b-866d-3aabf7be9c9b",
-      "title": "CreateIntegration",
-      "file": "/test/tracing/integration/create.js",
-      "tests": [
-        {
-          "uuid": "f7ff8ada-56dc-52d0-8d67-4259d7972fcf",
-          "description": "should create a DummyContract when \"createDummyContract\" method is called",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 173,
-                "blockHash": "0xb4c6bbb1a8a06086c2f1a5f3313d876a0776a44cd647f9a656dcbe7733b9fdd1",
-                "txHash": "0xa9a97bbf73554625220a5a489376bfe844b762d86e7d0d40a54f6e1e8b7c8825",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "c21049a8-e703-5fe2-b73b-814575534241",
-          "description": "should NOT create DummyOutOfGasContract when \"createDummyOutOfGasContract\" method is called",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 175,
-                "blockHash": "0xc484be57c7e4582c04067bd979e66dad668f307ccdc1d4e598c1eec39927fd5b",
-                "txHash": "0xabfb15447f8b153c0d13659a154649e54b21c0101b92b9715512885b655c38a4",
-                "txStatus": false
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "ae9141b2-3016-59c2-91d0-2780fa34da64",
-          "description": "should NOT create DummyBadOpCodeContract when \"createDummyBadOpCodeContract\" method is called",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 180,
-                "blockHash": "0x0ec0b296b238961297a77ead6ba9d8e42acaf9a6813368712fbfa4cb0f34fd31",
-                "txHash": "0x77e79f633fe8f43e28c74ce765bf2e4d1718c9a8e5c2e718ef5b86cf52c4c29d",
-                "txStatus": false
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "baa548dd-145a-5e1b-8c67-be92cb7141f6",
-          "description": "should NOT create a DummyRevertContract when \"createDummyRevertContract\" method is called",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 183,
-                "blockHash": "0x073603daa0adf060f423769f899734864ca61688d9d2b98cdaf17474e673b501",
-                "txHash": "0x29c1e60b26458ea8cb9ec84281e2ac010b64bd2c96b3b67b1ea8f9aeafcc6750",
-                "txStatus": false
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "646caf30-ede1-5bc3-a9e8-999ae1be205d",
-          "description": "should create a CreateNestedIntegration contract when \"createNestedDummyContracts\" method is called",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 188,
-                "blockHash": "0x429575e6c60ccb3fe56d8777d34e8af121e6b6503b26a84236e7ce035d5a6667",
-                "txHash": "0x27829adea08139afa0eca03092a825d47a2d6f268f37564a2b766dabd3f280dc",
-                "txStatus": true
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "1500873b-8aae-598b-a594-a244eeebfc48",
-      "title": "CreateDestroyIntegration",
-      "file": "/test/tracing/integration/other.js",
-      "tests": [
-        {
-          "uuid": "43105c0b-51fb-5432-b38d-52257ec3b21f",
-          "description": "should create and destroy itself on contract deploy",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 192,
-                "blockHash": "0xd269ea714da79df56c7868cf2a457894b2cfe547ec19255368f5a66d2db48f0a",
-                "txHash": "0x56aa3e9bc210357ad4be391565c0d7f312aa6ea41e0ba012bacaff3f71635797",
-                "txStatus": true
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "720b8693-b250-5516-8cd0-dcd82e8143bf",
-      "title": "SelfDestructIntegration",
-      "file": "/test/tracing/integration/selfdestruct.js",
-      "tests": [
-        {
-          "uuid": "cde6d58f-ff94-598f-af0a-bc7939fceb10",
-          "description": "should destroy the contract and refund the sender",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 200,
-                "blockHash": "0x6a12cc6a93a596c8e9bb99858b7ca79c598a0da266d739bf7da4d011358d148c",
-                "txHash": "0x5953ad882185df474625fc8500ae16b9b11c2c88ab1520ddea317258f294c7ef",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "97e70043-aed7-5fcb-b63d-ac2687f246cd",
-          "description": "should destroy and refund self (which triggers the destroy of ether)",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 204,
-                "blockHash": "0xd975eb7981b01509f204a3dfdc90cb766aec54333364adae4263e31ce39c00fc",
-                "txHash": "0xeced91119a1618df0fc00d7ee45d2e9a2612ffe0b6a3a2f46c91a6e4172d9fef",
-                "txStatus": true
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "ab6aecc5-b91c-5bb4-8ecd-61161d40d282",
-      "title": "SelfDestructDelegatingCallsIntegration",
-      "file": "/test/tracing/integration/selfdestruct.js",
-      "tests": [
-        {
-          "uuid": "692ac088-5d58-5102-b381-4ed325047ec1",
-          "description": "should send ether to contract after self referencing destroy",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 210,
-                "blockHash": "0x723c4b22e7b80306f7902ca84116a2090207ae1698dd82b45f258e51c72a74e2",
-                "txHash": "0xafa83bb39c0bb1d1ac759f4a5e1731aec386c9db79b10595daac5fce44e9990d",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "60784b63-3d8c-5dca-b116-273e6f77f8e8",
-          "description": "should produce a cascading destroy and refund sender",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 214,
-                "blockHash": "0x018ef9183a04939605000feea8846cf82516ba18e07655ee37d057214c002162",
-                "txHash": "0xcc75cb50671e139741e6b16766d4bcbe43ec9daf01c11d3b463521aaa81ebf29",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "3e8a19b0-c9f5-5bea-a6f2-0109897ae49e",
-          "description": "should create self destroying contracts and self destruct itself",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 216,
-                "blockHash": "0x17dfcf5566c9524f1692316a75f94deb68ce229c857aaaeaa792fcbfb95afab3",
-                "txHash": "0x8d74353ca1f12937a8d07e5a99bc6ba42c004f460e360844f87daadfdda98a49",
-                "txStatus": true
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "f62770bd-55aa-5465-9682-4a9819d54485",
-      "title": "CreateOpCodeUnit",
-      "file": "/test/tracing/unit/create.js",
-      "tests": [
-        {
-          "uuid": "abfad0fb-b919-5fb0-b106-38574ec24a3f",
-          "description": "should create a new smart contract with valid code and with ether associated",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 223,
-                "blockHash": "0xcc4180d7a17f6253c228efc3d6d6c3f7dd57d37a3dde007248bf16d43143ae72",
-                "txHash": "0x881f2e8caa236192d00b4c5a78bf49eaee296df10bac04c7daebdc1a1c3ba215",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "a12c8912-5817-59a6-8a13-8d2f7f9f238d",
-          "description": "should create a new smart contract with valid code and without ether associated",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 225,
-                "blockHash": "0xc6de14f6363217a71db4ffa3e21adef2d95502b3fd74e20eac153c536b2599b9",
-                "txHash": "0xa8e0acf0ace672c3d97d676ec54ab502300c9105128929625b05954af7f96008",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "59834478-b3fa-588f-beaa-2c2bf79247ee",
-          "description": "should create a new smart contract without code and without ether associated",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 228,
-                "blockHash": "0x6c597f24da39389bf9f2d050af12eaa2b7d567df9a08753eb0c985400fc9bbff",
-                "txHash": "0x7d1250977601a653d080ce6d95243ab93ea838e7e52569f04fe770f318989768",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "48f44991-6b05-5545-8bf9-7596c107a4a5",
-          "description": "should create a new smart contract with invalid code and without ether associated",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 232,
-                "blockHash": "0xce6f0080ce23ef7d3ce0b2326a50d0fc04ea2a7b351fa68f4963137eed1e7bcf",
-                "txHash": "0x35fc82d4ff95ff7a6e679b1b546ace635efcbe067fd3b6efcb4826c0d7404269",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "76541fb0-f6e5-5e53-8f41-7623a54ec2f3",
-          "description": "should create two new smart contracts with valid code and with ether associated",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 235,
-                "blockHash": "0x15829284c2b61dd4912d4ce783846ec94e0f1bbd93e6607af262b87388f71c23",
-                "txHash": "0x3a585193bc0a3a848db3d79b575e296a1541eeb7ba3d60f99100d17bfea212ea",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "d281ef19-5362-51a0-bc46-fff58d9d2c7e",
-          "description": "should create two new smart contracts with valid and invalid code and with ether associated",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 238,
-                "blockHash": "0x42cdbd8bd3ab87850ee9dc9fde27280ae64552e79fe43594b5b501ca017f41bd",
-                "txHash": "0x2b01460735adc9f9e7f0b2394b874b297b2aaa4464ee2963cf3825b23e2aab2c",
-                "txStatus": true
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "358dbc70-2f1d-54a4-82df-1cde3db8e6bf",
-      "title": "Create2OpCodeUnit",
-      "file": "/test/tracing/unit/create2.js",
-      "tests": [
-        {
-          "uuid": "44d8cc3f-f81f-5a5b-9361-50a5cc566412",
-          "description": "should create a new smart contract with an empty source",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 246,
-                "blockHash": "0x1eb03e44f2add46f698131937d6a663e85a236ace0f51d7a3fd5dfdd53e0fb7c",
-                "txHash": "0x1acc44bbad68a9773a24cfd40a4f37d4bb8658e17be46e8c0904e9e2ba81c6da",
-                "txStatus": true
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "fb927033-8edd-5b78-9ad1-0f11017e1d50",
-      "title": "SelfDestructOpCodeUnit",
-      "file": "/test/tracing/unit/selfdestruct.js",
-      "tests": [
-        {
-          "uuid": "cde6d58f-ff94-598f-af0a-bc7939fceb10",
-          "description": "should destroy the contract and refund the sender",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 254,
-                "blockHash": "0x79385f5b3eb3c8e6c6301112a9fe0ab127102b8a64c73f9492068d536fa55707",
-                "txHash": "0xf0fbbb71e79deb8c482ef4ef070ded4313020e97887a30e404de1cb6c1f9c838",
-                "txStatus": true
-              }
-            ]
-          }
-        },
-        {
-          "uuid": "3efc76a6-f2d7-58c2-92c1-943e4a7c893e",
-          "description": "should destroy and refund self while 'destroying' ether",
-          "web3": {
-            "summaries": [
-              {
-                "blockNumber": 257,
-                "blockHash": "0xf8baaed66e8dba9ab1ee75b40ff4ceb373215a18eafffbe2bd45366ea5c42009",
-                "txHash": "0xe1d8c5fd4d7b6ee90a73c882f28f777f7061704beb35b369ff9cedbaa53a69e3",
+                "blockNumber": 157,
+                "blockHash": "0x78cf031be0a6cccfcdc562cec6631403d78615544515a845cfe61709cd4a6d01",
+                "txHash": "0x5ba64ab912c415f8fee58fdd6be4022403b7944e9d303ef915d7adb3c0c137bb",
                 "txStatus": true
               }
             ]
@@ -826,33 +504,33 @@
           "web3": {
             "summaries": [
               {
-                "blockNumber": 262,
-                "blockHash": "0x1d99e6f6c8eac376ba3cdb312453c4819cfd5dc8f1277ea5c39c54bdb4b8fb41",
-                "txHash": "0xd8c86eeb5fbbecb5dc0c5cef97ddac119d9a2e4534e6e9187dfa28530f2b9557",
+                "blockNumber": 164,
+                "blockHash": "0xc50a4e5bfc093195215ee2fbfa9266db84703e5023688e8308b787a0a65f5f61",
+                "txHash": "0xd151cf4b45e2b3af09f1761779218ad4995dafd4ce293ec0348a672dd684401e",
                 "txStatus": true
               },
               {
-                "blockNumber": 264,
-                "blockHash": "0x707d9a0df8a1d8261be48f25121f2542cb0bd5961bd5d1d88a5d3d033f49913f",
-                "txHash": "0xee3d54be2275da1c3933b2439bf69b8da248aedec104c3afb735a1449e60faa0",
+                "blockNumber": 166,
+                "blockHash": "0x16b0896fd2a23d5b7b37545c40d4bdbb34a39971b5d7945794eb943402427682",
+                "txHash": "0x146a1889563f44af0e58446a947c4219653e0ba8d725cab78895b52c61973055",
                 "txStatus": true
               },
               {
-                "blockNumber": 266,
-                "blockHash": "0xfd66670f3abc12a17ca17f20ea9a0c0f5fae1470baf5309d91352d0c5af4b45e",
-                "txHash": "0x77288ce15bdb035696764f02231050fa30ccf3b4cd74947012f1e76c395355f3",
+                "blockNumber": 167,
+                "blockHash": "0xf71ab2e68fd65c8f580d6831c4949a11c19f693c85a2bddc6c8e4f1de38740cb",
+                "txHash": "0xce40d62866f343d7f8d7489f8f7e8297fcc244dba00addca557f6bf3492f1bb9",
                 "txStatus": true
               },
               {
-                "blockNumber": 267,
-                "blockHash": "0xe01641a30ec73553287e487efc1a45918bafd0ad73766310a151de11dd53a87a",
-                "txHash": "0x2df3b2561b214d48f5d57474f32a042f2d8b32b0a95fe8ae75a7a1d5ffc3f2b6",
+                "blockNumber": 169,
+                "blockHash": "0xfcd82bb3fdff7b00680dfa590710340d933dbee59b8c0c48b1b1514b2f9881ec",
+                "txHash": "0x8ca90f9ad09a72348bc06ba950571c245d20a57175c11f0710f70c5bbf1d7922",
                 "txStatus": true
               },
               {
-                "blockNumber": 268,
-                "blockHash": "0xce558b9c784c351b68b27cabab52380ca2691b93f4c8e74ab6e4d58a4efddd01",
-                "txHash": "0x26119a7ea8acf569efd71043a49dbf8317a425625bd615858244cb2ee04b601d",
+                "blockNumber": 170,
+                "blockHash": "0xea8d70d59acc9625bb1b6fb38260b9c0b5324f7eb8acaa1253aa4f9f0421d684",
+                "txHash": "0xb53fad9b28e081048e0a01236faf7114218b68e8eb1f2b19a1d700eeb0ad9b37",
                 "txStatus": true
               }
             ]

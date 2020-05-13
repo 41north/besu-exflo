@@ -29,6 +29,8 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.units.bigints.UInt256
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -38,8 +40,6 @@ import org.hyperledger.besu.ethereum.transaction.CallParameter
 import org.hyperledger.besu.ethereum.transaction.TransactionSimulator
 import org.hyperledger.besu.ethereum.transaction.TransactionSimulatorResult
 import org.hyperledger.besu.ethereum.vm.Code
-import org.hyperledger.besu.util.bytes.BytesValue
-import org.hyperledger.besu.util.uint.UInt256
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
@@ -190,7 +190,7 @@ object SolidityContractWrapperGen {
                 TypeSpec.companionObjectBuilder()
                     .addProperty(
                         PropertySpec.builder("CODE", Code::class, KModifier.PUBLIC)
-                            .initializer("Code(BytesValue.fromHexString(%S))", codeBinary)
+                            .initializer("Code(Bytes.fromHexString(%S))", codeBinary)
                             .build()
                     )
                     .build()
@@ -247,13 +247,13 @@ object SolidityContractWrapperGen {
                 funBuilder
                     .addCode(
                         """
-                        |val fn = %T("$fnName", listOf(Web3Address(contractAddress.hexString)), listOf(%T.create(%T::class.java)))
+                        |val fn = %T("$fnName", listOf(Web3Address(contractAddress.toHexString())), listOf(%T.create(%T::class.java)))
                         |val fnEncoded = %T.fromHexString(%T.encode(fn))
                         |return execute(fnEncoded, precompiledAddress, blockHash)
                         |   ?.output
                         |   ?.let {
-                        |      val rawInput = it.toUnprefixedString()
-                        |      %T.decode(rawInput, fn.outputParameters) as List<%T> 
+                        |      val rawInput = it.toUnprefixedHexString()
+                        |      %T.decode(rawInput, fn.outputParameters) as List<%T>
                         |    }
                         |   ?.firstOrNull()
                         |   ${ mapToOutputTypeName(outputTypeName) }
@@ -261,7 +261,7 @@ object SolidityContractWrapperGen {
                         Function::class,
                         TypeReference::class,
                         typeName,
-                        BytesValue::class,
+                        Bytes::class,
                         FunctionEncoder::class,
                         FunctionReturnDecoder::class,
                         typeName
@@ -313,7 +313,7 @@ object SolidityContractWrapperGen {
     private fun buildExecuteFunction(): FunSpec =
         FunSpec.builder("execute")
             .addModifiers(KModifier.PRIVATE)
-            .addParameter("method", BytesValue::class)
+            .addParameter("method", Bytes::class)
             .addParameter("address", Address::class)
             .addParameter("blockHash", Hash::class)
             .addStatement(
@@ -326,7 +326,7 @@ object SolidityContractWrapperGen {
                 |       null,
                 |       null,
                 |       method
-                |   ), 
+                |   ),
                 |   blockHash
                 |)
                 |.orElseGet(null)

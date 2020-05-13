@@ -16,30 +16,30 @@
 
 package io.exflo.ingestion
 
-import io.exflo.ingestion.tracer.BlockReplay
-import io.exflo.ingestion.tracer.BlockTracer
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.exflo.ingestion.tracker.BlockReader
 import io.exflo.testutil.KoinTestModules
+import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockReplay
+import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockTracer
 import org.hyperledger.besu.ethereum.transaction.TransactionSimulator
 import org.koin.dsl.module
 
 @Suppress("MemberVisibilityCanBePrivate")
 object KoinTestIngestionModules {
 
-    val blockReplay = module {
-        single { BlockReplay(get(), get(), get()) }
-    }
+  private val ingestion = listOf(module {
 
-    val tracer = module {
-        single { BlockTracer(get(), get()) }
-    }
+    single { BlockReplay(get(), get(), get()) }
 
-    val simulator = module {
-        single { TransactionSimulator(get(), get(), get()) }
-    }
+    single { BlockTracer(get()) }
 
-    val defaultModuleList = KoinTestModules.defaultModuleList + listOf(
-        blockReplay,
-        tracer,
-        simulator
-    )
+    single { TransactionSimulator(get(), get(), get()) }
+
+    single { BlockReader() }
+
+    single { ObjectMapper().registerModule(KotlinModule()) }
+  })
+
+  operator fun invoke() = KoinTestModules() + ingestion
 }

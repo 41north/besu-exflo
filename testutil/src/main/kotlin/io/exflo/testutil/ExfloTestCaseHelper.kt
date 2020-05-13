@@ -17,82 +17,82 @@
 package io.exflo.testutil
 
 import com.beust.klaxon.Klaxon
-import java.io.InputStream
 import org.hyperledger.besu.ethereum.chain.Blockchain
 import org.hyperledger.besu.ethereum.core.Block
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.TransactionReceipt
+import java.io.InputStream
 
 abstract class ExfloTestSuite {
 
-    // take our id from the simple name of the implementing class
-    open val title: String = this::class.java.simpleName
+  // take our id from the simple name of the implementing class
+  open val title: String = this::class.java.simpleName
 }
 
 abstract class ExfloTestCase(val suite: ExfloTestSuite) {
-    abstract val description: String
+  abstract val description: String
 }
 
 class ExfloTestCaseHelper(
-    private val blockchain: Blockchain,
-    testReportStream: InputStream
+  private val blockchain: Blockchain,
+  testReportStream: InputStream
 ) {
 
-    private val klaxon = Klaxon()
+  private val klaxon = Klaxon()
 
-    private val report = klaxon.parse<TruffleReport>(testReportStream)!!
+  private val report = klaxon.parse<TruffleReport>(testReportStream)!!
 
-    private val suitesByTitle = report
-        .results
-        .map { result ->
-            result.title to result.tests
-                .map { test -> test.description to test }
-                .toMap()
-        }
+  private val suitesByTitle = report
+    .results
+    .map { result ->
+      result.title to result.tests
+        .map { test -> test.description to test }
         .toMap()
+    }
+    .toMap()
 
-    fun web3TestResultFor(testCase: ExfloTestCase) =
-        suitesByTitle[testCase.suite.title]
-            ?.get(testCase.description)
+  fun web3TestResultFor(testCase: ExfloTestCase) =
+    suitesByTitle[testCase.suite.title]
+      ?.get(testCase.description)
 
-    fun blockHashesFor(testCase: ExfloTestCase): List<String> =
-        web3TestResultFor(testCase)
-            ?.let { result -> result.web3.summaries.map { summary -> summary.blockHash } }
-            .orEmpty()
+  fun blockHashesFor(testCase: ExfloTestCase): List<String> =
+    web3TestResultFor(testCase)
+      ?.let { result -> result.web3.summaries.map { summary -> summary.blockHash } }
+      .orEmpty()
 
-    fun blocksFor(testCase: ExfloTestCase): List<Block> =
-        blockHashesFor(testCase)
-            .map { hash -> blockchain.getBlockByHash(Hash.fromHexString(hash)) }
-            .filter { it.isPresent }
-            .map { it.get() }
+  fun blocksFor(testCase: ExfloTestCase): List<Block> =
+    blockHashesFor(testCase)
+      .map { hash -> blockchain.getBlockByHash(Hash.fromHexString(hash)) }
+      .filter { it.isPresent }
+      .map { it.get() }
 
-    fun blocksWithReceiptsFor(testCase: ExfloTestCase): List<Pair<Block, List<TransactionReceipt>>> =
-        blocksFor(testCase)
-            .map { block -> Pair(block, blockchain.getTxReceipts(block.hash).orElse(emptyList())) }
+  fun blocksWithReceiptsFor(testCase: ExfloTestCase): List<Pair<Block, List<TransactionReceipt>>> =
+    blocksFor(testCase)
+      .map { block -> Pair(block, blockchain.getTxReceipts(block.hash).orElse(emptyList())) }
 }
 
 data class TruffleReport(val results: List<TestSuite>)
 
 data class TestSuite(
-    val uuid: String,
-    val title: String,
-    val file: String,
-    val tests: List<TestResult>
+  val uuid: String,
+  val title: String,
+  val file: String,
+  val tests: List<TestResult>
 )
 
 data class TestResult(
-    val uuid: String,
-    val description: String,
-    val web3: Web3TestResult
+  val uuid: String,
+  val description: String,
+  val web3: Web3TestResult
 )
 
 data class Web3TestResult(
-    val summaries: List<Web3TestResultSummary>
+  val summaries: List<Web3TestResultSummary>
 )
 
 data class Web3TestResultSummary(
-    val blockNumber: Long,
-    val blockHash: String,
-    val txHash: String,
-    val txStatus: Boolean
+  val blockNumber: Long,
+  val blockHash: String,
+  val txHash: String,
+  val txStatus: Boolean
 )

@@ -16,13 +16,14 @@
 
 package io.exflo.ingestion.tokens.precompiled
 
+import io.exflo.ingestion.extensions.reflektField
 import io.exflo.ingestion.tokens.EVMFactory
-import java.math.BigInteger
-import java.util.NavigableSet
 import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.mainnet.MutableProtocolSchedule
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule
 import org.hyperledger.besu.ethereum.mainnet.ScheduledProtocolSpec
+import java.math.BigInteger
+import java.util.NavigableSet
 
 /**
  * In order to use directly Solidity to detect several Token types (instead of relying directly with low level stuff)
@@ -34,59 +35,56 @@ import org.hyperledger.besu.ethereum.mainnet.ScheduledProtocolSpec
  */
 object PrecompiledContractsFactory {
 
-    fun register(protocolSchedule: ProtocolSchedule<*>, chainId: BigInteger) {
-        check(protocolSchedule is MutableProtocolSchedule<*>) { "protocolSchedule must be of MutableProtocolSchedule" }
+  fun register(protocolSchedule: ProtocolSchedule<*>, chainId: BigInteger) {
+    check(protocolSchedule is MutableProtocolSchedule<*>) { "protocolSchedule must be of MutableProtocolSchedule" }
 
-        // TODO: Review with Besu devs if there's a better way to avoid having reflection here
-        val protocolSpecsField = protocolSchedule::class.java.getDeclaredField("protocolSpecs")
-        protocolSpecsField.isAccessible = true
+    // TODO: Review with Besu devs if there's a better way to avoid having reflection here
+    val protocolSpecs =
+      reflektField<NavigableSet<ScheduledProtocolSpec<*>>>(protocolSchedule, "protocolSpecs")
 
-        // Obtain registry of defined protocol specs
-        @Suppress("UNCHECKED_CAST") val protocolSpecs =
-            protocolSpecsField.get(protocolSchedule) as NavigableSet<ScheduledProtocolSpec<*>>
+    // TODO: MainnetEvmRegistries is also another useful class that shouldn't be private
+    val evm = EVMFactory.istanbul(chainId)
 
-        val evm = EVMFactory.istanbul(chainId)
+    val erc20Detector = ERC20DetectorPrecompiledContract(evm)
+    val erc165Detector = ERC165DetectorPrecompiledContract(evm)
+    val erc721Detector = ERC721DetectorPrecompiledContract(evm)
+    val erc777Detector = ERC777DetectorPrecompiledContract(evm)
+    val erc1155Detector = ERC1155DetectorPrecompiledContract(evm)
 
-        val erc20Detector = ERC20DetectorPrecompiledContract(evm)
-        val erc165Detector = ERC165DetectorPrecompiledContract(evm)
-        val erc721Detector = ERC721DetectorPrecompiledContract(evm)
-        val erc777Detector = ERC777DetectorPrecompiledContract(evm)
-        val erc1155Detector = ERC1155DetectorPrecompiledContract(evm)
+    protocolSpecs
+      .map { it.spec.precompileContractRegistry }
+      .forEach { precompileContractRegistry ->
+        with(precompileContractRegistry) {
+          put(
+            ERC20DetectorPrecompiledContract.ADDRESS,
+            Account.DEFAULT_VERSION,
+            erc20Detector
+          )
 
-        protocolSpecs
-            .map { it.spec.precompileContractRegistry }
-            .forEach { precompileContractRegistry ->
-                with(precompileContractRegistry) {
-                    put(
-                        ERC20DetectorPrecompiledContract.ADDRESS,
-                        Account.DEFAULT_VERSION,
-                        erc20Detector
-                    )
+          put(
+            ERC165DetectorPrecompiledContract.ADDRESS,
+            Account.DEFAULT_VERSION,
+            erc165Detector
+          )
 
-                    put(
-                        ERC165DetectorPrecompiledContract.ADDRESS,
-                        Account.DEFAULT_VERSION,
-                        erc165Detector
-                    )
+          put(
+            ERC721DetectorPrecompiledContract.ADDRESS,
+            Account.DEFAULT_VERSION,
+            erc721Detector
+          )
 
-                    put(
-                        ERC721DetectorPrecompiledContract.ADDRESS,
-                        Account.DEFAULT_VERSION,
-                        erc721Detector
-                    )
+          put(
+            ERC777DetectorPrecompiledContract.ADDRESS,
+            Account.DEFAULT_VERSION,
+            erc777Detector
+          )
 
-                    put(
-                        ERC777DetectorPrecompiledContract.ADDRESS,
-                        Account.DEFAULT_VERSION,
-                        erc777Detector
-                    )
-
-                    put(
-                        ERC1155DetectorPrecompiledContract.ADDRESS,
-                        Account.DEFAULT_VERSION,
-                        erc1155Detector
-                    )
-                }
-            }
-    }
+          put(
+            ERC1155DetectorPrecompiledContract.ADDRESS,
+            Account.DEFAULT_VERSION,
+            erc1155Detector
+          )
+        }
+      }
+  }
 }

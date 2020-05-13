@@ -16,12 +16,9 @@
 
 package io.exflo.ingestion.postgres.extensions
 
-import java.math.BigDecimal
-import java.math.BigInteger
-import org.hyperledger.besu.util.uint.UInt256
+import org.apache.tuweni.units.bigints.UInt256
+import org.hyperledger.besu.ethereum.core.Wei
 
-val UInt256.bigInteger: BigInteger
-    get() = byteArray.bigInteger
+fun UInt256.toBigDecimal() = toBigInteger().toBigDecimal()
 
-val UInt256.bigDecimal: BigDecimal
-    get() = bigInteger.toBigDecimal()
+fun Wei.toBigDecimal() = this.toBigInteger().toBigDecimal()

@@ -30,6 +30,7 @@ table BlockHeader {
 table BlockBody {
     ommers: [BlockHeader];
     transactions: [Transaction];
+    trace: string;
 }
 
 table Rewards {

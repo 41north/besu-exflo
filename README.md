@@ -1,88 +1,230 @@
-# Exflo
+<h1 align="center">
+  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/exflo-github.png"/>
+</h1>
 
-> A plugin for the [Besu](http://besu.hyperledger.org/en/stable/) enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines.
+<p align="center">
+  <a href="https://github.com/41north/exflo/workflows/build/badge.svg">
+    <img alt="Build Badge" height="20px" src="https://github.com/41north/exflo/workflows/build/badge.svg" />
+  </a>
+  <a href="https://img.shields.io/github/license/41north/exflo?style=flat-square">
+    <img alt="Exflo License" height="20px" src="https://img.shields.io/github/license/41north/exflo?style=flat-square" />
+  </a>
+</p>
 
-![License](https://img.shields.io/github/license/41north/exflo?style=flat-square)
-![Github Starts](https://img.shields.io/github/stars/41North/exflo.svg?style=flat-square)
-[![GitHub contributors](https://img.shields.io/github/contributors/41North/exflo.svg?style=flat-square)](https://github.com/41North/exflo/graphs/contributors/)
-[![Chat on Gitter](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg?style=flat-square)](https://gitter.im/exfloio/community)
+<p align="center">
+    A plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. <br/><br /> Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
+</p>
 
-## Description
+<p align="center"><b>⚠️ Warning</b>: This project is in alpha stage, and we are working actively!</p>
 
-Exflo can extract the following information from a Besu archive instance into either a Postgres database or a Kafka topic:
+## 🗒️ Features
+
+Exflo can extract the following information from a Besu archive instance into either a [Postgres](https://www.postgresql.org/) database or a [Kafka](https://kafka.apache.org/) topic:
 
 - Block headers.
 - Transactions.
 - Transaction traces.
 - Log events for standards-compliant [ERC20](https://eips.ethereum.org/EIPS/eip-20), [ERC721](https://eips.ethereum.org/EIPS/eip-721), [ERC777](https://eips.ethereum.org/EIPS/eip-777) and [ERC1155](https://eips.ethereum.org/EIPS/eip-1155) tokens.
-- Detailed breakdown of Ether movements e.g. block rewards, tx fees, simple ether transfers and so on.
-- Contract creations and self destructs.
+- A detailed breakdown of Ether movements e.g. block rewards, tx fees, simple ether transfers and so on.
+- Contract creations and self-destructs.
 - Per block account state changes.
 
-## Installation
+Some screenshots of captured data:
 
-If you want to run Exflo, the approach is the same as other Besu plugins. Assuming you're using docker:
+| Plugin   | Screenshots                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Postgres | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-2.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-3.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-4.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-5.png" width="100" /></p> |
+| Kafka    | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/kafka-capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/kafka-capture-2.png" width="100" /></p>                                                                                                                                                                                                                                                                                                                                                                            |
 
-1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file.
-2. Extract the `tar` or the `zip` file.
-3. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) exposes a `/etc/besu/plugins` folder where it loads the jars.
-4. Select which plugin you want to run (kafka or postgres).
-5. If you want to tweak default params, we recommend you to take a look on the [usage section](#usage).
+## ⏲️ Try Exflo in 10 seconds
 
-Here's an example of a possible `docker` configuration using `docker-compose` syntax:
+We offer two `docker-compose` files [ready to launch Exflo](docker/exflo/) configured for Ethereum's Ropsten network (and easily configurable to
+other networks).
 
-```yaml
-besu:
-  image: hyperledger/besu:1.3.8
-  volumes:
-    - ./path/exflo-{kafka, postgres}-jar/:/etc/besu/plugins
-  command: "----plugin-exflo-kafka-start-block-override=23 --plugin-exflo-kafka-max-fork-size=512"
+<details open>
+<summary>Postgres</summary>
+
+```bash
+docker-compose -f docker/exflo/docker-compose.postgres.yml up
 ```
 
-## Usage
+</details>
 
-Each plugin exposes a set of command line options with sane defaults and tries to autoconfigure itself as much as possible. In the case of the `kafka` plugin it creates associated topics by default or for the `postgres` one it deploys automatically migrations if it detects that the DB is not initialized.
+<details>
+<summary>Kafka</summary>
 
-### Kafka
+```bash
+docker-compose -f docker/exflo/docker-compose.kafka.yml up
+```
 
-Possible command line arguments for `kafka` are described below:
+</details>
 
-| Flag                                                   |                                              Description                                              |                                      Default | Optional |
-| ------------------------------------------------------ | :---------------------------------------------------------------------------------------------------: | -------------------------------------------: | -------: |
-| `--plugin-exflo-kafka-start-block-override`            |                              Block number from which to start publishing                              | Genesis block or from latest published block |      Yes |
-| `--plugin-exflo-kafka-max-fork-size`                   | Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart |                                          192 |      Yes |
-| `--plugin-exflo-kafka-processing-entities`             |     Comma separated list of entities to include on import / ingest. Default is a predefined list      |               HEADER, BODY, RECEIPTS, TRACES |      Yes |
-| `--plugin-exflo-kafka-bootstrap-servers`               |                                     Kafka cluster to publish into                                     |                               localhost:9092 |      Yes |
-| `--plugin-exflo-kafka-client-id`                       |                                 Client id to use with Kafka Publisher                                 |                                        exflo |      Yes |
-| `--plugin-exflo-kafka-replication-factor`              |                                 Replication factor to use for topics                                  |                                            1 |      Yes |
-| `--plugin-exflo-kafka-import-cache-topic`              |                               Topic to use for import progress tracking                               |                         \_exflo-import-cache |      Yes |
-| `--plugin-exflo-kafka-blocks-topic`                    |                              Topic to use for chain tracker state store                               |                                       blocks |      Yes |
-| `--plugin-exflo-kafka-blocks-topic-partitions`         |                               Num of partitions related to blocks topic                               |                                            1 |      Yes |
-| `--plugin-exflo-kafka-blocks-topic-replication-factor` |                           Num of replication factor related to blocks topic                           |                                            1 |      Yes |
-| `--plugin-exflo-kafka-ignore-kafka-topic-creation`     |                     Enables or disables the creation of the required Kafka topic                      |                                        false |      Yes |
-| `--plugin-exflo-kafka-safe-sync-block-amount`          |                     Number of blocks to check during the initial safe sync check                      |                                          256 |      Yes |
+Wait for docker to properly initialize each service. Once everything is ready navigate to
+[`http://localhost:8082`](http://localhost:8082), you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or
+[`kafkahq`](https://akhq.io/).
 
-### Postgres
+## 🚆 Development quick start
 
-Possible command line arguments for `postgres` are described below:
+Ensure you have the following programs installed in your system:
 
-| Flag                                              |                                              Description                                              |                                                                 Default | Optional |
-| ------------------------------------------------- | :---------------------------------------------------------------------------------------------------: | ----------------------------------------------------------------------: | -------: |
-| `--plugin-exflo-postgres-start-block-override`    |                              Block number from which to start publishing                              |                            Genesis block or from latest published block |      Yes |
-| `--plugin-exflo-postgres-max-fork-size`           | Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart |                                                                     192 |      Yes |
-| `--plugin-exflo-postgres-processing-level`        |     Comma separated list of entities to include on import / ingest. Default is a predefined list      |                                          HEADER, BODY, RECEIPTS, TRACES |      Yes |
-| `--plugin-exflo-postgres-jdbc-url`                |                               DBC connection url for postgres database                                | jdbc:postgresql://localhost/exflo_dev?user=exflo_dev&password=exflo_dev |      Yes |
-| `--plugin-exflo-postgres-ignore-migrations-check` |                      Enables or disables checking migrations on the selected DB                       |                                                                   false |      Yes |
+- Java 11 or higher ([AdoptOpenJDK](https://adoptopenjdk.net/), [Zulu Community](https://www.azul.com/products/zulu-community/) or [OpenJDK](https://openjdk.java.net/))
+- [Docker](https://docs.docker.com/install/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [direnv](https://github.com/direnv/direnv/blob/master/docs/installation.md)
+- (Optional but highly recommendable) [IntelliJ IDEA Community or Ultimate](https://www.jetbrains.com/)
 
-## Development
+Clone the repository:
 
-Please read the [instructions for how to get started](DEVELOPMENT.md) with developing on the Exflo codebase. Also read the [contribution guide](CONTRIBUTING.md) for more detail on how to submit a pull request (PR).
+```bash
+git clone git@github.com:41north/exflo.git
+```
 
-## Roadmap
+Generate [Intellij's run configurations](https://www.jetbrains.com/help/idea/running-applications.html) (it will read from the file [`intellij-run-configs.yml`](intellij-run-configs.yml) and auto create XML configurations to ease common operations inside the IDE):
 
-See our [Roadmap guide](ROADMAP.md) for more information.
+```bash
+./gradlew generateIntellijRunConfigs
+```
 
-## FAQ
+Decide which data store you want to run:
+
+<details open>
+<summary>Postgres</summary>
+
+Terminal:
+
+```bash
+docker-compose -f docker-compose.exflo-postgres.yml up
+```
+
+Intellij:
+
+![Docker Intellij Run](.github/assets/docker-postgres-run.png)
+
+</details>
+
+<details>
+<summary>Kafka</summary>
+
+Terminal:
+
+```bash
+docker-compose -f docker-compose.exflo-kafka.yml up
+```
+
+Intellij:
+
+![Docker Intellij Run](.github/assets/docker-kafka-run.png)
+
+</details>
+
+Wait for each docker service to initialize.
+
+After that, you can start processing with Exflo:
+
+<details open>
+<summary>Postgres</summary>
+
+Terminal:
+
+```bash
+./gradlew runPostgres
+```
+
+Intellij:
+
+![Postgres Intellij Run](.github/assets/ropsten-postgres-run.png)
+
+</details>
+
+<details>
+<summary>Kafka</summary>
+
+Terminal:
+
+```bash
+./gradlew runKafka
+```
+
+Intellij:
+
+![Kafka Intellij Run](.github/assets/ropsten-kafka-run.png)
+
+</details>
+
+You can now check the logs or open your browser and navigate to [`http://localhost:8082`](http://localhost:8082)
+and you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively.
+
+Exflo will start processing immediately!
+
+## Usage with Besu
+
+There are two possible ways of running Exflo with Besu.
+
+### Bundled docker images
+
+We have provide a docker image that contains a pre-packaged version of Besu to make your life easier. This is the recommended way of running Exflo as you don't need to worry about placing the plugin in the correct folder path. Below is an an example using `docker-compose`:
+
+```yaml
+version: "3.7"
+services:
+  besu:
+    image: 41north/exflo:latest
+    environment:
+      BESU_LOGGING: INFO
+      BESU_NETWORK: ROPSTEN
+      BESU_SYNC_MODE: FULL
+      BESU_DATA_PATH: /opt/besu/data
+      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: "false"
+      BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: "true"
+      BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
+```
+
+Have a look at the [usage section](.github/USAGE.md) for a full list of parameters.
+
+### JAR
+
+If you are already using Besu with other plugins it is possible to include Exflo as a jar. Below are instructions assuming you are running Besu within docker:
+
+1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file and extract it.
+2. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) relies upon a `/etc/besu/plugins` folder where it plugin jars. Ensure the Exflo jar is in this folder.
+
+Here's an example of a possible docker configuration using `docker-compose` syntax and a bind mount for the plugin folder:
+
+```yaml
+version: "3.7"
+services:
+  besu:
+    image: hyperledger/besu:1.4.4
+    volumes:
+      - ./path/to/exflo-jar/:/etc/besu/plugins
+    environment:
+      BESU_LOGGING: INFO
+      BESU_NETWORK: ROPSTEN
+      BESU_SYNC_MODE: FULL
+      BESU_DATA_PATH: /opt/besu/data
+      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: "false"
+      BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: "true"
+      BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
+```
+
+Have a look at the [usage section](.github/USAGE.md) for more information.
+
+## 💻 Contribute
+
+We welcome any kind of contribution or support to this project but before to do so:
+
+- Read our [development guide](/.github/DEVELOPMENT.md) to understand how to properly develop on the codebase.
+- Make sure you have read the [contribution guide](/.github/CONTRIBUTING.md) for more details on how to submit a good PR (pull request).
+
+In addition you can always:
+
+- Add a [GitHub Star 🌟](https://github.com/41north/exflo/stargazers) to the project.
+- ETH donations to [this address](https://etherscan.io/address/0xcee9ad6d00237e25A945D7ac2f7532C602d265Df)!
+- Tweet about this project.
+- Write a review or tutorial:
+  - [Exflo: A plugin for Hyperledger Besu](https://41north.dev/blog/open-source/exflo-a-plugin-for-hyperledger-besu/)
+
+## ❔ FAQ
 
 ### Why Besu?
 
@@ -96,22 +238,21 @@ We chose Besu for several reasons:
 
 ### Why not use the Web3 interface that every Ethereum client has?
 
-If you have every tried this you will quickly realise that extracting even just the basic information from an Ethereum client via the Web3 interface requires a lot of requests and some non-trivial logic to do well. On top of that, depending on the client (we won't name anyone in particular) you may find that under heavy load, such as when syncing for the first time, your client may become unstable and periodically core dump. Maximising throughput whilst keeping the client happy quickly becomes a tedious exercise.
+If you have ever tried this, you will quickly realise that extracting even just the basic information from an Ethereum client via the Web3
+interface requires a lot of requests, and some non-trivial logic to do well. On top of that, depending on the client
+(we won't name anyone in particular), you may find that under heavy load, such as when syncing for the first time, your client may become
+unstable and periodically core dump. Maximising throughput, whilst keeping the client happy, quickly becomes a tedious exercise.
 
-Put simply it has been our experience that pulling via the Web3 interface is sub-optimal for a variety reasons which are better explored in a blog post.
+Put simply it has been our experience that pulling via the Web3 interface is sub-optimal for a variety reasons which are better explored
+in a blog post.
 
-## Donations
+## 📬 Get in touch
 
-We plan to keep Exflo open and free.
+`Exflo` has been developed initially by [°41North](https://41north.dev).
 
-If you find it useful and want to help use direct more of our time to it's continued support and development, please consider donating.
+If you think this project would be useful for your use case and want to talk more about it you can reach out to us via our contact form
+or by sending an email to `hello@41north.dev`. We try to respond within 48 hours and look forward to hearing from you.
 
-- ETH donations to [this address](https://etherscan.io/address/0xcee9ad6d00237e25A945D7ac2f7532C602d265Df)!
-
-Also consider [leaving a star](https://github.com/41North/exflo/stargazers) on GitHub if you like this project.
-
-Thank you :heartbeat:!
-
-## License
+## ✍️ License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.

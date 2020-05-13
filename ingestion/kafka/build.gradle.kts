@@ -14,68 +14,38 @@
  * limitations under the License.
  */
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
-    `java-library`
-    kotlin("jvm")
-    `maven-publish`
-    id("com.github.johnrengelman.shadow")
-    id("org.jlleitschuh.gradle.ktlint")
+  `java-library`
+  kotlin("jvm")
+  `maven-publish`
 }
 
 dependencies {
 
-    implementation(project(":ingestion:base"))
+  implementation(project(":ingestion:base"))
 
-    implementation("io.kcache:kcache")
-    implementation("org.apache.kafka:kafka-clients")
+  implementation("io.kcache:kcache")
+  implementation("org.apache.kafka:kafka-clients")
 
-    runtimeOnly("org.apache.logging.log4j:log4j-core")
+  runtimeOnly("org.apache.logging.log4j:log4j-core")
 
-    testImplementation(project(":testutil"))
-    testImplementation("org.springframework.kafka:spring-kafka-test")
+  testImplementation(project(":testutil"))
+  testImplementation("org.springframework.kafka:spring-kafka-test")
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
+tasks {
+  register<JavaExec>("runKafka") {
+    group = "run"
+    description = "Execute Exflo's Kafka plugin from Gradle"
+    classpath = sourceSets.main.get().runtimeClasspath
+    main = "org.hyperledger.besu.Besu"
+    // Customize args as required to test and execute Exflo from Gradle
+    // See https://github.com/41north/exflo/blob/develop/readme/.github/USAGE.md to customize params
+    // Otherwise it will take defined defaults
+    args = listOf("--plugin-exflo-kafka-enabled=true")
+  }
 
-            groupId = "${rootProject.group}"
-            version = "${project.version}"
-
-            project.shadow.component(this)
-
-            pom {
-                name.set("Exflo - ${project.name}")
-                url.set("https://github.com/41North/exflo")
-
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git://github.com/41North/exflo.git")
-                    developerConnection.set("scm:git:ssh://github.com/41North/exflo.git")
-                    url.set("https://github.com/41North/exflo")
-                }
-            }
-        }
-    }
-}
-
-val build: DefaultTask by project.tasks
-build.dependsOn(tasks.shadowJar)
-
-tasks.withType<ShadowJar> {
-    archiveBaseName.set(project.name)
-    archiveClassifier.set("")
-    minimize()
-}
-
-tasks.withType<Test> {
+  withType<Test> {
     useJUnitPlatform()
+  }
 }

@@ -21,5 +21,5 @@ package io.exflo.ingestion.core
  */
 interface ImportTask : Runnable {
 
-    fun stop()
+  fun stop()
 }

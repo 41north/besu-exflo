@@ -16,8 +16,6 @@
 
 package io.exflo.ingestion.storage
 
-import java.io.IOException
-import java.util.concurrent.ConcurrentHashMap
 import org.hyperledger.besu.plugin.services.BesuConfiguration
 import org.hyperledger.besu.plugin.services.MetricsSystem
 import org.hyperledger.besu.plugin.services.exception.StorageException
@@ -25,70 +23,72 @@ import org.hyperledger.besu.plugin.services.storage.KeyValueStorage
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory
 import org.hyperledger.besu.plugin.services.storage.PrivacyKeyValueStorageFactory
 import org.hyperledger.besu.plugin.services.storage.SegmentIdentifier
+import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Object that stores different [KeyValueStorage] in a [ConcurrentHashMap].
  */
 object KeyValueStores {
-    private val stores = ConcurrentHashMap<SegmentIdentifier, KeyValueStorage>()
+  private val stores = ConcurrentHashMap<SegmentIdentifier, KeyValueStorage>()
 
-    operator fun get(identifier: SegmentIdentifier) = stores[identifier]
+  operator fun get(identifier: SegmentIdentifier) = stores[identifier]
 
-    operator fun set(identifier: SegmentIdentifier, storage: KeyValueStorage) {
-        stores[identifier] = storage
-    }
+  operator fun set(identifier: SegmentIdentifier, storage: KeyValueStorage) {
+    stores[identifier] = storage
+  }
 }
 
 /**
  * Factory for creating intercepting key-value storage instances.
  */
 class InterceptingKeyValueStorageFactory(
-    private val factory: KeyValueStorageFactory
+  private val factory: KeyValueStorageFactory
 ) : KeyValueStorageFactory {
 
-    override fun getName(): String = factory.name
+  override fun getName(): String = factory.name
 
-    override fun isSegmentIsolationSupported(): Boolean = factory.isSegmentIsolationSupported
+  override fun isSegmentIsolationSupported(): Boolean = factory.isSegmentIsolationSupported
 
-    @Throws(StorageException::class)
-    override fun create(
-        segment: SegmentIdentifier,
-        configuration: BesuConfiguration,
-        metricsSystem: MetricsSystem
-    ): KeyValueStorage {
-        val storage = factory.create(segment, configuration, metricsSystem)
-        KeyValueStores[segment] = storage
-        return storage
-    }
+  @Throws(StorageException::class)
+  override fun create(
+    segment: SegmentIdentifier,
+    configuration: BesuConfiguration,
+    metricsSystem: MetricsSystem
+  ): KeyValueStorage {
+    val storage = factory.create(segment, configuration, metricsSystem)
+    KeyValueStores[segment] = storage
+    return storage
+  }
 
-    @Throws(IOException::class)
-    override fun close() = factory.close()
+  @Throws(IOException::class)
+  override fun close() = factory.close()
 }
 
 /**
  * Factory for creating intercepting key-value storage instances.
  */
 class InterceptingPrivacyKeyValueStorageFactory(
-    private val factory: PrivacyKeyValueStorageFactory
+  private val factory: PrivacyKeyValueStorageFactory
 ) : PrivacyKeyValueStorageFactory {
 
-    override fun getVersion(): Int = factory.version
+  override fun getVersion(): Int = factory.version
 
-    override fun getName(): String = factory.name
+  override fun getName(): String = factory.name
 
-    @Throws(StorageException::class)
-    override fun create(
-        segment: SegmentIdentifier,
-        configuration: BesuConfiguration,
-        metricsSystem: MetricsSystem
-    ): KeyValueStorage {
-        val storage = factory.create(segment, configuration, metricsSystem)
-        KeyValueStores[segment] = storage
-        return storage
-    }
+  @Throws(StorageException::class)
+  override fun create(
+    segment: SegmentIdentifier,
+    configuration: BesuConfiguration,
+    metricsSystem: MetricsSystem
+  ): KeyValueStorage {
+    val storage = factory.create(segment, configuration, metricsSystem)
+    KeyValueStores[segment] = storage
+    return storage
+  }
 
-    override fun isSegmentIsolationSupported(): Boolean = factory.isSegmentIsolationSupported
+  override fun isSegmentIsolationSupported(): Boolean = factory.isSegmentIsolationSupported
 
-    @Throws(IOException::class)
-    override fun close() = factory.close()
+  @Throws(IOException::class)
+  override fun close() = factory.close()
 }

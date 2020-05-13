@@ -14,36 +14,32 @@
  * limitations under the License.
  */
 
-import io.exflo.gradle.plugins.flatbuffers.FlatBuffersExtension
-import io.exflo.gradle.plugins.flatbuffers.FlatBuffersPlugin
-import io.exflo.gradle.plugins.flatbuffers.Language
+import dev.north.fortyone.gradle.flatbuffers.Language
 
 plugins {
-    kotlin("jvm")
-    id("org.jlleitschuh.gradle.ktlint")
+  kotlin("jvm")
+  id("dev.north.fortyone.flatbuffers") version "0.1.0"
 }
-
-apply<FlatBuffersPlugin>()
 
 dependencies {
-    api("org.jetbrains.kotlin:kotlin-stdlib")
+  api(kotlin("stdlib"))
 
-    api("com.google.flatbuffers:flatbuffers-java")
+  api("com.google.flatbuffers:flatbuffers-java")
 
-    api("org.hyperledger.besu.internal:core")
-    api("org.hyperledger.besu.internal:util")
-    api("org.hyperledger.besu.internal:crypto")
+  api("org.hyperledger.besu.internal:core")
+  api("org.hyperledger.besu.internal:crypto")
 
-    testImplementation("io.kotlintest:kotlintest-runner-junit5")
-    testImplementation("org.apache.commons:commons-lang3")
+  testImplementation("io.kotlintest:kotlintest-runner-junit5")
 }
 
-configure<FlatBuffersExtension> {
-    language.set(Language.JAVA)
-    inputSources.set(listOf("block.fbs"))
-    extraFlatcArgs.set("flatc --java -o /output/ -I /input --gen-all /input/block.fbs")
+flatbuffers {
+  language.set(Language.JAVA)
+  inputSources.set(listOf("block.fbs"))
+  extraFlatcArgs.set("flatc --java -o /output/ -I /input --gen-all /input/block.fbs")
 }
 
-tasks.withType<Test> {
+tasks {
+  withType<Test> {
     useJUnitPlatform()
+  }
 }

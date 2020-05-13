@@ -16,7 +16,8 @@
 
 package io.exflo.ingestion.tokens
 
-import java.math.BigInteger
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.bytes.Bytes32
 import org.hyperledger.besu.ethereum.core.Account
 import org.hyperledger.besu.ethereum.mainnet.IstanbulGasCalculator
 import org.hyperledger.besu.ethereum.vm.EVM
@@ -99,8 +100,7 @@ import org.hyperledger.besu.ethereum.vm.operations.SubOperation
 import org.hyperledger.besu.ethereum.vm.operations.SwapOperation
 import org.hyperledger.besu.ethereum.vm.operations.TimestampOperation
 import org.hyperledger.besu.ethereum.vm.operations.XorOperation
-import org.hyperledger.besu.util.bytes.Bytes32
-import org.hyperledger.besu.util.bytes.BytesValue
+import java.math.BigInteger
 
 // TODO: Review with Besu devs if we can obtain concrete EVM versions directly as currently methods are private
 
@@ -110,177 +110,177 @@ import org.hyperledger.besu.util.bytes.BytesValue
  * Ideally this class shouldn't be necessary if affected classes had public methods.
  */
 object EVMFactory {
-    fun istanbul(chainId: BigInteger): EVM {
-        val registry = OperationRegistry()
+  fun istanbul(chainId: BigInteger): EVM {
+    val registry = OperationRegistry()
 
-        val gasCalculator = IstanbulGasCalculator()
+    val gasCalculator = IstanbulGasCalculator()
 
-        EVMRegistry.registerIstanbulOpcodes(
-            registry,
-            gasCalculator,
-            Account.DEFAULT_VERSION,
-            chainId
-        )
+    EVMRegistry.registerIstanbulOpcodes(
+      registry,
+      gasCalculator,
+      Account.DEFAULT_VERSION,
+      chainId
+    )
 
-        return EVM(registry, gasCalculator)
-    }
+    return EVM(registry, gasCalculator)
+  }
 }
 
 internal object EVMRegistry {
-    private fun registerFrontierOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int
-    ) {
-        registry.put(AddOperation(gasCalculator), accountVersion)
-        registry.put(AddOperation(gasCalculator), accountVersion)
-        registry.put(MulOperation(gasCalculator), accountVersion)
-        registry.put(SubOperation(gasCalculator), accountVersion)
-        registry.put(DivOperation(gasCalculator), accountVersion)
-        registry.put(SDivOperation(gasCalculator), accountVersion)
-        registry.put(ModOperation(gasCalculator), accountVersion)
-        registry.put(SModOperation(gasCalculator), accountVersion)
-        registry.put(ExpOperation(gasCalculator), accountVersion)
-        registry.put(AddModOperation(gasCalculator), accountVersion)
-        registry.put(MulModOperation(gasCalculator), accountVersion)
-        registry.put(SignExtendOperation(gasCalculator), accountVersion)
-        registry.put(LtOperation(gasCalculator), accountVersion)
-        registry.put(GtOperation(gasCalculator), accountVersion)
-        registry.put(SLtOperation(gasCalculator), accountVersion)
-        registry.put(SGtOperation(gasCalculator), accountVersion)
-        registry.put(EqOperation(gasCalculator), accountVersion)
-        registry.put(IsZeroOperation(gasCalculator), accountVersion)
-        registry.put(AndOperation(gasCalculator), accountVersion)
-        registry.put(OrOperation(gasCalculator), accountVersion)
-        registry.put(XorOperation(gasCalculator), accountVersion)
-        registry.put(NotOperation(gasCalculator), accountVersion)
-        registry.put(ByteOperation(gasCalculator), accountVersion)
-        registry.put(Sha3Operation(gasCalculator), accountVersion)
-        registry.put(AddressOperation(gasCalculator), accountVersion)
-        registry.put(BalanceOperation(gasCalculator), accountVersion)
-        registry.put(OriginOperation(gasCalculator), accountVersion)
-        registry.put(CallerOperation(gasCalculator), accountVersion)
-        registry.put(CallValueOperation(gasCalculator), accountVersion)
-        registry.put(CallDataLoadOperation(gasCalculator), accountVersion)
-        registry.put(CallDataSizeOperation(gasCalculator), accountVersion)
-        registry.put(CallDataCopyOperation(gasCalculator), accountVersion)
-        registry.put(CodeSizeOperation(gasCalculator), accountVersion)
-        registry.put(CodeCopyOperation(gasCalculator), accountVersion)
-        registry.put(GasPriceOperation(gasCalculator), accountVersion)
-        registry.put(ExtCodeCopyOperation(gasCalculator), accountVersion)
-        registry.put(ExtCodeSizeOperation(gasCalculator), accountVersion)
-        registry.put(BlockHashOperation(gasCalculator), accountVersion)
-        registry.put(CoinbaseOperation(gasCalculator), accountVersion)
-        registry.put(TimestampOperation(gasCalculator), accountVersion)
-        registry.put(NumberOperation(gasCalculator), accountVersion)
-        registry.put(DifficultyOperation(gasCalculator), accountVersion)
-        registry.put(GasLimitOperation(gasCalculator), accountVersion)
-        registry.put(PopOperation(gasCalculator), accountVersion)
-        registry.put(MLoadOperation(gasCalculator), accountVersion)
-        registry.put(MStoreOperation(gasCalculator), accountVersion)
-        registry.put(MStore8Operation(gasCalculator), accountVersion)
-        registry.put(SLoadOperation(gasCalculator), accountVersion)
-        registry.put(
-            SStoreOperation(
-                gasCalculator,
-                SStoreOperation.FRONTIER_MINIMUM
-            ),
-            accountVersion
-        )
-        registry.put(JumpOperation(gasCalculator), accountVersion)
-        registry.put(JumpiOperation(gasCalculator), accountVersion)
-        registry.put(PCOperation(gasCalculator), accountVersion)
-        registry.put(MSizeOperation(gasCalculator), accountVersion)
-        registry.put(GasOperation(gasCalculator), accountVersion)
-        registry.put(JumpDestOperation(gasCalculator), accountVersion)
-        registry.put(ReturnOperation(gasCalculator), accountVersion)
-        registry.put(InvalidOperation(gasCalculator), accountVersion)
-        registry.put(StopOperation(gasCalculator), accountVersion)
-        registry.put(SelfDestructOperation(gasCalculator), accountVersion)
-        registry.put(CreateOperation(gasCalculator), accountVersion)
-        registry.put(CallOperation(gasCalculator), accountVersion)
-        registry.put(CallCodeOperation(gasCalculator), accountVersion)
+  private fun registerFrontierOpcodes(
+    registry: OperationRegistry,
+    gasCalculator: GasCalculator,
+    accountVersion: Int
+  ) {
+    registry.put(AddOperation(gasCalculator), accountVersion)
+    registry.put(AddOperation(gasCalculator), accountVersion)
+    registry.put(MulOperation(gasCalculator), accountVersion)
+    registry.put(SubOperation(gasCalculator), accountVersion)
+    registry.put(DivOperation(gasCalculator), accountVersion)
+    registry.put(SDivOperation(gasCalculator), accountVersion)
+    registry.put(ModOperation(gasCalculator), accountVersion)
+    registry.put(SModOperation(gasCalculator), accountVersion)
+    registry.put(ExpOperation(gasCalculator), accountVersion)
+    registry.put(AddModOperation(gasCalculator), accountVersion)
+    registry.put(MulModOperation(gasCalculator), accountVersion)
+    registry.put(SignExtendOperation(gasCalculator), accountVersion)
+    registry.put(LtOperation(gasCalculator), accountVersion)
+    registry.put(GtOperation(gasCalculator), accountVersion)
+    registry.put(SLtOperation(gasCalculator), accountVersion)
+    registry.put(SGtOperation(gasCalculator), accountVersion)
+    registry.put(EqOperation(gasCalculator), accountVersion)
+    registry.put(IsZeroOperation(gasCalculator), accountVersion)
+    registry.put(AndOperation(gasCalculator), accountVersion)
+    registry.put(OrOperation(gasCalculator), accountVersion)
+    registry.put(XorOperation(gasCalculator), accountVersion)
+    registry.put(NotOperation(gasCalculator), accountVersion)
+    registry.put(ByteOperation(gasCalculator), accountVersion)
+    registry.put(Sha3Operation(gasCalculator), accountVersion)
+    registry.put(AddressOperation(gasCalculator), accountVersion)
+    registry.put(BalanceOperation(gasCalculator), accountVersion)
+    registry.put(OriginOperation(gasCalculator), accountVersion)
+    registry.put(CallerOperation(gasCalculator), accountVersion)
+    registry.put(CallValueOperation(gasCalculator), accountVersion)
+    registry.put(CallDataLoadOperation(gasCalculator), accountVersion)
+    registry.put(CallDataSizeOperation(gasCalculator), accountVersion)
+    registry.put(CallDataCopyOperation(gasCalculator), accountVersion)
+    registry.put(CodeSizeOperation(gasCalculator), accountVersion)
+    registry.put(CodeCopyOperation(gasCalculator), accountVersion)
+    registry.put(GasPriceOperation(gasCalculator), accountVersion)
+    registry.put(ExtCodeCopyOperation(gasCalculator), accountVersion)
+    registry.put(ExtCodeSizeOperation(gasCalculator), accountVersion)
+    registry.put(BlockHashOperation(gasCalculator), accountVersion)
+    registry.put(CoinbaseOperation(gasCalculator), accountVersion)
+    registry.put(TimestampOperation(gasCalculator), accountVersion)
+    registry.put(NumberOperation(gasCalculator), accountVersion)
+    registry.put(DifficultyOperation(gasCalculator), accountVersion)
+    registry.put(GasLimitOperation(gasCalculator), accountVersion)
+    registry.put(PopOperation(gasCalculator), accountVersion)
+    registry.put(MLoadOperation(gasCalculator), accountVersion)
+    registry.put(MStoreOperation(gasCalculator), accountVersion)
+    registry.put(MStore8Operation(gasCalculator), accountVersion)
+    registry.put(SLoadOperation(gasCalculator), accountVersion)
+    registry.put(
+      SStoreOperation(
+        gasCalculator,
+        SStoreOperation.FRONTIER_MINIMUM
+      ),
+      accountVersion
+    )
+    registry.put(JumpOperation(gasCalculator), accountVersion)
+    registry.put(JumpiOperation(gasCalculator), accountVersion)
+    registry.put(PCOperation(gasCalculator), accountVersion)
+    registry.put(MSizeOperation(gasCalculator), accountVersion)
+    registry.put(GasOperation(gasCalculator), accountVersion)
+    registry.put(JumpDestOperation(gasCalculator), accountVersion)
+    registry.put(ReturnOperation(gasCalculator), accountVersion)
+    registry.put(InvalidOperation(gasCalculator), accountVersion)
+    registry.put(StopOperation(gasCalculator), accountVersion)
+    registry.put(SelfDestructOperation(gasCalculator), accountVersion)
+    registry.put(CreateOperation(gasCalculator), accountVersion)
+    registry.put(CallOperation(gasCalculator), accountVersion)
+    registry.put(CallCodeOperation(gasCalculator), accountVersion)
 
-        // Register the PUSH1, PUSH2, ..., PUSH32 operations.
+    // Register the PUSH1, PUSH2, ..., PUSH32 operations.
 
-        for (i in 1..32) {
-            registry.put(PushOperation(i, gasCalculator), accountVersion)
-        }
-
-        // Register the DUP1, DUP2, ..., DUP16 operations.
-
-        for (i in 1..16) {
-            registry.put(DupOperation(i, gasCalculator), accountVersion)
-        }
-
-        // Register the SWAP1, SWAP2, ..., SWAP16 operations.
-
-        for (i in 1..16) {
-            registry.put(SwapOperation(i, gasCalculator), accountVersion)
-        }
-
-        // Register the LOG0, LOG1, ..., LOG4 operations.
-
-        for (i in 0..4) {
-            registry.put(LogOperation(i, gasCalculator), accountVersion)
-        }
+    for (i in 1..32) {
+      registry.put(PushOperation(i, gasCalculator), accountVersion)
     }
 
-    private fun registerHomesteadOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int
-    ) {
-        registerFrontierOpcodes(registry, gasCalculator, accountVersion)
-        registry.put(DelegateCallOperation(gasCalculator), accountVersion)
+    // Register the DUP1, DUP2, ..., DUP16 operations.
+
+    for (i in 1..16) {
+      registry.put(DupOperation(i, gasCalculator), accountVersion)
     }
 
-    private fun registerByzantiumOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int
-    ) {
-        registerHomesteadOpcodes(registry, gasCalculator, accountVersion)
-        registry.put(ReturnDataCopyOperation(gasCalculator), accountVersion)
-        registry.put(ReturnDataSizeOperation(gasCalculator), accountVersion)
-        registry.put(RevertOperation(gasCalculator), accountVersion)
-        registry.put(StaticCallOperation(gasCalculator), accountVersion)
+    // Register the SWAP1, SWAP2, ..., SWAP16 operations.
+
+    for (i in 1..16) {
+      registry.put(SwapOperation(i, gasCalculator), accountVersion)
     }
 
-    private fun registerConstantinopleOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int
-    ) {
-        registerByzantiumOpcodes(registry, gasCalculator, accountVersion)
-        registry.put(Create2Operation(gasCalculator), accountVersion)
-        registry.put(SarOperation(gasCalculator), accountVersion)
-        registry.put(ShlOperation(gasCalculator), accountVersion)
-        registry.put(ShrOperation(gasCalculator), accountVersion)
-        registry.put(ExtCodeHashOperation(gasCalculator), accountVersion)
-    }
+    // Register the LOG0, LOG1, ..., LOG4 operations.
 
-    fun registerIstanbulOpcodes(
-        registry: OperationRegistry,
-        gasCalculator: GasCalculator,
-        accountVersion: Int,
-        chainId: BigInteger
-    ) {
-        registerConstantinopleOpcodes(registry, gasCalculator, accountVersion)
-        registry.put(
-            ChainIdOperation(
-                gasCalculator,
-                Bytes32.leftPad(BytesValue.of(*chainId.toByteArray()))
-            ),
-            Account.DEFAULT_VERSION
-        )
-        registry.put(SelfBalanceOperation(gasCalculator), Account.DEFAULT_VERSION)
-        registry.put(
-            SStoreOperation(
-                gasCalculator,
-                SStoreOperation.EIP_1706_MINIMUM
-            ),
-            Account.DEFAULT_VERSION
-        )
+    for (i in 0..4) {
+      registry.put(LogOperation(i, gasCalculator), accountVersion)
     }
+  }
+
+  private fun registerHomesteadOpcodes(
+    registry: OperationRegistry,
+    gasCalculator: GasCalculator,
+    accountVersion: Int
+  ) {
+    registerFrontierOpcodes(registry, gasCalculator, accountVersion)
+    registry.put(DelegateCallOperation(gasCalculator), accountVersion)
+  }
+
+  private fun registerByzantiumOpcodes(
+    registry: OperationRegistry,
+    gasCalculator: GasCalculator,
+    accountVersion: Int
+  ) {
+    registerHomesteadOpcodes(registry, gasCalculator, accountVersion)
+    registry.put(ReturnDataCopyOperation(gasCalculator), accountVersion)
+    registry.put(ReturnDataSizeOperation(gasCalculator), accountVersion)
+    registry.put(RevertOperation(gasCalculator), accountVersion)
+    registry.put(StaticCallOperation(gasCalculator), accountVersion)
+  }
+
+  private fun registerConstantinopleOpcodes(
+    registry: OperationRegistry,
+    gasCalculator: GasCalculator,
+    accountVersion: Int
+  ) {
+    registerByzantiumOpcodes(registry, gasCalculator, accountVersion)
+    registry.put(Create2Operation(gasCalculator), accountVersion)
+    registry.put(SarOperation(gasCalculator), accountVersion)
+    registry.put(ShlOperation(gasCalculator), accountVersion)
+    registry.put(ShrOperation(gasCalculator), accountVersion)
+    registry.put(ExtCodeHashOperation(gasCalculator), accountVersion)
+  }
+
+  fun registerIstanbulOpcodes(
+    registry: OperationRegistry,
+    gasCalculator: GasCalculator,
+    accountVersion: Int,
+    chainId: BigInteger
+  ) {
+    registerConstantinopleOpcodes(registry, gasCalculator, accountVersion)
+    registry.put(
+      ChainIdOperation(
+        gasCalculator,
+        Bytes32.leftPad(Bytes.of(*chainId.toByteArray()))
+      ),
+      Account.DEFAULT_VERSION
+    )
+    registry.put(SelfBalanceOperation(gasCalculator), Account.DEFAULT_VERSION)
+    registry.put(
+      SStoreOperation(
+        gasCalculator,
+        SStoreOperation.EIP_1706_MINIMUM
+      ),
+      Account.DEFAULT_VERSION
+    )
+  }
 }
