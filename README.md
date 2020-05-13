@@ -39,7 +39,7 @@ Some screenshots of captured data:
 We offer two `docker-compose` files [ready to launch Exflo](docker/exflo/) configured for Ethereum's Ropsten network (and easily configurable to
 other networks).
 
-<details>
+<details open>
 <summary>Postgres</summary>
 
 ```bash
@@ -85,7 +85,7 @@ Generate [Intellij's run configurations](https://www.jetbrains.com/help/idea/run
 
 Decide which data store you want to run:
 
-<details>
+<details open>
 <summary>Postgres</summary>
 
 Terminal:
@@ -119,7 +119,7 @@ Wait for each docker service to initialize.
 
 After that, you can start processing with Exflo:
 
-<details>
+<details open>
 <summary>Postgres</summary>
 
 Terminal:
