@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/exflo-card.png"/>
+  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/exflo-github.png"/>
 </h1>
 
 <p align="center">
