@@ -36,8 +36,8 @@ Some screenshots of captured data:
 
 ## ⏲️ Try Exflo in 10 seconds
 
-We offer two `docker-compose` files [ready to launch Exflo](docker/exflo/) on Ethereum's Ropsten network (and easily configurable to
-other networks). Choose your flavor!
+We offer two `docker-compose` files [ready to launch Exflo](docker/exflo/) configured for Ethereum's Ropsten network (and easily configurable to
+other networks).
 
 <details>
 <summary>Postgres</summary>
@@ -57,13 +57,13 @@ docker-compose -f docker/exflo/docker-compose.kafka.yml up
 
 </details>
 
-Wait for docker to properly initialize each service. Once everything is ready just navigate to
+Wait for docker to properly initialize each service. Once everything is ready navigate to
 [`http://localhost:8082`](http://localhost:8082), you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or
-[`kafkahq`](https://akhq.io/) respectively and, luckily, with Exflo processing data!
+[`kafkahq`](https://akhq.io/).
 
 ## 🚆 Development quick start
 
-First and foremost, ensure you have the following programs installed in your system:
+Ensure you have the following programs installed in your system:
 
 - Java 11 or higher ([AdoptOpenJDK](https://adoptopenjdk.net/), [Zulu Community](https://www.azul.com/products/zulu-community/) or [OpenJDK](https://openjdk.java.net/))
 - [Docker](https://docs.docker.com/install/)
@@ -115,7 +115,7 @@ Intellij:
 
 </details>
 
-Wait for each docker service to be properly initialized (being those related to Postgres or Kafka respectively).
+Wait for each docker service to initialize.
 
 After that, you can start processing with Exflo:
 
@@ -151,16 +151,16 @@ Intellij:
 
 You can now check the logs or open your browser and navigate to [`http://localhost:8082`](http://localhost:8082)
 and you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively.
+
 Exflo will start processing immediately!
 
 ## Usage with Besu
 
-There are two possible ways of running Exflo with Besu. Choose whatever method suits you for your particular use-case and necessities:
+There are two possible ways of running Exflo with Besu.
 
 ### Bundled docker images
 
-We offer bundled docker images with Besu to make your life easier. This is the recommended way of running Exflo as you don't need to
-worry about placing the plugin in the correct folder path for Besu. Below there's an example using `docker-compose` syntax:
+We have provide a docker image that contains a pre-packaged version of Besu to make your life easier. This is the recommended way of running Exflo as you don't need to worry about placing the plugin in the correct folder path. Below is an an example using `docker-compose`:
 
 ```yaml
 version: "3.7"
@@ -177,19 +177,16 @@ services:
       BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
 ```
 
-Have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your liking.
+Have a look at the [usage section](.github/USAGE.md) for a full list of parameters.
 
 ### JAR
 
-If you are already using Besu with other plugins, or you want to customize further the settings, using the JARs directly is another
-possibility. Below are instructions assuming you are running Besu within docker:
+If you are already using Besu with other plugins it is possible to include Exflo as a jar. Below are instructions assuming you are running Besu within docker:
 
 1. Go to [releases](https://github.com/41North/exflo/releases) and download the `tar` or `zip` file and extract it.
-2. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) exposes a `/etc/besu/plugins` folder where it loads the jars.
-3. Add a bind volume where to put Exflo's jar.
-4. If you want to tweak default params, we recommend you to take a look on the [usage section](.github/USAGE.md).
+2. [Besu docker image](https://hub.docker.com/r/hyperledger/besu) relies upon a `/etc/besu/plugins` folder where it plugin jars. Ensure the Exflo jar is in this folder.
 
-Here's an example of a possible docker configuration using `docker-compose` syntax:
+Here's an example of a possible docker configuration using `docker-compose` syntax and a bind mount for the plugin folder:
 
 ```yaml
 version: "3.7"
@@ -208,7 +205,7 @@ services:
       BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
 ```
 
-Have a look on the [usage section](.github/USAGE.md), so you can tweak easily the params to your liking.
+Have a look at the [usage section](.github/USAGE.md) for more information.
 
 ## 💻 Contribute
 
@@ -217,7 +214,7 @@ We welcome any kind of contribution or support to this project but before to do 
 - Read our [development guide](/.github/DEVELOPMENT.md) to understand how to properly develop on the codebase.
 - Make sure you have read the [contribution guide](/.github/CONTRIBUTING.md) for more details on how to submit a good PR (pull request).
 
-Also, we are not only limited to technical contributions. Things that make us happy are:
+In addition you can always:
 
 - Add a [GitHub Star 🌟](https://github.com/41north/exflo/stargazers) to the project.
 - ETH donations to [this address](https://etherscan.io/address/0xcee9ad6d00237e25A945D7ac2f7532C602d265Df)!
@@ -246,20 +243,6 @@ unstable and periodically core dump. Maximising throughput, whilst keeping the c
 
 Put simply it has been our experience that pulling via the Web3 interface is sub-optimal for a variety reasons which are better explored
 in a blog post.
-
-### Why Postgres and Kafka? Is it possible to develop more data stores?
-
-Majority of people will find very useful to externalise the internal information that a typical Ethereum node stores. Postgres and Kafka
-are well-known data store technologies (each of one serving different purposes and necessities) that are often used to perform
-better queries or real-time analytics.
-
-Having said that, yes, we thought originally on Exflo to be easily extendable so, if you find another possible use-case, let us know!
-
-### Can we replace RocksDB storage engine that Besu uses with the Postgres' one inside Exflo?
-
-As far as we know, Besu originally had planned support to add Postgres directly as a storage plugin. To us, Exflo is considered a
-second class storage processor that complements and adds more meaning to existing data, so we don't see it replacing RocksDB
-for multiple obvious reasons (one of them being performance).
 
 ## 📬 Get in touch
 
