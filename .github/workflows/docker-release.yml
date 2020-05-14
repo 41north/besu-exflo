@@ -2,9 +2,6 @@ name: Publish to Registry
 on:
   release:
     types: [published]
-  push:
-    branches:
-      - master
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -20,4 +17,4 @@ jobs:
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
           dockerfile: docker/exflo/Dockerfile
-          tags: "latest,${{ env.RELEASE_VERSION }}"
+          tags: "${{ env.RELEASE_VERSION }}"
