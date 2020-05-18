@@ -31,8 +31,6 @@ dependencies {
   api(kotlin("stdlib"))
   api(kotlin("reflect"))
 
-  api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
-
   api(project(":domain"))
 
   api("org.hyperledger.besu.internal:besu")
@@ -53,6 +51,9 @@ dependencies {
   api("org.web3j:utils")
 
   api("io.reactivex.rxjava3:rxjava")
+
+  api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+  api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
 
   implementation("com.fasterxml.jackson.core:jackson-databind")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

@@ -33,7 +33,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import picocli.CommandLine
 import java.util.Properties
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class ExfloKafkaPlugin : ExfloPlugin<ExfloKafkaCliOptions>() {
 
   override val name = ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID
@@ -44,7 +46,7 @@ class ExfloKafkaPlugin : ExfloPlugin<ExfloKafkaCliOptions>() {
     module {
       single { options }
       single<ExfloCliOptions> { options }
-      factory<BlockWriter> { KafkaBlockWriter(get()) }
+      factory<BlockWriter> { KafkaBlockWriter(get(), get(), get()) }
     }
   )
 
@@ -93,15 +95,7 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
     paramLabel = "<LONG>",
     description = ["Block number from which to start publishing"]
   )
-  override var startBlockOverride: Long? = null
-
-  @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-max-fork-size"],
-    paramLabel = "<INTEGER>",
-    defaultValue = "${ExfloCliDefaultOptions.MAX_FORK_SIZE}",
-    description = ["Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart"]
-  )
-  override var maxForkSize: Int = ExfloCliDefaultOptions.MAX_FORK_SIZE
+  var startBlockOverride: Long? = null
 
   @CommandLine.Option(
     names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-processing-entities"],

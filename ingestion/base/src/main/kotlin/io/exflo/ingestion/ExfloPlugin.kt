@@ -24,7 +24,6 @@ import io.exflo.ingestion.storage.InterceptingKeyValueStorageFactory
 import io.exflo.ingestion.storage.InterceptingPrivacyKeyValueStorageFactory
 import io.exflo.ingestion.tokens.precompiled.PrecompiledContractsFactory
 import io.exflo.ingestion.tracker.BlockWriter
-import io.exflo.ingestion.tracker.ChainTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -165,7 +164,6 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
         single { protocolSchedule }
         single { genesisState }
         single { ScheduleBasedBlockHeaderFunctions.create(get<ProtocolSchedule<Void>>()) }
-        single { ChainTracker(get(), get(), get(), get(), get()) }
       }
 
       // implementation specific DI modules which we combine with other standard modules
@@ -218,10 +216,6 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
 interface ExfloCliOptions {
 
   var enabled: Boolean
-
-  var startBlockOverride: Long?
-
-  var maxForkSize: Int
 
   enum class ProcessableEntity {
     HEADER,

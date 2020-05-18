@@ -51,6 +51,9 @@ dependencyManagement {
     // Exflo: Common
     // ------------------------------------------------------------------
 
+    dependency 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6'
+    dependency 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.6'
+
     dependencySet(group: 'org.web3j', version: '4.5.18') {
       entry 'core'
       entry 'abi'

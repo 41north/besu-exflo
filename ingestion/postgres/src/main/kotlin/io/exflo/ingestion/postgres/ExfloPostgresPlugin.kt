@@ -150,26 +150,18 @@ class ExfloPostgresCliOptions : ExfloCliOptions {
   override var enabled: Boolean = false
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-start-block-override"],
+    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-earliest-block-number"],
     paramLabel = "<LONG>",
-    description = ["Block number from which to start publishing"]
+    description = ["Earliest block number to sync"]
   )
-  override var startBlockOverride: Long? = null
-
-  @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-max-fork-size"],
-    paramLabel = "<INTEGER>",
-    defaultValue = "${ExfloCliDefaultOptions.MAX_FORK_SIZE}",
-    description = ["Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart"]
-  )
-  override var maxForkSize: Int = ExfloCliDefaultOptions.MAX_FORK_SIZE
+  var startBlockOverride: Long? = null
 
   @CommandLine.Option(
     names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-processing-level"],
     paramLabel = "<ENTITY>",
     description = ["Level of which this plugin will process entities. Each one relies on the previous one"]
   )
-  var processableEntity: ProcessableEntity = RECEIPTS
+  var processingLevel: ProcessableEntity = RECEIPTS
 
   @CommandLine.Option(
     names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-jdbc-url"],
