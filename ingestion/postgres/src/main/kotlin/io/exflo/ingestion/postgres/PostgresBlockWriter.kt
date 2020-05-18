@@ -82,23 +82,33 @@ class PostgresBlockWriter(
 
         do {
 
-          val headers = readHeadersFrom(head, 256)
+          val headers = readHeadersFrom(head, 128)
 
           val elapsed = measureTime {
 
             val writeJobs = headers
-              .chunked(32)
+              .chunked(16)
               .map { chunk ->
 
                 launch {
 
                   val connection = dataSource.connection
 
+                  val txCtx = DSL.using(connection)
+
                   try {
 
-                    for (header in chunk) {
+                    // update any previous headers with the same numbers and set them as no longer canonical
 
-                      val txCtx = DSL.using(connection)
+                    txCtx
+                      .update(Tables.BLOCK_HEADER)
+                      .set(Tables.BLOCK_HEADER.IS_CANONICAL, false)
+                      .where(Tables.BLOCK_HEADER.NUMBER.`in`(chunk.map{ it.number }))
+                      .execute()
+
+                    //
+
+                    for (header in chunk) {
 
                       // insert the header
 
@@ -133,8 +143,10 @@ class PostgresBlockWriter(
 
                       }.join()
 
-                      connection.commit()
                     }
+
+                    connection.commit()
+
                   } catch (e: Exception) {
                     connection.rollback()
                   } finally {
