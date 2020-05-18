@@ -37,6 +37,7 @@ import org.koin.dsl.module
 import org.postgresql.Driver
 import picocli.CommandLine
 import javax.sql.DataSource
+import kotlin.time.ExperimentalTime
 
 class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 
@@ -44,6 +45,7 @@ class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 
   override val options = ExfloPostgresCliOptions()
 
+  @OptIn(ExperimentalTime::class)
   override fun implKoinModules(): List<Module> = listOf(
     module {
 

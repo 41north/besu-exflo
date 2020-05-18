@@ -202,7 +202,6 @@ fun BlockTrace.touchedAccounts(
 
   return allAccounts
     // Even if EIP158 is not enabled, we avoid serializing any empty / dead / unnecessary accounts
-    .filterValues { it != null }
     .filterNot { (_, acc) -> acc.isEmpty }
     .values
     .toList()

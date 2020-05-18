@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion.core
+alter table block_header drop constraint block_header_hash_fkey;
 
-/**
- * Basic interface that defines an [ImportTask].
- */
-interface ImportTask {
+drop table import_queue;
 
-  suspend fun run()
-
-}

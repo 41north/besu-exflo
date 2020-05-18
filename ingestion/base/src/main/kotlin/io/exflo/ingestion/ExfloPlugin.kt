@@ -25,6 +25,12 @@ import io.exflo.ingestion.storage.InterceptingPrivacyKeyValueStorageFactory
 import io.exflo.ingestion.tokens.precompiled.PrecompiledContractsFactory
 import io.exflo.ingestion.tracker.BlockWriter
 import io.exflo.ingestion.tracker.ChainTracker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.hyperledger.besu.cli.BesuCommand
@@ -61,6 +67,8 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
   private lateinit var commandLine: CommandLine
 
   private lateinit var besuCommand: BesuCommand
+
+  private lateinit var blockWriterJob: Job
 
   override fun register(context: BesuContext) {
 
@@ -180,7 +188,11 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
       implStart(koinApp)
 
       blockWriter = koinApp.koin.get()
-      blockWriter.start()
+
+      this.blockWriterJob = GlobalScope
+        .launch(Dispatchers.IO) {
+          blockWriter.run()
+        }
     } catch (ex: Exception) {
       log.error("Failed to start", ex)
     }
@@ -193,7 +205,9 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
     }
 
     log.debug("Stopping plugin")
-    blockWriter.stop()
+
+    runBlocking { blockWriterJob.cancelAndJoin() }
+
     stopKoin()
   }
 }

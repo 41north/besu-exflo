@@ -18,7 +18,6 @@ package io.exflo.ingestion.tracker
 
 interface BlockWriter {
 
-  fun start()
+  suspend fun run()
 
-  fun stop()
 }

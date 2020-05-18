@@ -31,6 +31,8 @@ dependencies {
   api(kotlin("stdlib"))
   api(kotlin("reflect"))
 
+  api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
+
   api(project(":domain"))
 
   api("org.hyperledger.besu.internal:besu")

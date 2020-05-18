@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion.core
+package io.exflo.ingestion.extensions
 
-/**
- * Basic interface that defines an [ImportTask].
- */
-interface ImportTask {
-
-  suspend fun run()
-
-}
+fun Double.format(digits: Int) = "%.${digits}f".format(this)
