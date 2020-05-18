@@ -217,17 +217,16 @@ interface ExfloCliOptions {
 
   var enabled: Boolean
 
-  enum class ProcessableEntity {
-    HEADER,
-    BODY,
-    RECEIPTS,
-    TRACES
+  enum class ProcessingLevel(val level: Int) {
+    HEADER(1),
+    BODY(2),
+    RECEIPTS(3),
+    TRACES(4);
+    fun isActive(other: ProcessingLevel) = other.level <= this.level
   }
 }
 
 object ExfloCliDefaultOptions {
   const val EXFLO_POSTGRES_PLUGIN_ID: String = "exflo-postgres"
   const val EXFLO_KAFKA_PLUGIN_ID: String = "exflo-kafka"
-
-  const val MAX_FORK_SIZE: Int = 192
 }

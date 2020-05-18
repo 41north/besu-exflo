@@ -79,11 +79,11 @@ class KafkaBlockWriter(
 
   private val pollInterval = 1.seconds
 
-  private val withHeader: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessableEntity.HEADER } != null
-  private val withBody: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessableEntity.BODY } != null
+  private val withHeader: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessingLevel.HEADER } != null
+  private val withBody: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessingLevel.BODY } != null
   private val withReceipts: Boolean =
-    cliOptions.entities.find { it == ExfloCliOptions.ProcessableEntity.RECEIPTS } != null
-  private val withTraces: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessableEntity.TRACES } != null
+    cliOptions.entities.find { it == ExfloCliOptions.ProcessingLevel.RECEIPTS } != null
+  private val withTraces: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessingLevel.TRACES } != null
 
   private lateinit var importCache: KafkaCache<Long, String>
 

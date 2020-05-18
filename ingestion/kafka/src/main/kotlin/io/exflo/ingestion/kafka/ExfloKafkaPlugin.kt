@@ -18,11 +18,11 @@ package io.exflo.ingestion.kafka
 
 import io.exflo.ingestion.ExfloCliDefaultOptions
 import io.exflo.ingestion.ExfloCliOptions
-import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity
-import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity.BODY
-import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity.HEADER
-import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity.RECEIPTS
-import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity.TRACES
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.BODY
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.HEADER
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.RECEIPTS
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.TRACES
 import io.exflo.ingestion.ExfloPlugin
 import io.exflo.ingestion.tracker.BlockWriter
 import org.apache.kafka.clients.admin.AdminClient
@@ -104,7 +104,7 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
     split = ",",
     arity = "1..4"
   )
-  var entities: List<ProcessableEntity> = listOf(HEADER, BODY, RECEIPTS, TRACES)
+  var entities: List<ProcessingLevel> = listOf(HEADER, BODY, RECEIPTS, TRACES)
 
   @CommandLine.Option(
     names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-bootstrap-servers"],

@@ -20,8 +20,8 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.exflo.ingestion.ExfloCliDefaultOptions
 import io.exflo.ingestion.ExfloCliOptions
-import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity
-import io.exflo.ingestion.ExfloCliOptions.ProcessableEntity.RECEIPTS
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.RECEIPTS
 import io.exflo.ingestion.ExfloPlugin
 import io.exflo.ingestion.tracker.BlockWriter
 import io.exflo.postgres.jooq.Tables.METADATA
@@ -69,7 +69,7 @@ class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
       }
 
       single<BlockWriter> {
-        PostgresBlockWriter(get(), get(), get(), get(), options)
+        PostgresBlockWriter(get(), get(), get(), get())
       }
     }
   )
@@ -161,7 +161,7 @@ class ExfloPostgresCliOptions : ExfloCliOptions {
     paramLabel = "<ENTITY>",
     description = ["Level of which this plugin will process entities. Each one relies on the previous one"]
   )
-  var processingLevel: ProcessableEntity = RECEIPTS
+  var processingLevel: ProcessingLevel = RECEIPTS
 
   @CommandLine.Option(
     names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-jdbc-url"],

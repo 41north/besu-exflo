@@ -17,6 +17,9 @@
 package io.exflo.ingestion.postgres
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.BODY
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.RECEIPTS
+import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.TRACES
 import io.exflo.ingestion.extensions.format
 import io.exflo.ingestion.extensions.toBalanceDeltas
 import io.exflo.ingestion.postgres.extensions.toAccountRecord
@@ -56,11 +59,10 @@ import kotlin.time.seconds
 
 @ExperimentalTime
 class PostgresBlockWriter(
-  classLoader: ClassLoader,
   private val objectMapper: ObjectMapper,
   private val dataSource: DataSource,
   private val blockReader: BlockReader,
-  cliOptions: ExfloPostgresCliOptions
+  private val cliOptions: ExfloPostgresCliOptions
 ) : BlockWriter {
 
   private val dbContext = DSL.using(dataSource, SQLDialect.POSTGRES)
@@ -68,6 +70,8 @@ class PostgresBlockWriter(
   private val log = LogManager.getLogger()
 
   private val pollInterval = 1.seconds
+
+  private val processingLevel = cliOptions.processingLevel
 
   override suspend fun run() {
     coroutineScope {
@@ -96,6 +100,8 @@ class PostgresBlockWriter(
 
                       val txCtx = DSL.using(connection)
 
+                      // insert the header
+
                       val headerRecord = header.hash
                         .let { hash -> blockReader.totalDifficulty(hash) }
                         .let { totalDifficulty ->
@@ -104,8 +110,9 @@ class PostgresBlockWriter(
                           )
                         }
 
-                      // insert the header
                       txCtx.insertInto(Tables.BLOCK_HEADER).set(headerRecord).execute()
+
+                      // insert the rest based on the processing level
 
                       val bodyRecords = Channel<TableRecord<*>>(512)
                       val receiptRecords = Channel<TableRecord<*>>(512)
@@ -119,9 +126,11 @@ class PostgresBlockWriter(
                       launch { trace(headerRecord, ommerChannel, traceRecords) }
 
                       launch {
+
                         writeToDb(txCtx, bodyRecords)
                         writeToDb(txCtx, receiptRecords)
                         writeToDb(txCtx, traceRecords)
+
                       }.join()
 
                       connection.commit()
@@ -133,7 +142,6 @@ class PostgresBlockWriter(
                   }
 
                 }
-
               }
 
             writeJobs.forEach { it.join() }
@@ -150,6 +158,7 @@ class PostgresBlockWriter(
           if (headers.isNotEmpty()) {
             head = headers.last().hash
           }
+
         } while (isActive && headers.isNotEmpty())
 
         // finished an import pass, either reaching the genesis block from an initial sync, or reaching an ancestor
@@ -253,6 +262,15 @@ class PostgresBlockWriter(
     ommerChannel: Channel<OmmerRecord>,
     transactionChannel: Channel<TransactionRecord>
   ) {
+
+    if (!processingLevel.isActive(BODY)) {
+      // close the channels and return early
+      recordsChannel.close()
+      ommerChannel.close()
+      transactionChannel.close()
+      return
+    }
+
     Hash.fromHexString(header.hash)
       .let { hash -> blockReader.body(hash) }
       ?.let { body ->
@@ -286,6 +304,12 @@ class PostgresBlockWriter(
     transactionChannel: Channel<TransactionRecord>,
     recordsChannel: Channel<TableRecord<*>>
   ) {
+
+    if (!processingLevel.isActive(RECEIPTS)) {
+      // close the channels and return early
+      recordsChannel.close()
+      return
+    }
 
     val hash = Hash.fromHexString(header.hash)
     val receipts =
@@ -323,6 +347,12 @@ class PostgresBlockWriter(
     ommerChannel: Channel<OmmerRecord>,
     recordsChannel: Channel<TableRecord<*>>
   ) {
+
+    if (!processingLevel.isActive(TRACES)) {
+      // close the channels and return early
+      recordsChannel.close()
+      return
+    }
 
     val hash = Hash.fromHexString(header.hash)
     val coinbase = Address.fromHexString(header.coinbase)
