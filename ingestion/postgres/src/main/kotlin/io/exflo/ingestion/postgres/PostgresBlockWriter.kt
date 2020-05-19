@@ -106,7 +106,7 @@ class PostgresBlockWriter(
                     txCtx
                       .update(Tables.BLOCK_HEADER)
                       .set(Tables.BLOCK_HEADER.IS_CANONICAL, false)
-                      .where(Tables.BLOCK_HEADER.NUMBER.`in`(chunk.map{ it.number }))
+                      .where(Tables.BLOCK_HEADER.NUMBER.`in`(chunk.map { it.number }))
                       .execute()
 
                     //
@@ -143,19 +143,15 @@ class PostgresBlockWriter(
                         writeToDb(txCtx, bodyRecords)
                         writeToDb(txCtx, receiptRecords)
                         writeToDb(txCtx, traceRecords)
-
                       }.join()
-
                     }
 
                     connection.commit()
-
                   } catch (e: Exception) {
                     connection.rollback()
                   } finally {
                     connection.close()
                   }
-
                 }
               }
 
@@ -173,7 +169,6 @@ class PostgresBlockWriter(
           if (headers.isNotEmpty()) {
             head = headers.last().hash
           }
-
         } while (isActive && headers.isNotEmpty())
 
         // finished an import pass, either reaching the genesis block from an initial sync, or reaching an ancestor
@@ -187,7 +182,6 @@ class PostgresBlockWriter(
             }
         }
       }
-
     }
   }
 
@@ -408,7 +402,6 @@ class PostgresBlockWriter(
         txTrace.contractsDestroyed
           .map { it.toContractDestroyedRecord(header) }
           .forEach { recordsChannel.send(it) }
-
       }
 
     recordsChannel.close()

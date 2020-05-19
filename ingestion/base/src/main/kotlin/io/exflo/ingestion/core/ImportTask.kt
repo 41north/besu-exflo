@@ -22,5 +22,4 @@ package io.exflo.ingestion.core
 interface ImportTask {
 
   suspend fun run()
-
 }
