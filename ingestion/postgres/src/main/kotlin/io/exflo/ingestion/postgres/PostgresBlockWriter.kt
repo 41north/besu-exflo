@@ -62,7 +62,7 @@ class PostgresBlockWriter(
   private val objectMapper: ObjectMapper,
   private val dataSource: DataSource,
   private val blockReader: BlockReader,
-  private val cliOptions: ExfloPostgresCliOptions
+  cliOptions: ExfloPostgresCliOptions
 ) : BlockWriter {
 
   private val dbContext = DSL.using(dataSource, SQLDialect.POSTGRES)
@@ -72,6 +72,8 @@ class PostgresBlockWriter(
   private val pollInterval = 1.seconds
 
   private val processingLevel = cliOptions.processingLevel
+
+  private val earliestBlockNumber = cliOptions.earliestBlockNumber ?: 0L
 
   override suspend fun run() {
     coroutineScope {
@@ -98,7 +100,8 @@ class PostgresBlockWriter(
 
                   try {
 
-                    // update any previous headers with the same numbers and set them as no longer canonical
+                    // update any previous headers with the same numbers as those we are about to sync  and set them
+                    // as no longer canonical
 
                     txCtx
                       .update(Tables.BLOCK_HEADER)
@@ -209,12 +212,12 @@ class PostgresBlockWriter(
   private fun latestHead(): Hash {
 
     // the latest head from besu
-    var head = blockReader.chainHead()!!
+    var besuHead = blockReader.chainHead()!!
 
-    // determine if ever made it back to the genesis block
-    // if not we resume from there until we reach the genesis block, otherwise resume from besu's head
+    // check the earliest sync'd block number. If it is less than the configured earliest block number (or genesis)
+    // then we start syncing from the besu head
 
-    val earliestEntry = dbContext
+    val earliestDbHeader = dbContext
       .select(Tables.BLOCK_HEADER.NUMBER, Tables.BLOCK_HEADER.HASH)
       .from(Tables.BLOCK_HEADER)
       .orderBy(Tables.BLOCK_HEADER.NUMBER.asc())
@@ -222,23 +225,29 @@ class PostgresBlockWriter(
       .fetch()
       .firstOrNull()
 
-    val earliestNumber = earliestEntry?.value1()
-    val earliestHash = earliestEntry?.let { Hash.fromHexString(it.value2()) }
+    val earliestDbNumber = earliestDbHeader?.value1()
+    val earliestDbHash = earliestDbHeader?.let { Hash.fromHexString(it.value2()) }
 
-    if (!(earliestNumber == null || earliestNumber == BlockHeader.GENESIS_BLOCK_NUMBER)) {
-      // we did not complete the initial first pass back to genesis
+    if (!(earliestDbNumber == null || earliestDbNumber <= earliestBlockNumber)) {
+      // we have not completed our initial historical sync
       // lets restart from the earliest point we did reach
-      head = blockReader.header(earliestHash!!)!!.parentHash
-      log.info("Restarting header import from block number = $earliestNumber")
+      besuHead = blockReader.header(earliestDbHash!!)!!.parentHash
+      log.info("Restarting header import from block number = $earliestDbNumber")
     }
 
-    return head
+    return besuHead
   }
 
   private fun readHeadersFrom(hash: Hash, count: Int = 128): List<BlockHeader> {
 
-    // read the next series of headers starting from hash and propagating backwards via parent hashes
-    val headers = blockReader.headersFrom(hash, count + 1)
+    // read the next series of headers starting from hash and propagating backwards via parent hashes, stopping at
+    // the configured earliest block number
+
+    val headers = blockReader
+      .headersFrom(hash, count + 1)
+      .filter { it.number >= earliestBlockNumber }
+
+    // map the hash strings into a set
 
     val hashStrings = headers
       .map { it.hash.toHexString() }
@@ -247,8 +256,6 @@ class PostgresBlockWriter(
     // check the import queue for existing entries for the headers we just read, indicating we are reaching a common ancestor
     // TODO make this logic more robust by checking where in the sequence the common ancestor was found and ensuring it was at the end
 
-    // TODO need to mark old headers as no longer canonical in the db
-
     val existingHashStrings = dbContext
       .select(Tables.BLOCK_HEADER.HASH)
       .from(Tables.BLOCK_HEADER)
@@ -256,16 +263,12 @@ class PostgresBlockWriter(
       .fetch()
       .map { it.value1() }
 
-    // subtract any existing hashes found in the import queue from the set of hashes read from besu and filtered the headers list
+    // subtract any existing hashes found in the db from the set of hashes read from besu and filtered the headers list
 
-    val hashStringsToInsert =
-      existingHashStrings
-        .takeIf { it.isNotEmpty() }
-        ?.let { hashStrings.minus(it) }
-        ?: hashStrings
+    val newHashStrings = hashStrings.minus(existingHashStrings)
 
     return headers
-      .filter { hashStringsToInsert.contains(it.hash.toHexString()) }
+      .filter { newHashStrings.contains(it.hash.toHexString()) }
   }
 
   private suspend fun readBody(

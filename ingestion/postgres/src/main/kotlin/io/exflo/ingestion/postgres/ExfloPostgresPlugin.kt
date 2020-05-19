@@ -152,9 +152,9 @@ class ExfloPostgresCliOptions : ExfloCliOptions {
   @CommandLine.Option(
     names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-earliest-block-number"],
     paramLabel = "<LONG>",
-    description = ["Earliest block number to sync"]
+    description = ["Earliest block number to sync from"]
   )
-  var startBlockOverride: Long? = null
+  var earliestBlockNumber: Long? = null
 
   @CommandLine.Option(
     names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-processing-level"],
