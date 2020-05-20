@@ -20,15 +20,15 @@ import io.exflo.domain.ContractEvent
 import io.exflo.domain.ContractEvents
 import org.apache.tuweni.bytes.Bytes
 import org.apache.tuweni.units.bigints.UInt256
-import java.math.BigInteger
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Log
 import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.DynamicArray
+import java.math.BigInteger
 import org.web3j.abi.datatypes.Address as AbiAddress
 import org.web3j.abi.datatypes.Bool as AbiBool
-import org.web3j.abi.datatypes.DynamicArray
 import org.web3j.abi.datatypes.DynamicBytes as AbiDynamicBytes
 import org.web3j.abi.datatypes.Event as AbiEvent
 import org.web3j.abi.datatypes.Type as AbiType
@@ -41,308 +41,308 @@ enum class ContractEventParsers(
   private val parser: (Address, List<AbiType<*>>) -> ContractEvent?
 ) {
 
-    FungibleApproval(
-        AbiEvent(
-            "Approval",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiUint256::class.java, false)
-            )
-        ),
-        { contractAddress, values ->
-            val (owner, spender, value) = values
-            ContractEvents.FungibleApproval(
-                contractAddress,
-                Address.fromHexString(owner.value as String),
-                Address.fromHexString(spender.value as String),
-                UInt256.valueOf(value.value as BigInteger)
-            )
-        }
+  FungibleApproval(
+    AbiEvent(
+      "Approval",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiUint256::class.java, false)
+      )
     ),
+    { contractAddress, values ->
+      val (owner, spender, value) = values
+      ContractEvents.FungibleApproval(
+        contractAddress,
+        Address.fromHexString(owner.value as String),
+        Address.fromHexString(spender.value as String),
+        UInt256.valueOf(value.value as BigInteger)
+      )
+    }
+  ),
 
-    FungibleTransfer(
-        AbiEvent(
-            "Transfer",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiUint256::class.java, false)
-            )
-        ),
-        { contractAddress, values ->
-            val (from, to, value) = values
-            ContractEvents.FungibleTransfer(
-                contractAddress,
-                Address.fromHexString(from.value as String),
-                Address.fromHexString(to.value as String),
-                UInt256.valueOf(value.value as BigInteger)
-            )
-        }
+  FungibleTransfer(
+    AbiEvent(
+      "Transfer",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiUint256::class.java, false)
+      )
     ),
+    { contractAddress, values ->
+      val (from, to, value) = values
+      ContractEvents.FungibleTransfer(
+        contractAddress,
+        Address.fromHexString(from.value as String),
+        Address.fromHexString(to.value as String),
+        UInt256.valueOf(value.value as BigInteger)
+      )
+    }
+  ),
 
-    NonFungibleApproval(
-        AbiEvent(
-            "Approval",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiUint256::class.java, true)
-            )
-        ),
-        { contractAddress, values ->
-            val (owner, approved, tokenId) = values
-            ContractEvents.NonFungibleApproval(
-                contractAddress,
-                Address.fromHexString(owner.value as String),
-                Address.fromHexString(approved.value as String),
-                UInt256.valueOf(tokenId.value as BigInteger)
-            )
-        }
+  NonFungibleApproval(
+    AbiEvent(
+      "Approval",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiUint256::class.java, true)
+      )
     ),
+    { contractAddress, values ->
+      val (owner, approved, tokenId) = values
+      ContractEvents.NonFungibleApproval(
+        contractAddress,
+        Address.fromHexString(owner.value as String),
+        Address.fromHexString(approved.value as String),
+        UInt256.valueOf(tokenId.value as BigInteger)
+      )
+    }
+  ),
 
-    ApprovalForAll(
-        AbiEvent(
-            "ApprovalForAll",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiBool::class.java, false)
-            )
-        ),
-        { contractAddress, values ->
-            val (owner, operator, approved) = values
-            ContractEvents.ApprovalForAll(
-                contractAddress,
-                Address.fromHexString(owner.value as String),
-                Address.fromHexString(operator.value as String),
-                approved.value as Boolean
-            )
-        }
+  ApprovalForAll(
+    AbiEvent(
+      "ApprovalForAll",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiBool::class.java, false)
+      )
     ),
+    { contractAddress, values ->
+      val (owner, operator, approved) = values
+      ContractEvents.ApprovalForAll(
+        contractAddress,
+        Address.fromHexString(owner.value as String),
+        Address.fromHexString(operator.value as String),
+        approved.value as Boolean
+      )
+    }
+  ),
 
-    NonFungibleTransfer(
-        AbiEvent(
-            "Transfer",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiUint256::class.java, true)
-            )
-        ),
-        { contractAddress, values ->
-            val (from, to, tokenId) = values
-            ContractEvents.NonFungibleTransfer(
-                contractAddress,
-                Address.fromHexString(from.value as String),
-                Address.fromHexString(to.value as String),
-                UInt256.valueOf(tokenId.value as BigInteger)
-            )
-        }
+  NonFungibleTransfer(
+    AbiEvent(
+      "Transfer",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiUint256::class.java, true)
+      )
     ),
+    { contractAddress, values ->
+      val (from, to, tokenId) = values
+      ContractEvents.NonFungibleTransfer(
+        contractAddress,
+        Address.fromHexString(from.value as String),
+        Address.fromHexString(to.value as String),
+        UInt256.valueOf(tokenId.value as BigInteger)
+      )
+    }
+  ),
 
-    Sent(
-        AbiEvent(
-            "Sent",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiUint256::class.java, false),
-                TypeReference.create(AbiDynamicBytes::class.java, false),
-                TypeReference.create(AbiDynamicBytes::class.java, false)
-            )
-        ),
-        { contractAddress, values ->
-            val (operator, from, to, amount, data) = values
-
-            // list can only be destructured with up to 5 items
-            val operatorData = values[5]
-
-            ContractEvents.Sent(
-                contractAddress,
-                Address.fromHexString(operator.value as String),
-                Address.fromHexString(from.value as String),
-                Address.fromHexString(to.value as String),
-                UInt256.valueOf(amount.value as BigInteger),
-                Bytes.wrap(data.value as ByteArray),
-                Bytes.wrap(operatorData.value as ByteArray)
-            )
-        }
+  Sent(
+    AbiEvent(
+      "Sent",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiUint256::class.java, false),
+        TypeReference.create(AbiDynamicBytes::class.java, false),
+        TypeReference.create(AbiDynamicBytes::class.java, false)
+      )
     ),
+    { contractAddress, values ->
+      val (operator, from, to, amount, data) = values
 
-    Minted(
-        AbiEvent(
-            "Minted",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiUint256::class.java, false),
-                TypeReference.create(AbiDynamicBytes::class.java, false),
-                TypeReference.create(AbiDynamicBytes::class.java, false)
-            )
-        ),
-        { contractAddress, values ->
-            val (operator, to, amount, data, operatorData) = values
-            ContractEvents.Minted(
-                contractAddress,
-                Address.fromHexString(operator.value as String),
-                Address.fromHexString(to.value as String),
-                UInt256.valueOf(amount.value as BigInteger),
-                Bytes.wrap(data.value as ByteArray),
-                Bytes.wrap(operatorData.value as ByteArray)
-            )
-        }
+      // list can only be destructured with up to 5 items
+      val operatorData = values[5]
+
+      ContractEvents.Sent(
+        contractAddress,
+        Address.fromHexString(operator.value as String),
+        Address.fromHexString(from.value as String),
+        Address.fromHexString(to.value as String),
+        UInt256.valueOf(amount.value as BigInteger),
+        Bytes.wrap(data.value as ByteArray),
+        Bytes.wrap(operatorData.value as ByteArray)
+      )
+    }
+  ),
+
+  Minted(
+    AbiEvent(
+      "Minted",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiUint256::class.java, false),
+        TypeReference.create(AbiDynamicBytes::class.java, false),
+        TypeReference.create(AbiDynamicBytes::class.java, false)
+      )
     ),
+    { contractAddress, values ->
+      val (operator, to, amount, data, operatorData) = values
+      ContractEvents.Minted(
+        contractAddress,
+        Address.fromHexString(operator.value as String),
+        Address.fromHexString(to.value as String),
+        UInt256.valueOf(amount.value as BigInteger),
+        Bytes.wrap(data.value as ByteArray),
+        Bytes.wrap(operatorData.value as ByteArray)
+      )
+    }
+  ),
 
-    Burned(
-        AbiEvent(
-            "Burned",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiUint256::class.java, false),
-                TypeReference.create(AbiDynamicBytes::class.java, false),
-                TypeReference.create(AbiDynamicBytes::class.java, false)
-            )
-        ),
-        { contractAddress, values ->
-            val (operator, to, amount, data, operatorData) = values
-            ContractEvents.Burned(
-                contractAddress,
-                Address.fromHexString(operator.value as String),
-                Address.fromHexString(to.value as String),
-                UInt256.valueOf(amount.value as BigInteger),
-                Bytes.wrap(data.value as ByteArray),
-                Bytes.wrap(operatorData.value as ByteArray)
-            )
-        }
+  Burned(
+    AbiEvent(
+      "Burned",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiUint256::class.java, false),
+        TypeReference.create(AbiDynamicBytes::class.java, false),
+        TypeReference.create(AbiDynamicBytes::class.java, false)
+      )
     ),
+    { contractAddress, values ->
+      val (operator, to, amount, data, operatorData) = values
+      ContractEvents.Burned(
+        contractAddress,
+        Address.fromHexString(operator.value as String),
+        Address.fromHexString(to.value as String),
+        UInt256.valueOf(amount.value as BigInteger),
+        Bytes.wrap(data.value as ByteArray),
+        Bytes.wrap(operatorData.value as ByteArray)
+      )
+    }
+  ),
 
-    AuthorizedOperator(
-        AbiEvent(
-            "AuthorizedOperator",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true)
-            )
-        ),
-        { contractAddress, values ->
-            val (operator, holder) = values
-            ContractEvents.AuthorizedOperator(
-                contractAddress,
-                Address.fromHexString(operator.value as String),
-                Address.fromHexString(holder.value as String)
-            )
-        }
+  AuthorizedOperator(
+    AbiEvent(
+      "AuthorizedOperator",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true)
+      )
     ),
+    { contractAddress, values ->
+      val (operator, holder) = values
+      ContractEvents.AuthorizedOperator(
+        contractAddress,
+        Address.fromHexString(operator.value as String),
+        Address.fromHexString(holder.value as String)
+      )
+    }
+  ),
 
-    RevokedOperator(
-        AbiEvent(
-            "RevokedOperator",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true)
-            )
-        ),
-        { contractAddress, values ->
-            val (operator, holder) = values
-            ContractEvents.RevokedOperator(
-                contractAddress,
-                Address.fromHexString(operator.value as String),
-                Address.fromHexString(holder.value as String)
-            )
-        }
+  RevokedOperator(
+    AbiEvent(
+      "RevokedOperator",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true)
+      )
     ),
+    { contractAddress, values ->
+      val (operator, holder) = values
+      ContractEvents.RevokedOperator(
+        contractAddress,
+        Address.fromHexString(operator.value as String),
+        Address.fromHexString(holder.value as String)
+      )
+    }
+  ),
 
-    TransferSingle(
-        AbiEvent(
-            "TransferSingle",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiUint256::class.java, false),
-                TypeReference.create(AbiUint256::class.java, false)
-            )
-        ),
-        { contractAddress, values ->
-            val (operator, from, to, id, value) = values
-            ContractEvents.TransferSingle(
-                contractAddress,
-                Address.fromHexString(operator.value as String),
-                Address.fromHexString(from.value as String),
-                Address.fromHexString(to.value as String),
-                UInt256.valueOf(id.value as BigInteger),
-                UInt256.valueOf(value.value as BigInteger)
-            )
-        }
+  TransferSingle(
+    AbiEvent(
+      "TransferSingle",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiUint256::class.java, false),
+        TypeReference.create(AbiUint256::class.java, false)
+      )
     ),
+    { contractAddress, values ->
+      val (operator, from, to, id, value) = values
+      ContractEvents.TransferSingle(
+        contractAddress,
+        Address.fromHexString(operator.value as String),
+        Address.fromHexString(from.value as String),
+        Address.fromHexString(to.value as String),
+        UInt256.valueOf(id.value as BigInteger),
+        UInt256.valueOf(value.value as BigInteger)
+      )
+    }
+  ),
 
-    TransferBatch(
-        AbiEvent(
-            "TransferBatch",
-            listOf(
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                TypeReference.create(AbiAddress::class.java, true),
-                object : TypeReference<DynamicArray<AbiUint256>>(false) {},
-                object : TypeReference<DynamicArray<AbiUint256>>(false) {}
-            )
-        ),
-        { contractAddress, v ->
-            val (operator, from, to, ids, values) = v
-            ContractEvents.TransferBatch(
-                contractAddress,
-                Address.fromHexString(operator.value as String),
-                Address.fromHexString(from.value as String),
-                Address.fromHexString(to.value as String),
-                (ids.value as List<AbiUint256>).map { UInt256.valueOf(it.value) },
-                (values.value as List<AbiUint256>).map { UInt256.valueOf(it.value) }
-            )
-        }
+  TransferBatch(
+    AbiEvent(
+      "TransferBatch",
+      listOf(
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        TypeReference.create(AbiAddress::class.java, true),
+        object : TypeReference<DynamicArray<AbiUint256>>(false) {},
+        object : TypeReference<DynamicArray<AbiUint256>>(false) {}
+      )
     ),
+    { contractAddress, v ->
+      val (operator, from, to, ids, values) = v
+      ContractEvents.TransferBatch(
+        contractAddress,
+        Address.fromHexString(operator.value as String),
+        Address.fromHexString(from.value as String),
+        Address.fromHexString(to.value as String),
+        (ids.value as List<AbiUint256>).map { UInt256.valueOf(it.value) },
+        (values.value as List<AbiUint256>).map { UInt256.valueOf(it.value) }
+      )
+    }
+  ),
 
-    URI(
-        AbiEvent(
-            "URI",
-            listOf(
-                // the abi specifies the non indexed parameter first for some reason. TODO check this
-                TypeReference.create(AbiString::class.java, false),
-                TypeReference.create(AbiUint256::class.java, true)
-            )
-        ),
-        { contractAddress, values ->
+  URI(
+    AbiEvent(
+      "URI",
+      listOf(
+        // the abi specifies the non indexed parameter first for some reason. TODO check this
+        TypeReference.create(AbiString::class.java, false),
+        TypeReference.create(AbiUint256::class.java, true)
+      )
+    ),
+    { contractAddress, values ->
 
-            val (id, value) = values
-            ContractEvents.URI(
-                contractAddress,
-                UInt256.valueOf(id.value as BigInteger),
-                value.value as String
-            )
-        }
-    );
+      val (id, value) = values
+      ContractEvents.URI(
+        contractAddress,
+        UInt256.valueOf(id.value as BigInteger),
+        value.value as String
+      )
+    }
+  );
 
-    private val numIndexedParameters = web3Event.indexedParameters.size
+  private val numIndexedParameters = web3Event.indexedParameters.size
 
-    private val signature: Bytes = Bytes.fromHexString(EventEncoder.encode(web3Event))
+  private val signature: Bytes = Bytes.fromHexString(EventEncoder.encode(web3Event))
 
-    fun parse(log: Log): ContractEvent? =
-        // look for signature and indexed topics match
-        if (signature == log.topics.firstOrNull() && log.topics.size == (numIndexedParameters + 1)) {
-            // TODO we are converting into hex to re-use web3 utilities. We should replace this with some utilities which operate against Bytes
-            val values =
-                log.topics
-                    // drop first entry as that contains the method signature
-                    .drop(1)
-                    .zip(web3Event.indexedParameters)
-                    // zip each topic with corresponding parameter definition and extract each value
-                    .map { (topic, parameter) -> FunctionReturnDecoder.decodeIndexedValue(topic.toString(), parameter) } +
-                    // append the non indexed parameters
-                    FunctionReturnDecoder.decode(log.data.toHexString(), web3Event.nonIndexedParameters)
+  fun parse(log: Log): ContractEvent? =
+    // look for signature and indexed topics match
+    if (signature == log.topics.firstOrNull() && log.topics.size == (numIndexedParameters + 1)) {
+      // TODO we are converting into hex to re-use web3 utilities. We should replace this with some utilities which operate against Bytes
+      val values =
+        log.topics
+          // drop first entry as that contains the method signature
+          .drop(1)
+          .zip(web3Event.indexedParameters)
+          // zip each topic with corresponding parameter definition and extract each value
+          .map { (topic, parameter) -> FunctionReturnDecoder.decodeIndexedValue(topic.toString(), parameter) } +
+          // append the non indexed parameters
+          FunctionReturnDecoder.decode(log.data.toHexString(), web3Event.nonIndexedParameters)
 
-            parser(log.logger, values)
-        } else {
-            null
-        }
+      parser(log.logger, values)
+    } else {
+      null
+    }
 }

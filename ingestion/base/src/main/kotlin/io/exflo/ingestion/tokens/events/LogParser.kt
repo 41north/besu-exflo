@@ -26,12 +26,12 @@ import org.hyperledger.besu.ethereum.core.TransactionReceipt as BesuTransactionR
  */
 object LogParser {
 
-    fun parse(log: BesuLog): ContractEvent? {
-        val events = ContractEventParsers.values().mapNotNull { it.parse(log) }
-        require(events.size <= 1) { "More than one event spec has matched with this log" }
-        return events.firstOrNull()
-    }
+  fun parse(log: BesuLog): ContractEvent? {
+    val events = ContractEventParsers.values().mapNotNull { it.parse(log) }
+    require(events.size <= 1) { "More than one event spec has matched with this log" }
+    return events.firstOrNull()
+  }
 
-    fun parse(receipt: BesuTransactionReceipt): List<ContractEvent> =
-        receipt.logs.mapNotNull { log -> parse(log) }
+  fun parse(receipt: BesuTransactionReceipt): List<ContractEvent> =
+    receipt.logs.mapNotNull { log -> parse(log) }
 }

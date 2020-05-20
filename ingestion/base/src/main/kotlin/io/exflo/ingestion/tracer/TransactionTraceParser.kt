@@ -26,144 +26,143 @@ import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.Hash
 import org.hyperledger.besu.ethereum.core.Wei
 import org.hyperledger.besu.ethereum.transaction.TransactionSimulator
-import java.lang.IllegalStateException
 
 private val creationMethods = setOf("create", "create2")
 
 fun FlatTrace.toContractCreated(programCounter: Int): ContractCreated {
-    require(type == "create" && creationMethods.contains(action.creationMethod))
+  require(type == "create" && creationMethods.contains(action.creationMethod))
 
-    val result = this.result.get()
+  val result = this.result.get()
 
-    return ContractCreated(
-        Hash.fromHexString(transactionHash),
-        Address.fromHexString(action.from),
-        Address.fromHexString(result.address),
-        Bytes.fromHexString(result.code),
-        Wei.fromHexString(action.value),
-        null,
-        null,
-        null,
-        programCounter
-    )
+  return ContractCreated(
+    Hash.fromHexString(transactionHash),
+    Address.fromHexString(action.from),
+    Address.fromHexString(result.address),
+    Bytes.fromHexString(result.code),
+    Wei.fromHexString(action.value),
+    null,
+    null,
+    null,
+    programCounter
+  )
 }
 
 fun FlatTrace.toContractDestroyed(programCounter: Int): ContractDestroyed {
-    require(type == "suicide")
-    return ContractDestroyed(
-        Hash.fromHexString(transactionHash),
-        Address.fromHexString(action.address),
-        Address.fromHexString(action.refundAddress),
-        Wei.fromHexString(action.balance),
-        programCounter
-    )
+  require(type == "suicide")
+  return ContractDestroyed(
+    Hash.fromHexString(transactionHash),
+    Address.fromHexString(action.address),
+    Address.fromHexString(action.refundAddress),
+    Wei.fromHexString(action.balance),
+    programCounter
+  )
 }
 
 fun FlatTrace.toInternalTransaction(programCounter: Int): InternalTransaction? {
-    require(type == "call" && action.callType == "call")
+  require(type == "call" && action.callType == "call")
 
-    val value = Wei.fromHexString(action.value)
+  val value = Wei.fromHexString(action.value)
 
-    return if (value == Wei.ZERO) {
-        null
-    } else {
-        InternalTransaction(
-            Hash.fromHexString(transactionHash),
-            Address.fromHexString(action.from),
-            Address.fromHexString(action.to),
-            value,
-            programCounter
-        )
-    }
+  return if (value == Wei.ZERO) {
+    null
+  } else {
+    InternalTransaction(
+      Hash.fromHexString(transactionHash),
+      Address.fromHexString(action.from),
+      Address.fromHexString(action.to),
+      value,
+      programCounter
+    )
+  }
 }
 
 class TransactionTraceParser(
   private val transactionSimulator: TransactionSimulator
 ) {
 
-    var programCounter = 0
+  var programCounter = 0
 
-    private val errorAddresses = mutableSetOf<List<Int>>()
+  private val errorAddresses = mutableSetOf<List<Int>>()
 
-    val contractsCreated = mutableListOf<ContractCreated>()
-    val contractsDestroyed = mutableListOf<ContractDestroyed>()
-    val internalTransactions = mutableListOf<InternalTransaction>()
+  val contractsCreated = mutableListOf<ContractCreated>()
+  val contractsDestroyed = mutableListOf<ContractDestroyed>()
+  val internalTransactions = mutableListOf<InternalTransaction>()
 
-    val touchedAccounts = mutableSetOf<Address>()
+  val touchedAccounts = mutableSetOf<Address>()
 
-    fun apply(trace: FlatTrace) {
+  fun apply(trace: FlatTrace) {
 
-        programCounter += 1
+    programCounter += 1
 
-        val traceAddress = trace.traceAddress
+    val traceAddress = trace.traceAddress
 
-        if (trace.error != null) {
-            errorAddresses.add(trace.traceAddress)
-        }
-
-        var inErrorBranch = false
-
-        for (n in 0..traceAddress.size) {
-            inErrorBranch = errorAddresses.contains(traceAddress.take(n))
-            if (inErrorBranch) break
-        }
-
-        if (inErrorBranch) {
-            return
-        }
-
-        when {
-
-            trace.type == "call" && trace.action.callType == "call" && traceAddress.isEmpty() -> {
-                // ignore as this is a normal transaction
-            }
-
-            trace.type == "call" && trace.action.callType == "delegatecall" -> {
-                // ignore
-            }
-
-            trace.type == "call" && trace.action.callType == "call" && traceAddress.isNotEmpty() ->
-                trace.toInternalTransaction(programCounter)
-                    ?.apply {
-                        internalTransactions.add(this)
-                        touchedAccounts.add(this.fromAddress)
-                        touchedAccounts.add(this.toAddress)
-                    }
-
-            trace.type == "create" && creationMethods.contains(trace.action.creationMethod) ->
-                trace.toContractCreated(programCounter)
-                    .apply {
-
-                        touchedAccounts.add(this.originatorAddress)
-                        touchedAccounts.add(this.contractAddress)
-
-                        val (type, capabilities, metadata) = TokenDetector(
-                            transactionSimulator,
-                            Hash.fromHexString(trace.blockHash),
-                            this.contractAddress,
-                            this.code
-                        ).detect()
-
-                        contractsCreated.add(
-                            this.copy(
-                                type = type,
-                                capabilities = capabilities,
-                                metadata = metadata
-                            )
-                        )
-                    }
-
-            trace.type == "suicide" ->
-                trace.toContractDestroyed(programCounter)
-                    .apply {
-                        contractsDestroyed.add(this)
-                        touchedAccounts.add(this.contractAddress)
-                        touchedAccounts.add(this.refundAddress)
-                    }
-
-            else -> {
-                throw IllegalStateException("Unhandled trace. Block hash = ${trace.blockHash}, tx hash = ${trace.transactionHash}, trace type = ${trace.type}")
-            }
-        }
+    if (trace.error != null) {
+      errorAddresses.add(trace.traceAddress)
     }
+
+    var inErrorBranch = false
+
+    for (n in 0..traceAddress.size) {
+      inErrorBranch = errorAddresses.contains(traceAddress.take(n))
+      if (inErrorBranch) break
+    }
+
+    if (inErrorBranch) {
+      return
+    }
+
+    when {
+
+      trace.type == "call" && trace.action.callType == "call" && traceAddress.isEmpty() -> {
+        // ignore as this is a normal transaction
+      }
+
+      trace.type == "call" && trace.action.callType == "delegatecall" -> {
+        // ignore
+      }
+
+      trace.type == "call" && trace.action.callType == "call" && traceAddress.isNotEmpty() ->
+        trace.toInternalTransaction(programCounter)
+          ?.apply {
+            internalTransactions.add(this)
+            touchedAccounts.add(this.fromAddress)
+            touchedAccounts.add(this.toAddress)
+          }
+
+      trace.type == "create" && creationMethods.contains(trace.action.creationMethod) ->
+        trace.toContractCreated(programCounter)
+          .apply {
+
+            touchedAccounts.add(this.originatorAddress)
+            touchedAccounts.add(this.contractAddress)
+
+            val (type, capabilities, metadata) = TokenDetector(
+              transactionSimulator,
+              Hash.fromHexString(trace.blockHash),
+              this.contractAddress,
+              this.code
+            ).detect()
+
+            contractsCreated.add(
+              this.copy(
+                type = type,
+                capabilities = capabilities,
+                metadata = metadata
+              )
+            )
+          }
+
+      trace.type == "suicide" ->
+        trace.toContractDestroyed(programCounter)
+          .apply {
+            contractsDestroyed.add(this)
+            touchedAccounts.add(this.contractAddress)
+            touchedAccounts.add(this.refundAddress)
+          }
+
+      else -> {
+        throw IllegalStateException("Unhandled trace. Block hash = ${trace.blockHash}, tx hash = ${trace.transactionHash}, trace type = ${trace.type}")
+      }
+    }
+  }
 }

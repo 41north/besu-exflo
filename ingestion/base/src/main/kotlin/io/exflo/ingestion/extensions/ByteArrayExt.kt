@@ -22,20 +22,20 @@ import org.apache.tuweni.bytes.Bytes
  * Computes the failure function using a boot-strapping process, where the pattern is matched against itself.
  */
 private fun ByteArray.computeFailure(): IntArray {
-    val failure = IntArray(size)
-    var j = 0
+  val failure = IntArray(size)
+  var j = 0
 
-    for (i in 1 until size) {
-        while (j > 0 && this[j] != this[i]) {
-            j = failure[j - 1]
-        }
-        if (this[j] == this[i]) {
-            j++
-        }
-        failure[i] = j
+  for (i in 1 until size) {
+    while (j > 0 && this[j] != this[i]) {
+      j = failure[j - 1]
     }
+    if (this[j] == this[i]) {
+      j++
+    }
+    failure[i] = j
+  }
 
-    return failure
+  return failure
 }
 
 /**
@@ -43,23 +43,23 @@ private fun ByteArray.computeFailure(): IntArray {
  */
 fun ByteArray.indexOf(pattern: ByteArray): Int {
 
-    val failure = pattern.computeFailure()
-    var j = 0
+  val failure = pattern.computeFailure()
+  var j = 0
 
-    for (i in this.indices) {
-        while (j > 0 && pattern[j] != this[i]) {
-            j = failure[j - 1]
-        }
-        if (pattern[j] == this[i]) {
-            j++
-        }
-        if (j == pattern.size) {
-            return i - pattern.size + 1
-        }
+  for (i in this.indices) {
+    while (j > 0 && pattern[j] != this[i]) {
+      j = failure[j - 1]
     }
+    if (pattern[j] == this[i]) {
+      j++
+    }
+    if (j == pattern.size) {
+      return i - pattern.size + 1
+    }
+  }
 
-    return -1
+  return -1
 }
 
 val ByteArray.bytesValue: Bytes
-    get() = Bytes.wrap(this)
+  get() = Bytes.wrap(this)

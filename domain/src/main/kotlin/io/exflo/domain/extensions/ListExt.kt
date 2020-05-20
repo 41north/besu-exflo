@@ -21,7 +21,7 @@ package io.exflo.domain.extensions
  * The returned list has length of the shortest collection.
  */
 fun <T, R, V> List<T>.zip(one: List<R>, two: List<V>): List<Triple<T, R, V>> =
-    zip(one, two) { t1, t2, t3 -> Triple(t1, t2, t3) }
+  zip(one, two) { t1, t2, t3 -> Triple(t1, t2, t3) }
 
 /**
  * Returns a list of values built from the elements of `this` collection, the [one] and [two] lists with the same index
@@ -29,13 +29,13 @@ fun <T, R, V> List<T>.zip(one: List<R>, two: List<V>): List<Triple<T, R, V>> =
  * The returned list has length of the shortest collection.
  */
 inline fun <T, R, P, V> List<T>.zip(one: List<R>, two: List<P>, transform: (a: T, b: R, c: P) -> V): List<V> {
-    val arraySize = minOf(one.size, two.size)
-    val list = ArrayList<V>(minOf(size, arraySize))
-    var i = 0
-    for (element in this) {
-        if (i >= arraySize) break
-        list.add(transform(element, one[i], two[i]))
-        i++
-    }
-    return list
+  val arraySize = minOf(one.size, two.size)
+  val list = ArrayList<V>(minOf(size, arraySize))
+  var i = 0
+  for (element in this) {
+    if (i >= arraySize) break
+    list.add(transform(element, one[i], two[i]))
+    i++
+  }
+  return list
 }

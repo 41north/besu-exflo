@@ -10,6 +10,7 @@ charset = utf-8
 
 [*.{kt, kts}]
 disabled_rules = import-ordering
+ij_continuation_indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false

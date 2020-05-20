@@ -1,4 +1,6 @@
-<h1 align="center">Exflo</h1>
+<h1 align="center">
+  <img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/exflo-github.png"/>
+</h1>
 
 <p align="center">
   <a href="https://github.com/41north/exflo/workflows/build/badge.svg">
@@ -10,7 +12,7 @@
 </p>
 
 <p align="center">
-    A plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. <br/> Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
+    A plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. <br/><br /> Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
 </p>
 
 <p align="center"><b>⚠️ Warning</b>: This project is in alpha stage, and we are working actively!</p>
@@ -32,14 +34,14 @@ Some screenshots of captured data:
 | Plugin   | Screenshots                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Postgres | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-2.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-3.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-4.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-5.png" width="100" /></p> |
-| Kafka    | TBW                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Kafka    | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/kafka-capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/kafka-capture-2.png" width="100" /></p>                                                                                                                                                                                                                                                                                                                                                                            |
 
 ## ⏲️ Try Exflo in 10 seconds
 
 We offer two `docker-compose` files [ready to launch Exflo](docker/exflo/) configured for Ethereum's Ropsten network (and easily configurable to
 other networks).
 
-<details>
+<details open>
 <summary>Postgres</summary>
 
 ```bash
@@ -85,7 +87,7 @@ Generate [Intellij's run configurations](https://www.jetbrains.com/help/idea/run
 
 Decide which data store you want to run:
 
-<details>
+<details open>
 <summary>Postgres</summary>
 
 Terminal:
@@ -119,7 +121,7 @@ Wait for each docker service to initialize.
 
 After that, you can start processing with Exflo:
 
-<details>
+<details open>
 <summary>Postgres</summary>
 
 Terminal:

@@ -147,97 +147,100 @@ import org.hyperledger.besu.ethereum.core.Wei as BesuWei
 // --------------------------------------------------------------------------
 
 fun BesuWei.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(toBytes().toArray())
-    UInt256.startUInt256(bb)
-    UInt256.addBytes(bb, offset)
-    return UInt256.endUInt256(bb)
+  val offset = bb.createByteVector(toBytes().toArray())
+  UInt256.startUInt256(bb)
+  UInt256.addBytes(bb, offset)
+  return UInt256.endUInt256(bb)
 }
 
 fun BesuAddress.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(toArray())
-    Bytes20.startBytes20(bb)
-    Bytes20.addBytes(bb, offset)
-    return Bytes20.endBytes20(bb)
+  val offset = bb.createByteVector(toArray())
+  Bytes20.startBytes20(bb)
+  Bytes20.addBytes(bb, offset)
+  return Bytes20.endBytes20(bb)
 }
 
 fun BesuSignature.toFlatBuffer(bb: FlatBufferBuilder): Int {
 
-    val rOffset = BesuUInt256.valueOf(r).toFlatBuffer(bb)
-    val sOffset = BesuUInt256.valueOf(s).toFlatBuffer(bb)
+  val rOffset = BesuUInt256.valueOf(r).toFlatBuffer(bb)
+  val sOffset = BesuUInt256.valueOf(s).toFlatBuffer(bb)
 
-    startSignature(bb)
+  startSignature(bb)
 
-    addR(bb, rOffset)
-    addS(bb, sOffset)
-    addRecId(bb, recId)
+  addR(bb, rOffset)
+  addS(bb, sOffset)
+  addRecId(bb, recId)
 
-    return endSignature(bb)
+  return endSignature(bb)
 }
 
 fun BesuLogTopic.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(toArray())
-    LogTopic.startLogTopic(bb)
-    LogTopic.addBytes(bb, offset)
-    return LogTopic.endLogTopic(bb)
+  val offset = bb.createByteVector(toArray())
+  LogTopic.startLogTopic(bb)
+  LogTopic.addBytes(bb, offset)
+  return LogTopic.endLogTopic(bb)
 }
 
 fun BesuLog.toFlatBuffer(bb: FlatBufferBuilder): Int {
 
-    val loggerOffset = logger.toFlatBuffer(bb)
-    val dataOffset = bb.createByteVector(data.toArray())
+  val loggerOffset = logger.toFlatBuffer(bb)
+  val dataOffset = bb.createByteVector(data.toArray())
 
-    val topicOffsets = topics.map { it.toFlatBuffer(bb) }
-    val topicVectorOffset = Log.createTopicsVector(bb, topicOffsets.toIntArray())
+  val topicOffsets = topics.map { it.toFlatBuffer(bb) }
+  val topicVectorOffset = Log.createTopicsVector(bb, topicOffsets.toIntArray())
 
-    Log.startLog(bb)
-    Log.addLogger(bb, loggerOffset)
-    Log.addData(bb, dataOffset)
-    Log.addTopics(bb, topicVectorOffset)
+  Log.startLog(bb)
+  Log.addLogger(bb, loggerOffset)
+  Log.addData(bb, dataOffset)
+  Log.addTopics(bb, topicVectorOffset)
 
-    return Log.endLog(bb)
+  return Log.endLog(bb)
 }
 
 fun BesuHash.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(toArray())
-    Bytes32.startBytes32(bb)
-    Bytes32.addBytes(bb, offset)
-    return Bytes32.endBytes32(bb)
+  val offset = bb.createByteVector(toArray())
+  Bytes32.startBytes32(bb)
+  Bytes32.addBytes(bb, offset)
+  return Bytes32.endBytes32(bb)
 }
 
 fun BesuLogsBloomFilter.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(toArray())
-    Bytes256.startBytes256(bb)
-    Bytes256.addBytes(bb, offset)
-    return Bytes256.endBytes256(bb)
+  val offset = bb.createByteVector(toArray())
+  Bytes256.startBytes256(bb)
+  Bytes256.addBytes(bb, offset)
+  return Bytes256.endBytes256(bb)
 }
 
-fun BesuTransactionReceipt.toFlatBuffer(bb: FlatBufferBuilder, logParser: (receipt: BesuLog) -> ExfloContractEvent?): Int {
+fun BesuTransactionReceipt.toFlatBuffer(
+  bb: FlatBufferBuilder,
+  logParser: (receipt: BesuLog) -> ExfloContractEvent?
+): Int {
 
-    val stateRootOffset = stateRoot?.toFlatBuffer(bb)
-    val logsVectorOffset = createLogsVector(bb, logs.map { it.toFlatBuffer(bb) }.toIntArray())
-    val bloomFilterOffset = bloomFilter.toFlatBuffer(bb)
+  val stateRootOffset = stateRoot?.toFlatBuffer(bb)
+  val logsVectorOffset = createLogsVector(bb, logs.map { it.toFlatBuffer(bb) }.toIntArray())
+  val bloomFilterOffset = bloomFilter.toFlatBuffer(bb)
 
-    val eventsWithType = logs
-        .mapNotNull { log -> logParser(log) }
-        .map { it.toFlatBuffer(bb) }
-    val eventsTypeVectorOffset = createEventsTypeVector(bb, eventsWithType.map { (type, _) -> type }.toByteArray())
-    val eventsVectorOffset = createEventsVector(bb, eventsWithType.map { (_, eventOffset) -> eventOffset }.toIntArray())
+  val eventsWithType = logs
+    .mapNotNull { log -> logParser(log) }
+    .map { it.toFlatBuffer(bb) }
+  val eventsTypeVectorOffset = createEventsTypeVector(bb, eventsWithType.map { (type, _) -> type }.toByteArray())
+  val eventsVectorOffset = createEventsVector(bb, eventsWithType.map { (_, eventOffset) -> eventOffset }.toIntArray())
 
-    val revertReasonOffset: Int? = revertReason
-        .map { bb.createByteVector(it.toArray()) }
-        .orElse(null)
+  val revertReasonOffset: Int? = revertReason
+    .map { bb.createByteVector(it.toArray()) }
+    .orElse(null)
 
-    startTransactionReceipt(bb)
-    stateRootOffset?.run { TransactionReceipt.addStateRoot(bb, this) }
-    addCumulativeGasUsed(bb, cumulativeGasUsed)
-    addLogs(bb, logsVectorOffset)
-    addEventsType(bb, eventsTypeVectorOffset)
-    addEvents(bb, eventsVectorOffset)
-    addBloomFilter(bb, bloomFilterOffset)
-    addStatus(bb, status.toByte())
-    revertReasonOffset?.run { addRevertReason(bb, this) }
+  startTransactionReceipt(bb)
+  stateRootOffset?.run { TransactionReceipt.addStateRoot(bb, this) }
+  addCumulativeGasUsed(bb, cumulativeGasUsed)
+  addLogs(bb, logsVectorOffset)
+  addEventsType(bb, eventsTypeVectorOffset)
+  addEvents(bb, eventsVectorOffset)
+  addBloomFilter(bb, bloomFilterOffset)
+  addStatus(bb, status.toByte())
+  revertReasonOffset?.run { addRevertReason(bb, this) }
 
-    return endTransactionReceipt(bb)
+  return endTransactionReceipt(bb)
 }
 
 fun BesuTransaction.toFlatBuffer(
@@ -248,105 +251,105 @@ fun BesuTransaction.toFlatBuffer(
   logParser: (receipt: BesuLog) -> ExfloContractEvent?
 ): Int {
 
-    val hashOffset = hash.toFlatBuffer(bb)
-    val fromOffset = sender.toFlatBuffer(bb)
-    val gasPriceOffset = gasPrice.toFlatBuffer(bb)
-    val valueOffset = value.toFlatBuffer(bb)
-    val payloadOffset = bb.createByteVector(payload.toArray())
-    val signatureOffset = signature.toFlatBuffer(bb)
-    val receiptOffset = receipt.toFlatBuffer(bb, logParser)
-    val feeOffset = fee.toFlatBuffer(bb)
-    val traceOffset = trace?.toFlatBuffer(bb)
-    val toOffset: Int? = to.map { it.toFlatBuffer(bb) }.orElse(null)
-    val chainIdOffset: Int? = chainId.map { BesuUInt256.valueOf(it).toFlatBuffer(bb) }.orElse(null)
-    val contractAddressOffset: Int? = contractAddress().map { it.toFlatBuffer(bb) }.orElse(null)
+  val hashOffset = hash.toFlatBuffer(bb)
+  val fromOffset = sender.toFlatBuffer(bb)
+  val gasPriceOffset = gasPrice.toFlatBuffer(bb)
+  val valueOffset = value.toFlatBuffer(bb)
+  val payloadOffset = bb.createByteVector(payload.toArray())
+  val signatureOffset = signature.toFlatBuffer(bb)
+  val receiptOffset = receipt.toFlatBuffer(bb, logParser)
+  val feeOffset = fee.toFlatBuffer(bb)
+  val traceOffset = trace?.toFlatBuffer(bb)
+  val toOffset: Int? = to.map { it.toFlatBuffer(bb) }.orElse(null)
+  val chainIdOffset: Int? = chainId.map { BesuUInt256.valueOf(it).toFlatBuffer(bb) }.orElse(null)
+  val contractAddressOffset: Int? = contractAddress().map { it.toFlatBuffer(bb) }.orElse(null)
 
-    startTransaction(bb)
+  startTransaction(bb)
 
-    Transaction.addHash(bb, hashOffset)
-    addFrom(bb, fromOffset)
-    Transaction.addNonce(bb, nonce)
-    addGasPrice(bb, gasPriceOffset)
-    Transaction.addGasLimit(bb, gasLimit)
-    addValue(bb, valueOffset)
-    addPayload(bb, payloadOffset)
-    addSignature(bb, signatureOffset)
-    addReceipt(bb, receiptOffset)
-    addFee(bb, feeOffset)
-    traceOffset?.let { addTrace(bb, it) }
-    toOffset?.run { addTo(bb, this) }
-    chainIdOffset?.run { addChainId(bb, this) }
-    contractAddressOffset?.run { addContractAddress(bb, this) }
+  Transaction.addHash(bb, hashOffset)
+  addFrom(bb, fromOffset)
+  Transaction.addNonce(bb, nonce)
+  addGasPrice(bb, gasPriceOffset)
+  Transaction.addGasLimit(bb, gasLimit)
+  addValue(bb, valueOffset)
+  addPayload(bb, payloadOffset)
+  addSignature(bb, signatureOffset)
+  addReceipt(bb, receiptOffset)
+  addFee(bb, feeOffset)
+  traceOffset?.let { addTrace(bb, it) }
+  toOffset?.run { addTo(bb, this) }
+  chainIdOffset?.run { addChainId(bb, this) }
+  contractAddressOffset?.run { addContractAddress(bb, this) }
 
-    return endTransaction(bb)
+  return endTransaction(bb)
 }
 
 fun BesuAccount.toFlatBuffer(bb: FlatBufferBuilder, contractsCreated: List<BesuAddress>): Int {
 
-    val contractCreated = contractsCreated.contains(address)
+  val contractCreated = contractsCreated.contains(address)
 
-    val addressOffset = address.toFlatBuffer(bb)
-    val balanceOffset = balance.toFlatBuffer(bb)
+  val addressOffset = address.toFlatBuffer(bb)
+  val balanceOffset = balance.toFlatBuffer(bb)
 
-    val codeOffset: Int? = if (contractCreated) bb.createByteVector(code.toArray()) else null
-    val codeHashOffset: Int? = if (contractCreated) codeHash.toFlatBuffer(bb) else null
+  val codeOffset: Int? = if (contractCreated) bb.createByteVector(code.toArray()) else null
+  val codeHashOffset: Int? = if (contractCreated) codeHash.toFlatBuffer(bb) else null
 
-    startAccount(bb)
+  startAccount(bb)
 
-    addAddress(bb, addressOffset)
-    Account.addNonce(bb, nonce)
-    addBalance(bb, balanceOffset)
+  addAddress(bb, addressOffset)
+  Account.addNonce(bb, nonce)
+  addBalance(bb, balanceOffset)
 
-    codeOffset?.run { addCode(bb, this) }
-    codeHashOffset?.run { addCodeHash(bb, this) }
+  codeOffset?.run { addCode(bb, this) }
+  codeHashOffset?.run { addCodeHash(bb, this) }
 
-    return endAccount(bb)
+  return endAccount(bb)
 }
 
 fun BesuUInt256.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val offset = bb.createByteVector(toBytes().toArray())
-    UInt256.startUInt256(bb)
-    UInt256.addBytes(bb, offset)
-    return UInt256.endUInt256(bb)
+  val offset = bb.createByteVector(toBytes().toArray())
+  UInt256.startUInt256(bb)
+  UInt256.addBytes(bb, offset)
+  return UInt256.endUInt256(bb)
 }
 
 fun BesuBlockHeader.toFlatBuffer(bb: FlatBufferBuilder, totalDifficulty: BesuUInt256?): Int {
 
-    val hashOffset = hash.toFlatBuffer(bb)
-    val parentHashOffset = parentHash.toFlatBuffer(bb)
-    val ommersHashOffset = ommersHash.toFlatBuffer(bb)
-    val coinbaseOffset = coinbase.toFlatBuffer(bb)
-    val stateRootOffset = stateRoot.toFlatBuffer(bb)
-    val transactionsRootOffset = transactionsRoot.toFlatBuffer(bb)
-    val receiptsRootOffset = receiptsRoot.toFlatBuffer(bb)
-    val logsBloomOffset = logsBloom.toFlatBuffer(bb)
-    val difficultyOffset = (difficulty.toUInt256()).toFlatBuffer(bb)
-    val extraDataOffset = bb.createByteVector(extraData.toArray())
-    val mixHashOffset = mixHash.toFlatBuffer(bb)
-    // Total difficulty is not set on ommers
-    val totalDifficultyOffset: Int? = totalDifficulty?.toFlatBuffer(bb)
+  val hashOffset = hash.toFlatBuffer(bb)
+  val parentHashOffset = parentHash.toFlatBuffer(bb)
+  val ommersHashOffset = ommersHash.toFlatBuffer(bb)
+  val coinbaseOffset = coinbase.toFlatBuffer(bb)
+  val stateRootOffset = stateRoot.toFlatBuffer(bb)
+  val transactionsRootOffset = transactionsRoot.toFlatBuffer(bb)
+  val receiptsRootOffset = receiptsRoot.toFlatBuffer(bb)
+  val logsBloomOffset = logsBloom.toFlatBuffer(bb)
+  val difficultyOffset = (difficulty.toUInt256()).toFlatBuffer(bb)
+  val extraDataOffset = bb.createByteVector(extraData.toArray())
+  val mixHashOffset = mixHash.toFlatBuffer(bb)
+  // Total difficulty is not set on ommers
+  val totalDifficultyOffset: Int? = totalDifficulty?.toFlatBuffer(bb)
 
-    startBlockHeader(bb)
+  startBlockHeader(bb)
 
-    addHash(bb, hashOffset)
-    addParentHash(bb, parentHashOffset)
-    addOmmersHash(bb, ommersHashOffset)
-    addCoinbase(bb, coinbaseOffset)
-    addStateRoot(bb, stateRootOffset)
-    addTransactionsRoot(bb, transactionsRootOffset)
-    addReceiptsRoot(bb, receiptsRootOffset)
-    addLogsBloom(bb, logsBloomOffset)
-    addDifficulty(bb, difficultyOffset)
-    addNumber(bb, number)
-    addGasLimit(bb, gasLimit)
-    addGasUsed(bb, gasUsed)
-    addTimestamp(bb, timestamp)
-    addExtraData(bb, extraDataOffset)
-    addMixHash(bb, mixHashOffset)
-    addNonce(bb, nonce)
-    totalDifficultyOffset?.run { addTotalDifficulty(bb, this) }
+  addHash(bb, hashOffset)
+  addParentHash(bb, parentHashOffset)
+  addOmmersHash(bb, ommersHashOffset)
+  addCoinbase(bb, coinbaseOffset)
+  addStateRoot(bb, stateRootOffset)
+  addTransactionsRoot(bb, transactionsRootOffset)
+  addReceiptsRoot(bb, receiptsRootOffset)
+  addLogsBloom(bb, logsBloomOffset)
+  addDifficulty(bb, difficultyOffset)
+  addNumber(bb, number)
+  addGasLimit(bb, gasLimit)
+  addGasUsed(bb, gasUsed)
+  addTimestamp(bb, timestamp)
+  addExtraData(bb, extraDataOffset)
+  addMixHash(bb, mixHashOffset)
+  addNonce(bb, nonce)
+  totalDifficultyOffset?.run { addTotalDifficulty(bb, this) }
 
-    return endBlockHeader(bb)
+  return endBlockHeader(bb)
 }
 
 fun BesuBlockBody.toFlatBuffer(
@@ -356,35 +359,35 @@ fun BesuBlockBody.toFlatBuffer(
   logParser: (receipt: BesuLog) -> ExfloContractEvent?
 ): Int {
 
-    val ommersVectorOffset = ommers
-        .map { it.toFlatBuffer(bb, null) }
-        .let { offsetArray -> createOmmersVector(bb, offsetArray.toIntArray()) }
+  val ommersVectorOffset = ommers
+    .map { it.toFlatBuffer(bb, null) }
+    .let { offsetArray -> createOmmersVector(bb, offsetArray.toIntArray()) }
 
-    require(receipts.size == transactions.size) { "Receipts and transactions lists must be the same size" }
+  require(receipts.size == transactions.size) { "Receipts and transactions lists must be the same size" }
 
-    trace?.apply { require(this.transactionTraces.size == transactions.size) { "Transaction traces and transactions lists must be the same size" } }
+  trace?.apply { require(this.transactionTraces.size == transactions.size) { "Transaction traces and transactions lists must be the same size" } }
 
-    var totalGasUsed = 0L
+  var totalGasUsed = 0L
 
-    val transactionsVectorOffset = transactions
-        .zip(receipts, trace?.transactionTraces ?: receipts.map { null })
-        .map { (tx, receipt, trace) ->
-            val gasUsed = receipt.cumulativeGasUsed.minus(totalGasUsed)
-            totalGasUsed += gasUsed
-            val fee = tx.gasPrice.multiply(gasUsed)
-            tx.toFlatBuffer(bb, receipt, fee, trace, logParser)
-        }
-        .let { offsetArray -> createTransactionsVector(bb, offsetArray.toIntArray()) }
+  val transactionsVectorOffset = transactions
+    .zip(receipts, trace?.transactionTraces ?: receipts.map { null })
+    .map { (tx, receipt, trace) ->
+      val gasUsed = receipt.cumulativeGasUsed.minus(totalGasUsed)
+      totalGasUsed += gasUsed
+      val fee = tx.gasPrice.multiply(gasUsed)
+      tx.toFlatBuffer(bb, receipt, fee, trace, logParser)
+    }
+    .let { offsetArray -> createTransactionsVector(bb, offsetArray.toIntArray()) }
 
-    val jsonTraceOffset = trace?.let { bb.createString(it.jsonTrace) }
+  val jsonTraceOffset = trace?.let { bb.createString(it.jsonTrace) }
 
-    startBlockBody(bb)
+  startBlockBody(bb)
 
-    addOmmers(bb, ommersVectorOffset)
-    addTransactions(bb, transactionsVectorOffset)
-    jsonTraceOffset?.apply { addTrace(bb, this) }
+  addOmmers(bb, ommersVectorOffset)
+  addTransactions(bb, transactionsVectorOffset)
+  jsonTraceOffset?.apply { addTrace(bb, this) }
 
-    return endBlockBody(bb)
+  return endBlockBody(bb)
 }
 
 // --------------------------------------------------------------------------
@@ -393,415 +396,415 @@ fun BesuBlockBody.toFlatBuffer(
 
 fun ExfloBlockTrace.toRewardsFlatBuffer(bb: FlatBufferBuilder): Int {
 
-    val rewardsOffsets: List<Int> = rewards
-        .entries
-        .map { reward ->
-            val hashOffset = reward.key.toFlatBuffer(bb)
-            val amountOffset = reward.value.toFlatBuffer(bb)
-            Reward.startReward(bb)
-            Reward.addHash(bb, hashOffset)
-            Reward.addAmount(bb, amountOffset)
-            Reward.endReward(bb)
-        }
+  val rewardsOffsets: List<Int> = rewards
+    .entries
+    .map { reward ->
+      val hashOffset = reward.key.toFlatBuffer(bb)
+      val amountOffset = reward.value.toFlatBuffer(bb)
+      Reward.startReward(bb)
+      Reward.addHash(bb, hashOffset)
+      Reward.addAmount(bb, amountOffset)
+      Reward.endReward(bb)
+    }
 
-    val rewardsVectorOffset = Rewards.createRewardsVector(bb, rewardsOffsets.toIntArray())
+  val rewardsVectorOffset = Rewards.createRewardsVector(bb, rewardsOffsets.toIntArray())
 
-    Rewards.startRewards(bb)
-    Rewards.addRewards(bb, rewardsVectorOffset)
+  Rewards.startRewards(bb)
+  Rewards.addRewards(bb, rewardsVectorOffset)
 
-    return Rewards.endRewards(bb)
+  return Rewards.endRewards(bb)
 }
 
 fun ExfloTransactionTrace.toFlatBuffer(bb: FlatBufferBuilder): Int {
 
-    val contractsCreatedVectorOffset: Int = contractsCreated
-        .map { contractCreated -> contractCreated.toFlatBuffer(bb) }
-        .let { offsetArray ->
-            TransactionTrace.createContractsCreatedVector(
-                bb,
-                offsetArray.toIntArray()
-            )
-        }
+  val contractsCreatedVectorOffset: Int = contractsCreated
+    .map { contractCreated -> contractCreated.toFlatBuffer(bb) }
+    .let { offsetArray ->
+      TransactionTrace.createContractsCreatedVector(
+        bb,
+        offsetArray.toIntArray()
+      )
+    }
 
-    val contractsDestroyedVectorOffset: Int = contractsDestroyed
-        .map { contractDestroyed -> contractDestroyed.toFlatBuffer(bb) }
-        .let { offsetArray ->
-            TransactionTrace.createContractsDestroyedVector(
-                bb,
-                offsetArray.toIntArray()
-            )
-        }
+  val contractsDestroyedVectorOffset: Int = contractsDestroyed
+    .map { contractDestroyed -> contractDestroyed.toFlatBuffer(bb) }
+    .let { offsetArray ->
+      TransactionTrace.createContractsDestroyedVector(
+        bb,
+        offsetArray.toIntArray()
+      )
+    }
 
-    val internalTransactionsVectorOffset: Int = internalTransactions
-        .map { internalTransaction -> internalTransaction.toFlatBuffer(bb) }
-        .let { offsetArray ->
-            TransactionTrace.createInternalTransactionsVector(
-                bb,
-                offsetArray.toIntArray()
-            )
-        }
+  val internalTransactionsVectorOffset: Int = internalTransactions
+    .map { internalTransaction -> internalTransaction.toFlatBuffer(bb) }
+    .let { offsetArray ->
+      TransactionTrace.createInternalTransactionsVector(
+        bb,
+        offsetArray.toIntArray()
+      )
+    }
 
-    val revertReasonOffset: Int? =
-        result
-            .revertReason
-            .map { bb.createByteVector(it.toArray()) }.orElse(null)
+  val revertReasonOffset: Int? =
+    result
+      .revertReason
+      .map { bb.createByteVector(it.toArray()) }.orElse(null)
 
-    TransactionTrace.startTransactionTrace(bb)
+  TransactionTrace.startTransactionTrace(bb)
 
-    TransactionTrace.addContractsCreated(bb, contractsCreatedVectorOffset)
-    TransactionTrace.addContractsDestroyed(bb, contractsDestroyedVectorOffset)
-    TransactionTrace.addInternalTransactions(bb, internalTransactionsVectorOffset)
-    TransactionTrace.addStatus(bb, result.status.ordinal.toByte())
+  TransactionTrace.addContractsCreated(bb, contractsCreatedVectorOffset)
+  TransactionTrace.addContractsDestroyed(bb, contractsDestroyedVectorOffset)
+  TransactionTrace.addInternalTransactions(bb, internalTransactionsVectorOffset)
+  TransactionTrace.addStatus(bb, result.status.ordinal.toByte())
 
-    revertReasonOffset?.run { TransactionTrace.addRevertReason(bb, this) }
+  revertReasonOffset?.run { TransactionTrace.addRevertReason(bb, this) }
 
-    return TransactionTrace.endTransactionTrace(bb)
+  return TransactionTrace.endTransactionTrace(bb)
 }
 
 fun ExfloInternalTransaction.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val fromAddressOffset = fromAddress.toFlatBuffer(bb)
-    val toAddressOffset = toAddress.toFlatBuffer(bb)
-    val amountOffset = amount.toFlatBuffer(bb)
+  val fromAddressOffset = fromAddress.toFlatBuffer(bb)
+  val toAddressOffset = toAddress.toFlatBuffer(bb)
+  val amountOffset = amount.toFlatBuffer(bb)
 
-    val transactionHashOffset: Int? = transactionHash?.toFlatBuffer(bb)
+  val transactionHashOffset: Int? = transactionHash?.toFlatBuffer(bb)
 
-    InternalTransaction.startInternalTransaction(bb)
+  InternalTransaction.startInternalTransaction(bb)
 
-    InternalTransaction.addFrom(bb, fromAddressOffset)
-    InternalTransaction.addTo(bb, toAddressOffset)
-    ContractCreated.addAmount(bb, amountOffset)
-    InternalTransaction.addPc(bb, pc)
-    transactionHashOffset?.run { ContractCreated.addTransactionHash(bb, this) }
+  InternalTransaction.addFrom(bb, fromAddressOffset)
+  InternalTransaction.addTo(bb, toAddressOffset)
+  ContractCreated.addAmount(bb, amountOffset)
+  InternalTransaction.addPc(bb, pc)
+  transactionHashOffset?.run { ContractCreated.addTransactionHash(bb, this) }
 
-    return InternalTransaction.endInternalTransaction(bb)
+  return InternalTransaction.endInternalTransaction(bb)
 }
 
 fun ExfloContractCreated.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val addressOffset = contractAddress.toFlatBuffer(bb)
-    val creatorOffset = originatorAddress.toFlatBuffer(bb)
-    val codeOffset = bb.createByteVector(code.toArray())
-    val amountOffset = amount.toFlatBuffer(bb)
-    val transactionHashOffset = transactionHash?.toFlatBuffer(bb)
-    val capabilitiesOffset = capabilities
-        ?.map { it.ordinal.toByte() }
-        ?.toByteArray()
-        ?.let { elems -> bb.createByteVector(elems) }
-    val metadataOffset = metadata?.toFlatBuffer(bb)
+  val addressOffset = contractAddress.toFlatBuffer(bb)
+  val creatorOffset = originatorAddress.toFlatBuffer(bb)
+  val codeOffset = bb.createByteVector(code.toArray())
+  val amountOffset = amount.toFlatBuffer(bb)
+  val transactionHashOffset = transactionHash?.toFlatBuffer(bb)
+  val capabilitiesOffset = capabilities
+    ?.map { it.ordinal.toByte() }
+    ?.toByteArray()
+    ?.let { elems -> bb.createByteVector(elems) }
+  val metadataOffset = metadata?.toFlatBuffer(bb)
 
-    ContractCreated.startContractCreated(bb)
+  ContractCreated.startContractCreated(bb)
 
-    ContractCreated.addAddress(bb, addressOffset)
-    ContractCreated.addCreator(bb, creatorOffset)
-    ContractCreated.addCode(bb, codeOffset)
-    ContractCreated.addAmount(bb, amountOffset)
-    ContractDestroyed.addPc(bb, pc)
-    transactionHashOffset?.run { ContractCreated.addTransactionHash(bb, this) }
-    type?.run { ContractCreated.addType(bb, ordinal.toByte()) }
-    capabilitiesOffset?.run { ContractCreated.addCapabilities(bb, this) }
-    metadataOffset?.run { ContractCreated.addMetadata(bb, this) }
+  ContractCreated.addAddress(bb, addressOffset)
+  ContractCreated.addCreator(bb, creatorOffset)
+  ContractCreated.addCode(bb, codeOffset)
+  ContractCreated.addAmount(bb, amountOffset)
+  ContractDestroyed.addPc(bb, pc)
+  transactionHashOffset?.run { ContractCreated.addTransactionHash(bb, this) }
+  type?.run { ContractCreated.addType(bb, ordinal.toByte()) }
+  capabilitiesOffset?.run { ContractCreated.addCapabilities(bb, this) }
+  metadataOffset?.run { ContractCreated.addMetadata(bb, this) }
 
-    return ContractCreated.endContractCreated(bb)
+  return ContractCreated.endContractCreated(bb)
 }
 
 fun ExfloContractDestroyed.toFlatBuffer(bb: FlatBufferBuilder): Int {
 
-    val addressOffset = contractAddress.toFlatBuffer(bb)
-    val refundAddressOffset = refundAddress.toFlatBuffer(bb)
-    val refundAmountOffset = refundAmount.toFlatBuffer(bb)
+  val addressOffset = contractAddress.toFlatBuffer(bb)
+  val refundAddressOffset = refundAddress.toFlatBuffer(bb)
+  val refundAmountOffset = refundAmount.toFlatBuffer(bb)
 
-    val transactionHashOffset: Int? = transactionHash?.toFlatBuffer(bb)
+  val transactionHashOffset: Int? = transactionHash?.toFlatBuffer(bb)
 
-    ContractDestroyed.startContractDestroyed(bb)
+  ContractDestroyed.startContractDestroyed(bb)
 
-    ContractDestroyed.addAddress(bb, addressOffset)
-    ContractDestroyed.addRefundAddress(bb, refundAddressOffset)
-    ContractDestroyed.addRefundAmount(bb, refundAmountOffset)
-    ContractDestroyed.addPc(bb, pc)
+  ContractDestroyed.addAddress(bb, addressOffset)
+  ContractDestroyed.addRefundAddress(bb, refundAddressOffset)
+  ContractDestroyed.addRefundAmount(bb, refundAmountOffset)
+  ContractDestroyed.addPc(bb, pc)
 
-    transactionHashOffset?.run { ContractDestroyed.addTransactionHash(bb, this) }
+  transactionHashOffset?.run { ContractDestroyed.addTransactionHash(bb, this) }
 
-    return ContractDestroyed.endContractDestroyed(bb)
+  return ContractDestroyed.endContractDestroyed(bb)
 }
 
 fun ExfloContractMetadata.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val nameOffset = name?.let { bb.createString(it) }
-    val symbolOffset = symbol?.let { bb.createString(it) }
-    val totalSupplyOffset = totalSupply?.toFlatBuffer(bb)
-    val granularityOffset = granularity?.toFlatBuffer(bb)
-    val capOffset = cap?.toFlatBuffer(bb)
+  val nameOffset = name?.let { bb.createString(it) }
+  val symbolOffset = symbol?.let { bb.createString(it) }
+  val totalSupplyOffset = totalSupply?.toFlatBuffer(bb)
+  val granularityOffset = granularity?.toFlatBuffer(bb)
+  val capOffset = cap?.toFlatBuffer(bb)
 
-    ContractMetadata.startContractMetadata(bb)
+  ContractMetadata.startContractMetadata(bb)
 
-    nameOffset?.let { ContractMetadata.addName(bb, nameOffset) }
-    symbolOffset?.let { ContractMetadata.addSymbol(bb, symbolOffset) }
-    decimals?.let { ContractMetadata.addDecimals(bb, it) }
-    totalSupplyOffset?.let { ContractMetadata.addTotalSupply(bb, it) }
-    granularityOffset?.let { ContractMetadata.addGranularity(bb, it) }
-    capOffset?.let { ContractMetadata.addCap(bb, it) }
+  nameOffset?.let { ContractMetadata.addName(bb, nameOffset) }
+  symbolOffset?.let { ContractMetadata.addSymbol(bb, symbolOffset) }
+  decimals?.let { ContractMetadata.addDecimals(bb, it) }
+  totalSupplyOffset?.let { ContractMetadata.addTotalSupply(bb, it) }
+  granularityOffset?.let { ContractMetadata.addGranularity(bb, it) }
+  capOffset?.let { ContractMetadata.addCap(bb, it) }
 
-    return ContractMetadata.endContractMetadata(bb)
+  return ContractMetadata.endContractMetadata(bb)
 }
 
 fun ExfloBalanceDelta.toFlatBuffer(bb: FlatBufferBuilder): Int {
-    val transactionHashOffset = transactionHash?.toFlatBuffer(bb)
-    val contractAddressOffset = contractAddress?.toFlatBuffer(bb)
-    val fromOffset = from?.toFlatBuffer(bb)
-    val toOffset = to?.toFlatBuffer(bb)
-    val amountOffset = amount?.toFlatBuffer(bb)
-    val tokenIdOffset = tokenId?.toFlatBuffer(bb)
+  val transactionHashOffset = transactionHash?.toFlatBuffer(bb)
+  val contractAddressOffset = contractAddress?.toFlatBuffer(bb)
+  val fromOffset = from?.toFlatBuffer(bb)
+  val toOffset = to?.toFlatBuffer(bb)
+  val amountOffset = amount?.toFlatBuffer(bb)
+  val tokenIdOffset = tokenId?.toFlatBuffer(bb)
 
-    BalanceDelta.startBalanceDelta(bb)
+  BalanceDelta.startBalanceDelta(bb)
 
-    BalanceDelta.addDeltaType(bb, deltaType.ordinal.toByte())
-    BalanceDelta.addPc(bb, pc)
-    transactionIndex?.let { BalanceDelta.addTransactionIndex(bb, it) }
-    transactionHashOffset?.let { BalanceDelta.addTransactionHash(bb, it) }
-    contractAddressOffset?.let { BalanceDelta.addContractAddress(bb, it) }
-    fromOffset?.let { BalanceDelta.addFrom(bb, it) }
-    toOffset?.let { BalanceDelta.addTo(bb, it) }
-    amountOffset?.let { BalanceDelta.addAmount(bb, it) }
-    tokenIdOffset?.let { BalanceDelta.addTokenId(bb, it) }
+  BalanceDelta.addDeltaType(bb, deltaType.ordinal.toByte())
+  BalanceDelta.addPc(bb, pc)
+  transactionIndex?.let { BalanceDelta.addTransactionIndex(bb, it) }
+  transactionHashOffset?.let { BalanceDelta.addTransactionHash(bb, it) }
+  contractAddressOffset?.let { BalanceDelta.addContractAddress(bb, it) }
+  fromOffset?.let { BalanceDelta.addFrom(bb, it) }
+  toOffset?.let { BalanceDelta.addTo(bb, it) }
+  amountOffset?.let { BalanceDelta.addAmount(bb, it) }
+  tokenIdOffset?.let { BalanceDelta.addTokenId(bb, it) }
 
-    return BalanceDelta.endBalanceDelta(bb)
+  return BalanceDelta.endBalanceDelta(bb)
 }
 
 inline fun <reified T : ExfloContractEvent> T.toFlatBuffer(bb: FlatBufferBuilder): Pair<Byte, Int> {
-    when (this) {
-        is ExfloContractEvents.FungibleApproval -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val ownerOffset = owner.toFlatBuffer(bb)
-            val spenderOffset = spender.toFlatBuffer(bb)
-            val valueOffset = value.toFlatBuffer(bb)
-            return Pair(
-                ContractEvent.FungibleApproval,
-                FungibleApproval.createFungibleApproval(bb, contractOffset, ownerOffset, spenderOffset, valueOffset)
-            )
-        }
-
-        is ExfloContractEvents.FungibleTransfer -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val fromOffset = from.toFlatBuffer(bb)
-            val toOffset = to.toFlatBuffer(bb)
-            val valueOffset = value.toFlatBuffer(bb)
-            return Pair(
-                ContractEvent.FungibleTransfer,
-                FungibleTransfer.createFungibleTransfer(bb, contractOffset, fromOffset, toOffset, valueOffset)
-            )
-        }
-
-        is ExfloContractEvents.NonFungibleApproval -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val ownerOffset = owner.toFlatBuffer(bb)
-            val approvedOffset = approved.toFlatBuffer(bb)
-            val tokenIdOffset = tokenId.toFlatBuffer(bb)
-            return Pair(
-                ContractEvent.NonFungibleApproval,
-                NonFungibleApproval.createNonFungibleApproval(
-                    bb,
-                    contractOffset,
-                    ownerOffset,
-                    approvedOffset,
-                    tokenIdOffset
-                )
-            )
-        }
-
-        is ExfloContractEvents.ApprovalForAll -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val ownerOffset = owner.toFlatBuffer(bb)
-            val operatorOffset = operator.toFlatBuffer(bb)
-            return Pair(
-                ContractEvent.ApprovalForAll,
-                ApprovalForAll.createApprovalForAll(bb, contractOffset, ownerOffset, operatorOffset, approved)
-            )
-        }
-
-        is ExfloContractEvents.NonFungibleTransfer -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val fromOffset = from.toFlatBuffer(bb)
-            val toOffset = to.toFlatBuffer(bb)
-            val tokenIdOffset = tokenId.toFlatBuffer(bb)
-            return Pair(
-                ContractEvent.NonFungibleTransfer,
-                NonFungibleTransfer.createNonFungibleTransfer(bb, contractOffset, fromOffset, toOffset, tokenIdOffset)
-            )
-        }
-
-        is ExfloContractEvents.Sent -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val operatorOffset = operator.toFlatBuffer(bb)
-            val fromOffset = from.toFlatBuffer(bb)
-            val toOffset = to.toFlatBuffer(bb)
-            val amountOffset = amount.toFlatBuffer(bb)
-            val dataOffset = bb.createByteVector(data.toArray())
-            val operatorDataOffset = bb.createByteVector(operatorData.toArray())
-            return Pair(
-                ContractEvent.Sent,
-                Sent.createSent(
-                    bb,
-                    contractOffset,
-                    operatorOffset,
-                    fromOffset,
-                    toOffset,
-                    amountOffset,
-                    dataOffset,
-                    operatorDataOffset
-                )
-            )
-        }
-
-        is ExfloContractEvents.Minted -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val operatorOffset = operator.toFlatBuffer(bb)
-            val toOffset = to.toFlatBuffer(bb)
-            val amountOffset = amount.toFlatBuffer(bb)
-            val dataOffset = bb.createByteVector(data.toArray())
-            val operatorDataOffset = bb.createByteVector(operatorData.toArray())
-            return Pair(
-                ContractEvent.Minted,
-                Minted.createMinted(
-                    bb,
-                    contractOffset,
-                    operatorOffset,
-                    toOffset,
-                    amountOffset,
-                    dataOffset,
-                    operatorDataOffset
-                )
-            )
-        }
-
-        is ExfloContractEvents.Burned -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val operatorOffset = operator.toFlatBuffer(bb)
-            val toOffset = to.toFlatBuffer(bb)
-            val amountOffset = amount.toFlatBuffer(bb)
-            val dataOffset = bb.createByteVector(data.toArray())
-            val operatorDataOffset = bb.createByteVector(operatorData.toArray())
-            return Pair(
-                ContractEvent.Burned,
-                Burned.createBurned(
-                    bb,
-                    contractOffset,
-                    operatorOffset,
-                    toOffset,
-                    amountOffset,
-                    dataOffset,
-                    operatorDataOffset
-                )
-            )
-        }
-
-        is ExfloContractEvents.AuthorizedOperator -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val operatorOffset = operator.toFlatBuffer(bb)
-            val holderOffset = holder.toFlatBuffer(bb)
-            return Pair(
-                ContractEvent.AuthorizedOperator,
-                AuthorizedOperator.createAuthorizedOperator(bb, contractOffset, operatorOffset, holderOffset)
-            )
-        }
-
-        is ExfloContractEvents.RevokedOperator -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val operatorOffset = operator.toFlatBuffer(bb)
-            val holderOffset = holder.toFlatBuffer(bb)
-            return Pair(
-                ContractEvent.RevokedOperator,
-                RevokedOperator.createRevokedOperator(bb, contractOffset, operatorOffset, holderOffset)
-            )
-        }
-
-        is ExfloContractEvents.TransferSingle -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val operatorOffset = operator.toFlatBuffer(bb)
-            val fromOffset = from.toFlatBuffer(bb)
-            val toOffset = to.toFlatBuffer(bb)
-            val idOffset = id.toFlatBuffer(bb)
-            val valueOffset = value.toFlatBuffer(bb)
-            return Pair(
-                ContractEvent.TransferSingle,
-                TransferSingle.createTransferSingle(
-                    bb,
-                    contractOffset,
-                    operatorOffset,
-                    fromOffset,
-                    toOffset,
-                    idOffset,
-                    valueOffset
-                )
-            )
-        }
-
-        is ExfloContractEvents.TransferBatch -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val operatorOffset = operator.toFlatBuffer(bb)
-            val fromOffset = from.toFlatBuffer(bb)
-            val toOffset = to.toFlatBuffer(bb)
-
-            val idsOffset = ids
-                .map { it.toFlatBuffer(bb) }
-                .let { bb.createVectorOfTables(it.toIntArray()) }
-
-            val valuesOffset = values
-                .map { it.toFlatBuffer(bb) }
-                .let { bb.createVectorOfTables(it.toIntArray()) }
-
-            return Pair(
-                ContractEvent.TransferBatch,
-                TransferBatch.createTransferBatch(
-                    bb,
-                    contractOffset,
-                    operatorOffset,
-                    fromOffset,
-                    toOffset,
-                    idsOffset,
-                    valuesOffset
-                )
-            )
-        }
-
-        is ExfloContractEvents.URI -> {
-            val contractOffset = contract.toFlatBuffer(bb)
-            val idOffset = id.toFlatBuffer(bb)
-            val valueOffset = bb.createString(value)
-            return Pair(
-                ContractEvent.URI,
-                URI.createURI(bb, contractOffset, valueOffset, idOffset)
-            )
-        }
-
-        else -> throw IllegalArgumentException("Unknown entity: $this")
+  when (this) {
+    is ExfloContractEvents.FungibleApproval -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val ownerOffset = owner.toFlatBuffer(bb)
+      val spenderOffset = spender.toFlatBuffer(bb)
+      val valueOffset = value.toFlatBuffer(bb)
+      return Pair(
+        ContractEvent.FungibleApproval,
+        FungibleApproval.createFungibleApproval(bb, contractOffset, ownerOffset, spenderOffset, valueOffset)
+      )
     }
+
+    is ExfloContractEvents.FungibleTransfer -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val fromOffset = from.toFlatBuffer(bb)
+      val toOffset = to.toFlatBuffer(bb)
+      val valueOffset = value.toFlatBuffer(bb)
+      return Pair(
+        ContractEvent.FungibleTransfer,
+        FungibleTransfer.createFungibleTransfer(bb, contractOffset, fromOffset, toOffset, valueOffset)
+      )
+    }
+
+    is ExfloContractEvents.NonFungibleApproval -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val ownerOffset = owner.toFlatBuffer(bb)
+      val approvedOffset = approved.toFlatBuffer(bb)
+      val tokenIdOffset = tokenId.toFlatBuffer(bb)
+      return Pair(
+        ContractEvent.NonFungibleApproval,
+        NonFungibleApproval.createNonFungibleApproval(
+          bb,
+          contractOffset,
+          ownerOffset,
+          approvedOffset,
+          tokenIdOffset
+        )
+      )
+    }
+
+    is ExfloContractEvents.ApprovalForAll -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val ownerOffset = owner.toFlatBuffer(bb)
+      val operatorOffset = operator.toFlatBuffer(bb)
+      return Pair(
+        ContractEvent.ApprovalForAll,
+        ApprovalForAll.createApprovalForAll(bb, contractOffset, ownerOffset, operatorOffset, approved)
+      )
+    }
+
+    is ExfloContractEvents.NonFungibleTransfer -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val fromOffset = from.toFlatBuffer(bb)
+      val toOffset = to.toFlatBuffer(bb)
+      val tokenIdOffset = tokenId.toFlatBuffer(bb)
+      return Pair(
+        ContractEvent.NonFungibleTransfer,
+        NonFungibleTransfer.createNonFungibleTransfer(bb, contractOffset, fromOffset, toOffset, tokenIdOffset)
+      )
+    }
+
+    is ExfloContractEvents.Sent -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val operatorOffset = operator.toFlatBuffer(bb)
+      val fromOffset = from.toFlatBuffer(bb)
+      val toOffset = to.toFlatBuffer(bb)
+      val amountOffset = amount.toFlatBuffer(bb)
+      val dataOffset = bb.createByteVector(data.toArray())
+      val operatorDataOffset = bb.createByteVector(operatorData.toArray())
+      return Pair(
+        ContractEvent.Sent,
+        Sent.createSent(
+          bb,
+          contractOffset,
+          operatorOffset,
+          fromOffset,
+          toOffset,
+          amountOffset,
+          dataOffset,
+          operatorDataOffset
+        )
+      )
+    }
+
+    is ExfloContractEvents.Minted -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val operatorOffset = operator.toFlatBuffer(bb)
+      val toOffset = to.toFlatBuffer(bb)
+      val amountOffset = amount.toFlatBuffer(bb)
+      val dataOffset = bb.createByteVector(data.toArray())
+      val operatorDataOffset = bb.createByteVector(operatorData.toArray())
+      return Pair(
+        ContractEvent.Minted,
+        Minted.createMinted(
+          bb,
+          contractOffset,
+          operatorOffset,
+          toOffset,
+          amountOffset,
+          dataOffset,
+          operatorDataOffset
+        )
+      )
+    }
+
+    is ExfloContractEvents.Burned -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val operatorOffset = operator.toFlatBuffer(bb)
+      val toOffset = to.toFlatBuffer(bb)
+      val amountOffset = amount.toFlatBuffer(bb)
+      val dataOffset = bb.createByteVector(data.toArray())
+      val operatorDataOffset = bb.createByteVector(operatorData.toArray())
+      return Pair(
+        ContractEvent.Burned,
+        Burned.createBurned(
+          bb,
+          contractOffset,
+          operatorOffset,
+          toOffset,
+          amountOffset,
+          dataOffset,
+          operatorDataOffset
+        )
+      )
+    }
+
+    is ExfloContractEvents.AuthorizedOperator -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val operatorOffset = operator.toFlatBuffer(bb)
+      val holderOffset = holder.toFlatBuffer(bb)
+      return Pair(
+        ContractEvent.AuthorizedOperator,
+        AuthorizedOperator.createAuthorizedOperator(bb, contractOffset, operatorOffset, holderOffset)
+      )
+    }
+
+    is ExfloContractEvents.RevokedOperator -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val operatorOffset = operator.toFlatBuffer(bb)
+      val holderOffset = holder.toFlatBuffer(bb)
+      return Pair(
+        ContractEvent.RevokedOperator,
+        RevokedOperator.createRevokedOperator(bb, contractOffset, operatorOffset, holderOffset)
+      )
+    }
+
+    is ExfloContractEvents.TransferSingle -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val operatorOffset = operator.toFlatBuffer(bb)
+      val fromOffset = from.toFlatBuffer(bb)
+      val toOffset = to.toFlatBuffer(bb)
+      val idOffset = id.toFlatBuffer(bb)
+      val valueOffset = value.toFlatBuffer(bb)
+      return Pair(
+        ContractEvent.TransferSingle,
+        TransferSingle.createTransferSingle(
+          bb,
+          contractOffset,
+          operatorOffset,
+          fromOffset,
+          toOffset,
+          idOffset,
+          valueOffset
+        )
+      )
+    }
+
+    is ExfloContractEvents.TransferBatch -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val operatorOffset = operator.toFlatBuffer(bb)
+      val fromOffset = from.toFlatBuffer(bb)
+      val toOffset = to.toFlatBuffer(bb)
+
+      val idsOffset = ids
+        .map { it.toFlatBuffer(bb) }
+        .let { bb.createVectorOfTables(it.toIntArray()) }
+
+      val valuesOffset = values
+        .map { it.toFlatBuffer(bb) }
+        .let { bb.createVectorOfTables(it.toIntArray()) }
+
+      return Pair(
+        ContractEvent.TransferBatch,
+        TransferBatch.createTransferBatch(
+          bb,
+          contractOffset,
+          operatorOffset,
+          fromOffset,
+          toOffset,
+          idsOffset,
+          valuesOffset
+        )
+      )
+    }
+
+    is ExfloContractEvents.URI -> {
+      val contractOffset = contract.toFlatBuffer(bb)
+      val idOffset = id.toFlatBuffer(bb)
+      val valueOffset = bb.createString(value)
+      return Pair(
+        ContractEvent.URI,
+        URI.createURI(bb, contractOffset, valueOffset, idOffset)
+      )
+    }
+
+    else -> throw IllegalArgumentException("Unknown entity: $this")
+  }
 }
 
 fun ExfloFullBlock.toFlatBuffer(logParser: (receipt: BesuLog) -> ExfloContractEvent?, bb: FlatBufferBuilder): Int {
-    val headerOffset = header?.toFlatBuffer(bb, totalDifficulty)
-    val bodyOffset = body?.toFlatBuffer(bb, receipts, trace, logParser)
+  val headerOffset = header?.toFlatBuffer(bb, totalDifficulty)
+  val bodyOffset = body?.toFlatBuffer(bb, receipts, trace, logParser)
 
-    val contractsCreatedAddresses = trace?.transactionTraces
-        ?.map { it.contractsCreated }
-        ?.flatten()
-        ?.map { it.contractAddress }
+  val contractsCreatedAddresses = trace?.transactionTraces
+    ?.map { it.contractsCreated }
+    ?.flatten()
+    ?.map { it.contractAddress }
 
-    val touchedAccountsVectorOffset = touchedAccounts
-        ?.map { account -> account.toFlatBuffer(bb, contractsCreatedAddresses!!) }
-        ?.let { offsetArray -> Block.createTouchedAccountsVector(bb, offsetArray.toIntArray()) }
+  val touchedAccountsVectorOffset = touchedAccounts
+    ?.map { account -> account.toFlatBuffer(bb, contractsCreatedAddresses!!) }
+    ?.let { offsetArray -> Block.createTouchedAccountsVector(bb, offsetArray.toIntArray()) }
 
-    // Only create rewards offset where rewards exist for this block
-    val rewardsOffset = if (trace?.rewards?.isNotEmpty() == true) trace.toRewardsFlatBuffer(bb) else null
+  // Only create rewards offset where rewards exist for this block
+  val rewardsOffset = if (trace?.rewards?.isNotEmpty() == true) trace.toRewardsFlatBuffer(bb) else null
 
-    val balanceDeltasVectorOffset = balanceDeltas
-        ?.map { delta -> delta.toFlatBuffer(bb) }
-        ?.let { offsetArray -> Block.createBalanceDeltasVector(bb, offsetArray.toIntArray()) }
+  val balanceDeltasVectorOffset = balanceDeltas
+    ?.map { delta -> delta.toFlatBuffer(bb) }
+    ?.let { offsetArray -> Block.createBalanceDeltasVector(bb, offsetArray.toIntArray()) }
 
-    Block.startBlock(bb)
+  Block.startBlock(bb)
 
-    headerOffset?.let { Block.addHeader(bb, headerOffset) }
-    bodyOffset?.let { Block.addBody(bb, bodyOffset) }
-    rewardsOffset?.let { Block.addRewards(bb, it) }
-    touchedAccountsVectorOffset?.let { Block.addTouchedAccounts(bb, it) }
-    balanceDeltasVectorOffset?.let { Block.addBalanceDeltas(bb, it) }
+  headerOffset?.let { Block.addHeader(bb, headerOffset) }
+  bodyOffset?.let { Block.addBody(bb, bodyOffset) }
+  rewardsOffset?.let { Block.addRewards(bb, it) }
+  touchedAccountsVectorOffset?.let { Block.addTouchedAccounts(bb, it) }
+  balanceDeltasVectorOffset?.let { Block.addBalanceDeltas(bb, it) }
 
-    return Block.endBlock(bb)
+  return Block.endBlock(bb)
 }

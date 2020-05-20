@@ -24,11 +24,11 @@ import org.hyperledger.besu.ethereum.vm.EVM
 
 class ERC20DetectorPrecompiledContract(evm: EVM) : AbstractDetectorPrecompiledContract(evm) {
 
-    override val code: Code = AbstractERC20Detector.CODE
+  override val code: Code = AbstractERC20Detector.CODE
 
-    override fun getName(): String = ERC20Detector::class.java.simpleName
+  override fun getName(): String = ERC20Detector::class.java.simpleName
 
-    companion object {
-        val ADDRESS: Address = Address.fromHexString("0xffffffffffffffffffffffffffffffffffffffff")
-    }
+  companion object {
+    val ADDRESS: Address = Address.fromHexString("0xffffffffffffffffffffffffffffffffffffffff")
+  }
 }

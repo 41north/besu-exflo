@@ -16,6 +16,6 @@
 
 create table block_trace
 (
-    block_hash       char(66)  not null references block_header (hash) on update cascade on delete cascade,
-    trace            jsonb not null
+    block_hash char(66) not null references block_header (hash) on update cascade on delete cascade,
+    trace      jsonb    not null
 );

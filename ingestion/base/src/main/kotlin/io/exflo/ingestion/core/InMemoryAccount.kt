@@ -42,59 +42,59 @@ class InMemoryAccount(
   private val codeHash: Hash?
 ) : Account {
 
-    override fun getBalance(): Wei = balance
+  override fun getBalance(): Wei = balance
 
-    override fun getStorageValue(key: UInt256?): UInt256 {
-        throw UnsupportedOperationException("not implemented")
+  override fun getStorageValue(key: UInt256?): UInt256 {
+    throw UnsupportedOperationException("not implemented")
+  }
+
+  override fun getAddressHash(): Hash = Hash.fromHexString(address.toHexString())
+
+  override fun getOriginalStorageValue(key: UInt256?): UInt256 {
+    throw UnsupportedOperationException("not implemented")
+  }
+
+  override fun getAddress(): Address = address
+
+  override fun getVersion(): Int {
+    throw UnsupportedOperationException("not implemented")
+  }
+
+  override fun storageEntriesFrom(startKeyHash: Bytes32?, limit: Int): NavigableMap<Bytes32, AccountStorageEntry> {
+    throw UnsupportedOperationException("not implemented")
+  }
+
+  override fun getCode(): Bytes = code ?: Bytes.EMPTY
+
+  override fun getNonce(): Long = nonce
+
+  override fun getCodeHash(): Hash = codeHash ?: Hash.EMPTY
+
+  companion object {
+
+    fun fromGenesisAllocation(allocation: GenesisAllocation): InMemoryAccount {
+
+      val nonce = toUnsignedLong(allocation.nonce)
+      val address = Address.fromHexString(allocation.address)
+      val balance = toWei(allocation.balance)
+      val code = allocation.code?.let { Bytes.fromHexString(it) }
+
+      return InMemoryAccount(address, balance, nonce, code, null)
     }
 
-    override fun getAddressHash(): Hash = Hash.fromHexString(address.toHexString())
-
-    override fun getOriginalStorageValue(key: UInt256?): UInt256 {
-        throw UnsupportedOperationException("not implemented")
+    private fun toUnsignedLong(s: String): Long {
+      var value = s.toLowerCase(Locale.US)
+      if (value.startsWith("0x")) {
+        value = value.substring(2)
+      }
+      return java.lang.Long.parseUnsignedLong(value, 16)
     }
 
-    override fun getAddress(): Address = address
-
-    override fun getVersion(): Int {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun storageEntriesFrom(startKeyHash: Bytes32?, limit: Int): NavigableMap<Bytes32, AccountStorageEntry> {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun getCode(): Bytes = code ?: Bytes.EMPTY
-
-    override fun getNonce(): Long = nonce
-
-    override fun getCodeHash(): Hash = codeHash ?: Hash.EMPTY
-
-    companion object {
-
-        fun fromGenesisAllocation(allocation: GenesisAllocation): InMemoryAccount {
-
-            val nonce = toUnsignedLong(allocation.nonce)
-            val address = Address.fromHexString(allocation.address)
-            val balance = toWei(allocation.balance)
-            val code = allocation.code?.let { Bytes.fromHexString(it) }
-
-            return InMemoryAccount(address, balance, nonce, code, null)
-        }
-
-        private fun toUnsignedLong(s: String): Long {
-            var value = s.toLowerCase(Locale.US)
-            if (value.startsWith("0x")) {
-                value = value.substring(2)
-            }
-            return java.lang.Long.parseUnsignedLong(value, 16)
-        }
-
-        private fun toWei(s: String): Wei =
-            if (s.startsWith("0x")) {
-                Wei.fromHexString(s)
-            } else {
-                Wei.of(BigInteger(s))
-            }
-    }
+    private fun toWei(s: String): Wei =
+      if (s.startsWith("0x")) {
+        Wei.fromHexString(s)
+      } else {
+        Wei.of(BigInteger(s))
+      }
+  }
 }

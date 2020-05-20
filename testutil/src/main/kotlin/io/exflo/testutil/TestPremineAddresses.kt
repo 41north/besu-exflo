@@ -23,9 +23,9 @@ import org.hyperledger.besu.ethereum.core.Address
  */
 object TestPremineAddresses {
 
-    val one: Address = Address.fromHexString("fe3b557e8fb62b89f4916b721be55ceb828dbd73")!!
-    val two: Address = Address.fromHexString("627306090abaB3A6e1400e9345bC60c78a8BEf57")!!
-    val three: Address = Address.fromHexString("f17f52151EbEF6C7334FAD080c5704D77216b732")!!
+  val one: Address = Address.fromHexString("fe3b557e8fb62b89f4916b721be55ceb828dbd73")!!
+  val two: Address = Address.fromHexString("627306090abaB3A6e1400e9345bC60c78a8BEf57")!!
+  val three: Address = Address.fromHexString("f17f52151EbEF6C7334FAD080c5704D77216b732")!!
 
-    val all = listOf(one, two, three)
+  val all = listOf(one, two, three)
 }

@@ -46,135 +46,137 @@ import java.nio.file.Path
 @Suppress("MemberVisibilityCanBePrivate")
 object KoinTestModules {
 
-    val defaultTestChainResources = module {
-        single { ExfloBlockTestUtil.getTestChainResources() }
+  private val defaultTestChainResources = module {
+    single { ExfloBlockTestUtil.getTestChainResources() }
+  }
+
+  private val initialState = module {
+
+    single { EthNetworkConfig.getNetworkConfig(NetworkName.DEV) }
+
+    // genesis config file
+    single {
+      val chainResources = get<BlockTestUtil.ChainResources>()
+      val genesisJson = chainResources.genesisURL.readText()
+      GenesisConfigFile.fromConfig(genesisJson)
     }
 
-    val initialState = module {
-
-        single { EthNetworkConfig.getNetworkConfig(NetworkName.DEV) }
-
-        // genesis config file
-        single {
-            val chainResources = get<BlockTestUtil.ChainResources>()
-            val genesisJson = chainResources.genesisURL.readText()
-            GenesisConfigFile.fromConfig(genesisJson)
-        }
-
-        // genesis state
-        single {
-            val chainResources = get<BlockTestUtil.ChainResources>()
-            val protocolSchedule = get<ProtocolSchedule<Void>>()
-            val genesisJson = chainResources.genesisURL.readText()
-            GenesisState.fromJson(genesisJson, protocolSchedule)
-        }
-
-        // used to read test blocks when importing
-        factory {
-
-            val chainResources = get<BlockTestUtil.ChainResources>()
-            val blockHeaderFunctions = get<BlockHeaderFunctions>()
-            val blocksPath = Path.of(chainResources.blocksURL.toURI())
-
-            RawBlockIterator(blocksPath) { rlp -> BlockHeader.readFrom(rlp, blockHeaderFunctions) }
-        }
-
-        single {
-
-            val iterator = get<RawBlockIterator>()
-
-            var head = 0L
-
-            iterator.forEach { block -> head = block.header.number }
-
-            val genesisState = get<GenesisState>()
-            TestChainSummary(genesisState, head)
-        }
+    // genesis state
+    single {
+      val chainResources = get<BlockTestUtil.ChainResources>()
+      val protocolSchedule = get<ProtocolSchedule<Void>>()
+      val genesisJson = chainResources.genesisURL.readText()
+      GenesisState.fromJson(genesisJson, protocolSchedule)
     }
 
-    val headerFunctions = module {
+    // used to read test blocks when importing
+    factory {
 
-        // protocol schedule
-        single {
-            val genesisConfigFile = get<GenesisConfigFile>()
-            MainnetProtocolSchedule.fromConfig(genesisConfigFile.configOptions)
-        }
+      val chainResources = get<BlockTestUtil.ChainResources>()
+      val blockHeaderFunctions = get<BlockHeaderFunctions>()
+      val blocksPath = Path.of(chainResources.blocksURL.toURI())
 
-        // header functions
-        single {
-            val protocolSchedule = get<ProtocolSchedule<Void>>()
-            ScheduleBasedBlockHeaderFunctions.create(protocolSchedule)
-        }
+      RawBlockIterator(blocksPath) { rlp -> BlockHeader.readFrom(rlp, blockHeaderFunctions) }
     }
 
-    val storage = module {
+    single {
 
-        single<BlockchainStorage> {
-            val keyValueStorage = InMemoryKeyValueStorage()
-            val headerFunctions = get<BlockHeaderFunctions>()
-            KeyValueStoragePrefixedKeyBlockchainStorage(keyValueStorage, headerFunctions)
-        }
+      val iterator = get<RawBlockIterator>()
 
-        single<WorldStateStorage> { WorldStateKeyValueStorage(InMemoryKeyValueStorage()) }
+      var head = 0L
 
-        single<WorldStatePreimageStorage> { WorldStatePreimageKeyValueStorage(InMemoryKeyValueStorage()) }
+      iterator.forEach { block -> head = block.header.number }
+
+      val genesisState = get<GenesisState>()
+      TestChainSummary(genesisState, head)
+    }
+  }
+
+  private val headerFunctions = module {
+
+    // protocol schedule
+    single {
+      val genesisConfigFile = get<GenesisConfigFile>()
+      MainnetProtocolSchedule.fromConfig(genesisConfigFile.configOptions)
     }
 
-    val chainState = module {
+    // header functions
+    single {
+      val protocolSchedule = get<ProtocolSchedule<Void>>()
+      ScheduleBasedBlockHeaderFunctions.create(protocolSchedule)
+    }
+  }
 
-        // mutable blockchain initialised with genesis block
-        single<MutableBlockchain> {
+  private val storage = module {
 
-            val genesisState = get<GenesisState>()
-            val genesisBlock = genesisState.block
-
-            val blockchainStorage = get<BlockchainStorage>()
-
-            DefaultBlockchain.createMutable(
-                genesisBlock,
-                blockchainStorage,
-                NoOpMetricsSystem()
-            )
-        }
-
-        // re-export under interface
-        single<Blockchain> { get<MutableBlockchain>() }
-
-        single {
-
-            val worldStateArchive = WorldStateArchive(get(), get())
-
-            // initialise world state from genesis block
-            val genesisState = get<GenesisState>()
-            genesisState.writeStateTo(worldStateArchive.mutable)
-
-            worldStateArchive
-        }
-
-        // protocol context
-        single {
-            val blockchain = get<MutableBlockchain>()
-            val worldStateArchive = get<WorldStateArchive>()
-            ProtocolContext(blockchain, worldStateArchive, null)
-        }
+    single<BlockchainStorage> {
+      val keyValueStorage = InMemoryKeyValueStorage()
+      val headerFunctions = get<BlockHeaderFunctions>()
+      KeyValueStoragePrefixedKeyBlockchainStorage(keyValueStorage, headerFunctions)
     }
 
-    val testHelpers = module {
+    single<WorldStateStorage> { WorldStateKeyValueStorage(InMemoryKeyValueStorage()) }
 
-        // created at start ensures initialisation before tests
-        single(createdAtStart = true) {
-            ExfloTestCaseHelper(get(), ExfloBlockTestUtil.getTestReportAsInputStream())
-        }
+    single<WorldStatePreimageStorage> { WorldStatePreimageKeyValueStorage(InMemoryKeyValueStorage()) }
+  }
 
-        single { TestChainLoader(get(), get(), get()) }
+  private val chainState = module {
+
+    // mutable blockchain initialised with genesis block
+    single<MutableBlockchain> {
+
+      val genesisState = get<GenesisState>()
+      val genesisBlock = genesisState.block
+
+      val blockchainStorage = get<BlockchainStorage>()
+
+      DefaultBlockchain.createMutable(
+        genesisBlock,
+        blockchainStorage,
+        NoOpMetricsSystem()
+      )
     }
 
-    val defaultModuleList = listOf(
-        defaultTestChainResources,
-        initialState,
-        headerFunctions,
-        storage,
-        chainState,
-        testHelpers
-    )
+    // re-export under interface
+    single<Blockchain> { get<MutableBlockchain>() }
+
+    single {
+
+      val worldStateArchive = WorldStateArchive(get(), get())
+
+      // initialise world state from genesis block
+      val genesisState = get<GenesisState>()
+      genesisState.writeStateTo(worldStateArchive.mutable)
+
+      worldStateArchive
+    }
+
+    // protocol context
+    single {
+      val blockchain = get<MutableBlockchain>()
+      val worldStateArchive = get<WorldStateArchive>()
+      ProtocolContext(blockchain, worldStateArchive, null)
+    }
+  }
+
+  private val testHelpers = module {
+
+    // created at start ensures initialisation before tests
+    single(createdAtStart = true) {
+      ExfloTestCaseHelper(get(), ExfloBlockTestUtil.getTestReportAsInputStream())
+    }
+
+    single { TestChainLoader(get(), get(), get()) }
+  }
+
+  private val defaultModuleList = listOf(
+    defaultTestChainResources,
+    initialState,
+    headerFunctions,
+    storage,
+    chainState,
+    testHelpers
+  )
+
+  operator fun invoke() = defaultModuleList
 }

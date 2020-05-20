@@ -28,18 +28,18 @@ import org.koin.dsl.module
 @Suppress("MemberVisibilityCanBePrivate")
 object KoinTestIngestionModules {
 
-    private val ingestion = listOf(module {
+  private val ingestion = listOf(module {
 
-        single { BlockReplay(get(), get(), get()) }
+    single { BlockReplay(get(), get(), get()) }
 
-        single { BlockTracer(get()) }
+    single { BlockTracer(get()) }
 
-        single { TransactionSimulator(get(), get(), get()) }
+    single { TransactionSimulator(get(), get(), get()) }
 
-        single { BlockReader() }
+    single { BlockReader() }
 
-        single { ObjectMapper().registerModule(KotlinModule()) }
-    })
+    single { ObjectMapper().registerModule(KotlinModule()) }
+  })
 
-    operator fun invoke() = KoinTestModules.defaultModuleList + ingestion
+  operator fun invoke() = KoinTestModules() + ingestion
 }

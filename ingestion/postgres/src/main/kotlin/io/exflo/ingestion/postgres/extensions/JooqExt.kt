@@ -28,29 +28,29 @@ import io.exflo.postgres.jooq.tables.records.TransactionRecord
 import org.jooq.TableRecord
 
 val TableRecord<*>.blockNumber: Long
-    get() = when (this) {
-        is BlockHeaderRecord -> number
-        is OmmerRecord -> number
-        is TransactionRecord -> blockNumber
-        is TransactionReceiptRecord -> blockNumber
-        is ContractEventRecord -> blockNumber
-        is ContractCreatedRecord -> blockNumber
-        is ContractDestroyedRecord -> blockNumber
-        is BalanceDeltaRecord -> blockNumber
-        is AccountRecord -> blockNumber
-        else -> throw IllegalArgumentException()
-    }
+  get() = when (this) {
+    is BlockHeaderRecord -> number
+    is OmmerRecord -> number
+    is TransactionRecord -> blockNumber
+    is TransactionReceiptRecord -> blockNumber
+    is ContractEventRecord -> blockNumber
+    is ContractCreatedRecord -> blockNumber
+    is ContractDestroyedRecord -> blockNumber
+    is BalanceDeltaRecord -> blockNumber
+    is AccountRecord -> blockNumber
+    else -> throw IllegalArgumentException()
+  }
 
 val TableRecord<*>.blockHash: String
-    get() = when (this) {
-        is BlockHeaderRecord -> hash
-        is OmmerRecord -> nephewHash
-        is TransactionRecord -> blockHash
-        is TransactionReceiptRecord -> blockHash
-        is ContractEventRecord -> blockHash
-        is ContractCreatedRecord -> blockHash
-        is ContractDestroyedRecord -> blockHash
-        is BalanceDeltaRecord -> blockHash
-        is AccountRecord -> blockHash
-        else -> throw IllegalArgumentException()
-    }
+  get() = when (this) {
+    is BlockHeaderRecord -> hash
+    is OmmerRecord -> nephewHash
+    is TransactionRecord -> blockHash
+    is TransactionReceiptRecord -> blockHash
+    is ContractEventRecord -> blockHash
+    is ContractCreatedRecord -> blockHash
+    is ContractDestroyedRecord -> blockHash
+    is BalanceDeltaRecord -> blockHash
+    is AccountRecord -> blockHash
+    else -> throw IllegalArgumentException()
+  }

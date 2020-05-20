@@ -44,78 +44,78 @@ import org.koin.dsl.module
 import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockReplay as BesuBlockReplay
 
 object KoinModules {
-    val eventsModule = module {
+  val eventsModule = module {
 
-        single {
-            get<BesuContext>().getService(BesuEvents::class.java).get()
+    single {
+      get<BesuContext>().getService(BesuEvents::class.java).get()
+    }
+  }
+
+  val storageModule = module {
+
+    single {
+      val classLoader = get<ClassLoader>()
+      ObjectMapper()
+        .registerModule(KotlinModule())
+        .apply {
+          this.typeFactory = TypeFactory
+            .defaultInstance()
+            .withClassLoader(classLoader)
         }
     }
 
-    val storageModule = module {
-
-        single {
-            val classLoader = get<ClassLoader>()
-            ObjectMapper()
-                .registerModule(KotlinModule())
-                .apply {
-                    this.typeFactory = TypeFactory
-                        .defaultInstance()
-                        .withClassLoader(classLoader)
-                }
-        }
-
-        single {
-            val context = get<BesuContext>()
-            context.getService(StorageService::class.java).get()
-        }
-
-        single {
-            get<StorageService>().getByName("rocksdb")
-        }
-
-        single {
-            get<BesuContext>().getService(BesuConfiguration::class.java).get()
-        }
-
-        single<BlockchainStorage> {
-
-            val protocolSchedule: ProtocolSchedule<Void> = get()
-            val segmentedStorage = KeyValueStores[KeyValueSegmentIdentifier.BLOCKCHAIN]
-
-            KeyValueStoragePrefixedKeyBlockchainStorage(
-                segmentedStorage,
-                ScheduleBasedBlockHeaderFunctions.create(protocolSchedule)
-            )
-        }
-
-        single<MetricsSystem> { NoOpMetricsSystem() }
-
-        single<Blockchain> {
-            DefaultBlockchain.createMutable(
-                get<GenesisState>().block,
-                get<BlockchainStorage>(),
-                get<MetricsSystem>()
-            )
-        }
-
-        single {
-            val segmentedStorage = KeyValueStores[KeyValueSegmentIdentifier.WORLD_STATE]
-            WorldStateKeyValueStorage(segmentedStorage)
-        }
-
-        single {
-            val worldStateStorage = get<WorldStateKeyValueStorage>()
-            val worldStatePreImageStorage = WorldStatePreimageKeyValueStorage(LimitedInMemoryKeyValueStorage(5000L))
-            WorldStateArchive(worldStateStorage, worldStatePreImageStorage)
-        }
+    single {
+      val context = get<BesuContext>()
+      context.getService(StorageService::class.java).get()
     }
 
-    val stateModule = module {
-
-        single { BesuBlockReplay(get(), get(), get()) }
-
-        single { TransactionSimulator(get(), get(), get()) }
-
-        single { BlockReader() }
+    single {
+      get<StorageService>().getByName("rocksdb")
     }
+
+    single {
+      get<BesuContext>().getService(BesuConfiguration::class.java).get()
+    }
+
+    single<BlockchainStorage> {
+
+      val protocolSchedule: ProtocolSchedule<Void> = get()
+      val segmentedStorage = KeyValueStores[KeyValueSegmentIdentifier.BLOCKCHAIN]
+
+      KeyValueStoragePrefixedKeyBlockchainStorage(
+        segmentedStorage,
+        ScheduleBasedBlockHeaderFunctions.create(protocolSchedule)
+      )
+    }
+
+    single<MetricsSystem> { NoOpMetricsSystem() }
+
+    single<Blockchain> {
+      DefaultBlockchain.createMutable(
+        get<GenesisState>().block,
+        get<BlockchainStorage>(),
+        get<MetricsSystem>()
+      )
+    }
+
+    single {
+      val segmentedStorage = KeyValueStores[KeyValueSegmentIdentifier.WORLD_STATE]
+      WorldStateKeyValueStorage(segmentedStorage)
+    }
+
+    single {
+      val worldStateStorage = get<WorldStateKeyValueStorage>()
+      val worldStatePreImageStorage = WorldStatePreimageKeyValueStorage(LimitedInMemoryKeyValueStorage(5000L))
+      WorldStateArchive(worldStateStorage, worldStatePreImageStorage)
+    }
+  }
+
+  val stateModule = module {
+
+    single { BesuBlockReplay(get(), get(), get()) }
+
+    single { TransactionSimulator(get(), get(), get()) }
+
+    single { BlockReader() }
+  }
 }

@@ -40,147 +40,147 @@ import javax.sql.DataSource
 
 class ExfloPostgresPlugin : ExfloPlugin<ExfloPostgresCliOptions>() {
 
-    override val name = ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID
+  override val name = ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID
 
-    override val options = ExfloPostgresCliOptions()
+  override val options = ExfloPostgresCliOptions()
 
-    override fun implKoinModules(): List<Module> = listOf(
-        module {
+  override fun implKoinModules(): List<Module> = listOf(
+    module {
 
-            single { options }
+      single { options }
 
-            single<ExfloCliOptions> { options }
+      single<ExfloCliOptions> { options }
 
-            single<DataSource> {
-                val dataSourceConfig = HikariConfig()
-                    .apply {
-                        driverClassName = Driver::class.java.name
-                        jdbcUrl = options.jdbcUrl
-                        isAutoCommit = false
-                        maximumPoolSize = 30
-                        addDataSourceProperty("cachePrepStmts", "true")
-                        addDataSourceProperty("prepStmtCacheSize", "250")
-                        addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
-                    }
+      single<DataSource> {
+        val dataSourceConfig = HikariConfig()
+          .apply {
+            driverClassName = Driver::class.java.name
+            jdbcUrl = options.jdbcUrl
+            isAutoCommit = false
+            maximumPoolSize = 30
+            addDataSourceProperty("cachePrepStmts", "true")
+            addDataSourceProperty("prepStmtCacheSize", "250")
+            addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
+          }
 
-                HikariDataSource(dataSourceConfig)
-            }
+        HikariDataSource(dataSourceConfig)
+      }
 
-            single<BlockWriter> {
-                PostgresBlockWriter(get(), get(), get(), get(), options)
+      single<BlockWriter> {
+        PostgresBlockWriter(get(), get(), get(), get(), options)
+      }
+    }
+  )
+
+  override fun implStart(koinApp: KoinApplication) {
+
+    val koin = koinApp.koin
+
+    val dataSource = koin.get<DataSource>()
+    val netConfig = koin.get<EthNetworkConfig>()
+
+    options.disableMigrations
+      .takeIf { !it }
+      ?.run { migrateDatabase(dataSource) }
+
+    checkDatabaseNetworkId(dataSource, netConfig)
+  }
+
+  private fun migrateDatabase(dataSource: DataSource) {
+
+    // we need to use the class loader from the plugin class so we correctly pick up the plugin classloader
+    // otherwise flyway will not correctly detect the migrations in the classpath
+
+    val config = FluentConfiguration(ExfloPostgresPlugin::class.java.classLoader)
+      .dataSource(dataSource)
+      .locations("classpath:/db/migration")
+
+    Flyway(config).migrate()
+  }
+
+  private fun checkDatabaseNetworkId(dataSource: DataSource, config: EthNetworkConfig) {
+
+    val dbCtx = DSL.using(dataSource, SQLDialect.POSTGRES)
+
+    dbCtx.transaction { txConfig ->
+
+      val txCtx = DSL.using(txConfig)
+
+      val networkKey = "network_id"
+
+      val dbNetworkId = txCtx
+        .select(METADATA.VALUE)
+        .from(METADATA)
+        .where(METADATA.KEY.eq(networkKey))
+        .fetchOne()
+        ?.value1()
+        ?.toBigInteger()
+
+      when (dbNetworkId) {
+        // do nothing, db matches the configured network
+        config.networkId -> {
+        }
+        // first run, we need to set the network id in the database
+        null -> {
+          MetadataRecord()
+            .apply {
+              key = networkKey
+              value = config.networkId.toString()
+              txCtx.executeInsert(this)
             }
         }
-    )
-
-    override fun implStart(koinApp: KoinApplication) {
-
-        val koin = koinApp.koin
-
-        val dataSource = koin.get<DataSource>()
-        val netConfig = koin.get<EthNetworkConfig>()
-
-        options.disableMigrations
-            .takeIf { !it }
-            ?.run { migrateDatabase(dataSource) }
-
-        checkDatabaseNetworkId(dataSource, netConfig)
+        else -> throw IllegalStateException(
+          "Configured network id '${config.networkId}' does not match database network id '$dbNetworkId"
+        )
+      }
     }
-
-    private fun migrateDatabase(dataSource: DataSource) {
-
-        // we need to use the class loader from the plugin class so we correctly pick up the plugin classloader
-        // otherwise flyway will not correctly detect the migrations in the classpath
-
-        val config = FluentConfiguration(ExfloPostgresPlugin::class.java.classLoader)
-            .dataSource(dataSource)
-            .locations("classpath:/db/migration")
-
-        Flyway(config).migrate()
-    }
-
-    private fun checkDatabaseNetworkId(dataSource: DataSource, config: EthNetworkConfig) {
-
-        val dbCtx = DSL.using(dataSource, SQLDialect.POSTGRES)
-
-        dbCtx.transaction { txConfig ->
-
-            val txCtx = DSL.using(txConfig)
-
-            val networkKey = "network_id"
-
-            val dbNetworkId = txCtx
-                .select(METADATA.VALUE)
-                .from(METADATA)
-                .where(METADATA.KEY.eq(networkKey))
-                .fetchOne()
-                ?.value1()
-                ?.toBigInteger()
-
-            when (dbNetworkId) {
-                // do nothing, db matches the configured network
-                config.networkId -> {
-                }
-                // first run, we need to set the network id in the database
-                null -> {
-                    MetadataRecord()
-                        .apply {
-                            key = networkKey
-                            value = config.networkId.toString()
-                            txCtx.executeInsert(this)
-                        }
-                }
-                else -> throw IllegalStateException(
-                    "Configured network id '${config.networkId}' does not match database network id '$dbNetworkId"
-                )
-            }
-        }
-    }
+  }
 }
 
 class ExfloPostgresCliOptions : ExfloCliOptions {
 
-    @CommandLine.Option(
-        names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-enabled"],
-        paramLabel = "<BOOLEAN>",
-        defaultValue = "false",
-        description = ["Enable this plugin"]
-    )
-    override var enabled: Boolean = false
+  @CommandLine.Option(
+    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-enabled"],
+    paramLabel = "<BOOLEAN>",
+    defaultValue = "false",
+    description = ["Enable this plugin"]
+  )
+  override var enabled: Boolean = false
 
-    @CommandLine.Option(
-        names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-start-block-override"],
-        paramLabel = "<LONG>",
-        description = ["Block number from which to start publishing"]
-    )
-    override var startBlockOverride: Long? = null
+  @CommandLine.Option(
+    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-start-block-override"],
+    paramLabel = "<LONG>",
+    description = ["Block number from which to start publishing"]
+  )
+  override var startBlockOverride: Long? = null
 
-    @CommandLine.Option(
-        names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-max-fork-size"],
-        paramLabel = "<INTEGER>",
-        defaultValue = "${ExfloCliDefaultOptions.MAX_FORK_SIZE}",
-        description = ["Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart"]
-    )
-    override var maxForkSize: Int = ExfloCliDefaultOptions.MAX_FORK_SIZE
+  @CommandLine.Option(
+    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-max-fork-size"],
+    paramLabel = "<INTEGER>",
+    defaultValue = "${ExfloCliDefaultOptions.MAX_FORK_SIZE}",
+    description = ["Max no. of blocks that a fork can be comprised of. Used for resetting chain tracker's tail on restart"]
+  )
+  override var maxForkSize: Int = ExfloCliDefaultOptions.MAX_FORK_SIZE
 
-    @CommandLine.Option(
-        names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-processing-level"],
-        paramLabel = "<ENTITY>",
-        description = ["Level of which this plugin will process entities. Each one relies on the previous one"]
-    )
-    var processableEntity: ProcessableEntity = RECEIPTS
+  @CommandLine.Option(
+    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-processing-level"],
+    paramLabel = "<ENTITY>",
+    description = ["Level of which this plugin will process entities. Each one relies on the previous one"]
+  )
+  var processableEntity: ProcessableEntity = RECEIPTS
 
-    @CommandLine.Option(
-        names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-jdbc-url"],
-        defaultValue = "jdbc:postgresql://localhost/exflo_dev?user=exflo_dev&password=exflo_dev",
-        paramLabel = "<STRING>",
-        description = ["JDBC connection url for postgres database"]
-    )
-    var jdbcUrl: String? = null
+  @CommandLine.Option(
+    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-jdbc-url"],
+    defaultValue = "jdbc:postgresql://localhost/exflo_dev?user=exflo_dev&password=exflo_dev",
+    paramLabel = "<STRING>",
+    description = ["JDBC connection url for postgres database"]
+  )
+  var jdbcUrl: String? = null
 
-    @CommandLine.Option(
-        names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-ignore-migrations-check"],
-        paramLabel = "<BOOLEAN>",
-        description = ["Enables or disables checking migrations on the selected DB"]
-    )
-    var disableMigrations: Boolean = false
+  @CommandLine.Option(
+    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-ignore-migrations-check"],
+    paramLabel = "<BOOLEAN>",
+    description = ["Enables or disables checking migrations on the selected DB"]
+  )
+  var disableMigrations: Boolean = false
 }

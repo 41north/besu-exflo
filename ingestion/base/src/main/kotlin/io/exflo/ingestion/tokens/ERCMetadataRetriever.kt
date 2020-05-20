@@ -40,130 +40,130 @@ class ERCMetadataRetriever(
   private val blockHash: Hash
 ) {
 
-    @Suppress("UNCHECKED_CAST")
-    fun name(): String? {
-        val fn = Function(
-            "name",
-            listOf(),
-            listOf(TypeReference.create(Utf8String::class.java))
-        )
-        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
-        return execute(fnEncoded, contractAddress, blockHash)
-            ?.output
-            ?.let {
-                val rawInput = it.toUnprefixedHexString()
-                FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Utf8String>
-            }
-            ?.firstOrNull()
-            ?.value
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun symbol(): String? {
-        val fn = Function(
-            "symbol",
-            listOf(),
-            listOf(TypeReference.create(Utf8String::class.java))
-        )
-        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
-        return execute(fnEncoded, contractAddress, blockHash)
-            ?.output
-            ?.let {
-                val rawInput = it.toUnprefixedHexString()
-                FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Utf8String>
-            }
-            ?.firstOrNull()
-            ?.value
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun totalSupply(): UInt256? {
-        val fn = Function(
-            "totalSupply",
-            listOf(),
-            listOf(TypeReference.create(Uint256::class.java))
-        )
-        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
-        return execute(fnEncoded, contractAddress, blockHash)
-            ?.output
-            ?.let {
-                val rawInput = it.toUnprefixedHexString()
-                FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint256>
-            }
-            ?.firstOrNull()
-            ?.value?.let { UInt256.valueOf(it) }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun decimals(): Byte? {
-        val fn = Function(
-            "decimals",
-            listOf(),
-            listOf(TypeReference.create(Uint8::class.java))
-        )
-        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
-        return execute(fnEncoded, contractAddress, blockHash)
-            ?.output
-            ?.let {
-                val rawInput = it.toUnprefixedHexString()
-                FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint8>
-            }
-            ?.firstOrNull()
-            ?.value
-            ?.toByte()
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun cap(): UInt256? {
-        val fn = Function(
-            "cap",
-            listOf(),
-            listOf(TypeReference.create(Uint256::class.java))
-        )
-        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
-        return execute(fnEncoded, contractAddress, blockHash)
-            ?.output
-            ?.let {
-                val rawInput = it.toUnprefixedHexString()
-                FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint256>
-            }
-            ?.firstOrNull()
-            ?.value?.let { UInt256.valueOf(it) }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun granularity(): UInt256? {
-        val fn = Function(
-            "granularity",
-            listOf(),
-            listOf(TypeReference.create(Uint256::class.java))
-        )
-        val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
-        return execute(fnEncoded, contractAddress, blockHash)
-            ?.output
-            ?.let {
-                val rawInput = it.toUnprefixedHexString()
-                FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint256>
-            }
-            ?.firstOrNull()
-            ?.value?.let { UInt256.valueOf(it) }
-    }
-
-    private fun execute(
-      method: Bytes,
-      address: Address,
-      blockHash: Hash
-    ): TransactionSimulatorResult? = transactionSimulator.process(
-        CallParameter(
-            null,
-            address,
-            100_000,
-            null,
-            null,
-            method
-        ),
-        blockHash
+  @Suppress("UNCHECKED_CAST")
+  fun name(): String? {
+    val fn = Function(
+      "name",
+      listOf(),
+      listOf(TypeReference.create(Utf8String::class.java))
     )
-        .orElseGet(null)
-        ?.takeIf { it.isSuccessful }
+    val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
+    return execute(fnEncoded, contractAddress, blockHash)
+      ?.output
+      ?.let {
+        val rawInput = it.toUnprefixedHexString()
+        FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Utf8String>
+      }
+      ?.firstOrNull()
+      ?.value
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  fun symbol(): String? {
+    val fn = Function(
+      "symbol",
+      listOf(),
+      listOf(TypeReference.create(Utf8String::class.java))
+    )
+    val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
+    return execute(fnEncoded, contractAddress, blockHash)
+      ?.output
+      ?.let {
+        val rawInput = it.toUnprefixedHexString()
+        FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Utf8String>
+      }
+      ?.firstOrNull()
+      ?.value
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  fun totalSupply(): UInt256? {
+    val fn = Function(
+      "totalSupply",
+      listOf(),
+      listOf(TypeReference.create(Uint256::class.java))
+    )
+    val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
+    return execute(fnEncoded, contractAddress, blockHash)
+      ?.output
+      ?.let {
+        val rawInput = it.toUnprefixedHexString()
+        FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint256>
+      }
+      ?.firstOrNull()
+      ?.value?.let { UInt256.valueOf(it) }
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  fun decimals(): Byte? {
+    val fn = Function(
+      "decimals",
+      listOf(),
+      listOf(TypeReference.create(Uint8::class.java))
+    )
+    val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
+    return execute(fnEncoded, contractAddress, blockHash)
+      ?.output
+      ?.let {
+        val rawInput = it.toUnprefixedHexString()
+        FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint8>
+      }
+      ?.firstOrNull()
+      ?.value
+      ?.toByte()
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  fun cap(): UInt256? {
+    val fn = Function(
+      "cap",
+      listOf(),
+      listOf(TypeReference.create(Uint256::class.java))
+    )
+    val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
+    return execute(fnEncoded, contractAddress, blockHash)
+      ?.output
+      ?.let {
+        val rawInput = it.toUnprefixedHexString()
+        FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint256>
+      }
+      ?.firstOrNull()
+      ?.value?.let { UInt256.valueOf(it) }
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  fun granularity(): UInt256? {
+    val fn = Function(
+      "granularity",
+      listOf(),
+      listOf(TypeReference.create(Uint256::class.java))
+    )
+    val fnEncoded = Bytes.fromHexString(FunctionEncoder.encode(fn))
+    return execute(fnEncoded, contractAddress, blockHash)
+      ?.output
+      ?.let {
+        val rawInput = it.toUnprefixedHexString()
+        FunctionReturnDecoder.decode(rawInput, fn.outputParameters) as List<Uint256>
+      }
+      ?.firstOrNull()
+      ?.value?.let { UInt256.valueOf(it) }
+  }
+
+  private fun execute(
+    method: Bytes,
+    address: Address,
+    blockHash: Hash
+  ): TransactionSimulatorResult? = transactionSimulator.process(
+    CallParameter(
+      null,
+      address,
+      100_000,
+      null,
+      null,
+      method
+    ),
+    blockHash
+  )
+    .orElseGet(null)
+    ?.takeIf { it.isSuccessful }
 }

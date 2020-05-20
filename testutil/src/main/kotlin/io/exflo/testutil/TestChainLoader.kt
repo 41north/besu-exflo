@@ -31,17 +31,17 @@ class TestChainLoader(
   private val blockIterator: RawBlockIterator
 ) {
 
-    fun load() {
+  fun load() {
 
-        blockIterator.forEach { block ->
-            if (block.header.number == BlockHeader.GENESIS_BLOCK_NUMBER) {
-                return@forEach
-            }
+    blockIterator.forEach { block ->
+      if (block.header.number == BlockHeader.GENESIS_BLOCK_NUMBER) {
+        return@forEach
+      }
 
-            val protocolSpec = protocolSchedule.getByBlockNumber(block.header.number)
-            val blockImporter = protocolSpec.blockImporter
-            val result = blockImporter.importBlock(protocolContext, block, HeaderValidationMode.FULL)
-            check(result) { "Unable to import block " + block.header.number }
-        }
+      val protocolSpec = protocolSchedule.getByBlockNumber(block.header.number)
+      val blockImporter = protocolSpec.blockImporter
+      val result = blockImporter.importBlock(protocolContext, block, HeaderValidationMode.FULL)
+      check(result) { "Unable to import block " + block.header.number }
     }
+  }
 }

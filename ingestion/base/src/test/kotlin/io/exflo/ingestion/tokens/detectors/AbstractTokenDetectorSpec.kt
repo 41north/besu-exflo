@@ -50,25 +50,25 @@ import org.koin.test.inject
 
 abstract class AbstractTokenDetectorSpec : FunSpec(), KoinTest {
 
-    protected val testChainLoader: TestChainLoader by inject()
-    protected val testHelper: ExfloTestCaseHelper by inject()
-    protected val networkConfig: EthNetworkConfig by inject()
-    protected val protocolSchedule: ProtocolSchedule<*> by inject()
-    protected val transactionSimulator: TransactionSimulator by inject()
+  protected val testChainLoader: TestChainLoader by inject()
+  protected val testHelper: ExfloTestCaseHelper by inject()
+  protected val networkConfig: EthNetworkConfig by inject()
+  protected val protocolSchedule: ProtocolSchedule<*> by inject()
+  protected val transactionSimulator: TransactionSimulator by inject()
 
-    override fun beforeSpecClass(spec: Spec, tests: List<TopLevelTest>) {
-        startKoin {
-            modules(KoinTestIngestionModules())
-        }
-
-        // import test blocks
-        testChainLoader.load()
-
-        // register precompiled contracts
-        PrecompiledContractsFactory.register(protocolSchedule, networkConfig.networkId)
+  override fun beforeSpecClass(spec: Spec, tests: List<TopLevelTest>) {
+    startKoin {
+      modules(KoinTestIngestionModules())
     }
 
-    override fun afterSpecClass(spec: Spec, results: Map<TestCase, TestResult>) {
-        stopKoin()
-    }
+    // import test blocks
+    testChainLoader.load()
+
+    // register precompiled contracts
+    PrecompiledContractsFactory.register(protocolSchedule, networkConfig.networkId)
+  }
+
+  override fun afterSpecClass(spec: Spec, results: Map<TestCase, TestResult>) {
+    stopKoin()
+  }
 }

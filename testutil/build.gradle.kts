@@ -15,26 +15,25 @@
  */
 
 plugins {
-    `java-library`
-    kotlin("jvm")
-    id("org.jlleitschuh.gradle.ktlint")
+  `java-library`
+  kotlin("jvm")
 }
 
 dependencies {
-    api(kotlin("stdlib"))
+  api(kotlin("stdlib"))
 
-    implementation("org.hyperledger.besu.internal:besu")
-    implementation("org.hyperledger.besu.internal:core")
-    implementation("org.hyperledger.besu.internal:config")
-    implementation("org.hyperledger.besu.internal:metrics-core")
-    implementation("org.hyperledger.besu.internal:rlp")
-    implementation("org.hyperledger.besu.internal:kvstore")
+  implementation("org.hyperledger.besu.internal:besu")
+  implementation("org.hyperledger.besu.internal:core")
+  implementation("org.hyperledger.besu.internal:config")
+  implementation("org.hyperledger.besu.internal:metrics-core")
+  implementation("org.hyperledger.besu.internal:rlp")
+  implementation("org.hyperledger.besu.internal:kvstore")
 
-    implementation("com.beust:klaxon")
+  implementation("com.beust:klaxon")
 
-    api("io.kotlintest:kotlintest-runner-junit5")
-    api("org.hyperledger.besu.internal:testutil")
-    api("org.koin:koin-test")
-    api("io.mockk:mockk")
-    api("com.splunk.logging:splunk-library-javalogging")
+  api("io.kotlintest:kotlintest-runner-junit5")
+  api("org.hyperledger.besu.internal:testutil")
+  api("org.koin:koin-test")
+  api("io.mockk:mockk")
+  api("com.splunk.logging:splunk-library-javalogging")
 }

@@ -15,38 +15,37 @@
  */
 
 plugins {
-    `java-library`
-    kotlin("jvm")
-    `maven-publish`
-    id("org.jlleitschuh.gradle.ktlint")
+  `java-library`
+  kotlin("jvm")
+  `maven-publish`
 }
 
 dependencies {
 
-    implementation(project(":ingestion:base"))
+  implementation(project(":ingestion:base"))
 
-    implementation("io.kcache:kcache")
-    implementation("org.apache.kafka:kafka-clients")
+  implementation("io.kcache:kcache")
+  implementation("org.apache.kafka:kafka-clients")
 
-    runtimeOnly("org.apache.logging.log4j:log4j-core")
+  runtimeOnly("org.apache.logging.log4j:log4j-core")
 
-    testImplementation(project(":testutil"))
-    testImplementation("org.springframework.kafka:spring-kafka-test")
+  testImplementation(project(":testutil"))
+  testImplementation("org.springframework.kafka:spring-kafka-test")
 }
 
 tasks {
-    register<JavaExec>("runKafka") {
-        group = "run"
-        description = "Execute Exflo's Kafka plugin from Gradle"
-        classpath = sourceSets.main.get().runtimeClasspath
-        main = "org.hyperledger.besu.Besu"
-        // Customize args as required to test and execute Exflo from Gradle
-        // See https://github.com/41north/exflo/blob/develop/readme/.github/USAGE.md to customize params
-        // Otherwise it will take defined defaults
-        args = listOf("--plugin-exflo-kafka-enabled=true")
-    }
+  register<JavaExec>("runKafka") {
+    group = "run"
+    description = "Execute Exflo's Kafka plugin from Gradle"
+    classpath = sourceSets.main.get().runtimeClasspath
+    main = "org.hyperledger.besu.Besu"
+    // Customize args as required to test and execute Exflo from Gradle
+    // See https://github.com/41north/exflo/blob/develop/readme/.github/USAGE.md to customize params
+    // Otherwise it will take defined defaults
+    args = listOf("--plugin-exflo-kafka-enabled=true")
+  }
 
-    withType<Test> {
-        useJUnitPlatform()
-    }
+  withType<Test> {
+    useJUnitPlatform()
+  }
 }

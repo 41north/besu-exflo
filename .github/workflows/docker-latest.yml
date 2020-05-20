@@ -1,0 +1,18 @@
+name: Publish to Registry
+on:
+  push:
+    branches:
+      - master
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: 41north/exflo
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+          dockerfile: docker/exflo/Dockerfile
+          tags: "latest"
