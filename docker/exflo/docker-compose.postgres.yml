@@ -54,6 +54,5 @@ services:
       BESU_NETWORK: ROPSTEN
       BESU_SYNC_MODE: FULL
       BESU_DATA_PATH: /opt/besu/data
-      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'false'
       BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: 'true'
       BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo

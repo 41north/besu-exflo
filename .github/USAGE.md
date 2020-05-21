@@ -19,8 +19,7 @@ variables are more comfortable to use rather than a list of command-line argumen
 Keep in mind for environment variables you need to prepend `BESU_PLUGIN_EXFLO_${COMMAND}` and for command-line arguments `--plugin-exflo-${COMMAND}`
 where `${COMMAND}` is the one of the possible values as described in each plugin section.
 
-By default, both plugins, Postgres and Kafka, are disabled. So, if you want to turn one of them on, you can set `--plugin-exflo-postgres-enabled`
-or `--plugin-exflo-kafka-enabled` to true. You can even execute both at the same time!
+By default, plugins are disabled. So, if you want to turn one of them on, you can set `--plugin-exflo-postgres-enabled` to true. 
 
 ### Postgres
 
@@ -34,21 +33,3 @@ Possible command line arguments for `postgres` are described below:
 | `--plugin-exflo-postgres-processing-level`        | `BESU_PLUGIN_EXFLO_POSTGRES_PROCESSING_LEVEL`        | Comma separated list of entities to include on import / ingest. Default is a predefined list          | HEADER, BODY, RECEIPTS, TRACES                                          |
 | `--plugin-exflo-postgres-jdbc-url`                | `BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL`                | JDBC connection url for postgres database                                                             | jdbc:postgresql://localhost/exflo_dev?user=exflo_dev&password=exflo_dev |
 | `--plugin-exflo-postgres-ignore-migrations-check` | `BESU_PLUGIN_EXFLO_POSTGRES_IGNORE_MIGRATIONS_CHECK` | Enables or disables checking migrations on the selected DB                                            | false                                                                   |
-
-### Kafka
-
-Possible command line arguments for `kafka` are described below:
-
-| Flag                                                   | Environment Variable                                      | Description                                                                                           | Default                                      |
-| :----------------------------------------------------- | :-------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- | :------------------------------------------- |
-| `--plugin-exflo-kafka-enabled`                         | `BESU_PLUGIN_EXFLO_KAFKA_ENABLED`                         | Enables the kafka exflo plugin                                                                        | false                                        |
-| `--plugin-exflo-kafka-earliest-block-number`           | `BESU_PLUGIN_EXFLO_KAFKA_EARLIEST_BLOCK_NUMBER`           | Earliest block number to include in the history                                                       | Genesis block                                |
-| `--plugin-exflo-kafka-processing-level`                | `BESU_PLUGIN_EXFLO_KAFKA_PROCESSING_LEVEL`                | Comma separated list of entities to include on import / ingest. Default is a predefined list          | HEADER, BODY, RECEIPTS, TRACES               |
-| `--plugin-exflo-kafka-bootstrap-servers`               | `BESU_PLUGIN_EXFLO_KAFKA_BOOTSTRAP_SERVERS`               | Kafka cluster to publish into                                                                         | localhost:9092                               |
-| `--plugin-exflo-kafka-client-id`                       | `BESU_PLUGIN_EXFLO_KAFKA_CLIENT_ID`                       | Client id to use with Kafka Publisher                                                                 | exflo                                        |
-| `--plugin-exflo-kafka-replication-factor`              | `BESU_PLUGIN_EXFLO_KAFKA_REPLICATION_FACTOR`              | Replication factor to use for topics                                                                  | 1                                            |
-| `--plugin-exflo-kafka-import-cache-topic`              | `BESU_PLUGIN_EXFLO_KAFKA_IMPORT_CACHE_TOPIC`              | Topic to use for import progress tracking                                                             | \_exflo-import-cache                         |
-| `--plugin-exflo-kafka-blocks-topic`                    | `BESU_PLUGIN_EXFLO_KAFKA_BLOCKS_TOPIC`                    | Topic to use for chain tracker state store                                                            | blocks                                       |
-| `--plugin-exflo-kafka-blocks-topic-partitions`         | `BESU_PLUGIN_EXFLO_KAFKA_BLOCKS_TOPIC_PARTITIONS`         | Num of partitions related to blocks topic                                                             | 1                                            |
-| `--plugin-exflo-kafka-blocks-topic-replication-factor` | `BESU_PLUGIN_EXFLO_KAFKA_BLOCKS_TOPIC_REPLICATION_FACTOR` | Num of replication factor related to blocks topic                                                     | 1                                            |
-| `--plugin-exflo-kafka-ignore-kafka-topic-creation`     | `BESU_PLUGIN_EXFLO_KAFKA_IGNORE_KAFKA_TOPIC_CREATION`     | Enables or disables the creation of the required Kafka topic                                          | false                                        |

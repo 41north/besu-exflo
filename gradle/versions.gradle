@@ -90,16 +90,6 @@ dependencyManagement {
     dependency 'com.google.flatbuffers:flatbuffers-java:1.11.0'
 
     // ------------------------------------------------------------------
-    // Exflo: Kafka
-    // ------------------------------------------------------------------
-
-    dependency 'org.apache.kafka:kafka-clients:2.5.0'
-
-    dependency 'io.kcache:kcache:3.1.2'
-
-    dependency 'org.springframework.kafka:spring-kafka-test:2.4.6.RELEASE'
-
-    // ------------------------------------------------------------------
     // Exflo: Postgres
     // ------------------------------------------------------------------
 

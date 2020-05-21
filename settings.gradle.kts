@@ -25,7 +25,6 @@ pluginManagement {
 
 include(":domain")
 include(":ingestion:base")
-include(":ingestion:kafka")
 include(":ingestion:postgres")
 include(":plugin")
 include(":testutil")

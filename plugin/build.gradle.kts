@@ -23,7 +23,6 @@ plugins {
 }
 
 dependencies {
-  implementation(project(":ingestion:kafka"))
   implementation(project(":ingestion:postgres"))
 }
 

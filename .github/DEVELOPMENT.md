@@ -13,7 +13,6 @@
     * [Processing using Postgres](#processing-using-postgres)
        * [Performing Migrations](#performing-migrations)
        * [Updating Jooq Entities](#updating-jooq-entities)
-    * [Processing into Kafka](#processing-into-kafka)
     * [How to update tests](#how-to-update-tests)
     * [Run tests](#run-tests)
     * [Formatting source](#formatting-source)
@@ -39,7 +38,6 @@ The codebase can be broken down as follows:
 ├── gradle            # Configuration of main gradle dependencies
 ├── ingestion         # Core of Exflo
 │   ├── base          #   - Common logic to all plugins
-│   ├── kafka         #   - Specific logic related to Kafka implementation
 │   └── postgres      #   - Specific logic related to Postgres implementation
 ├── plugin            # Common entry point plugin definitions for Besu
 ├── postman           # JSON RPC Postman collection to interact with the node
@@ -134,29 +132,11 @@ $ ./gradlew jooq-codegen-primary
 
 We have added another shortcut named `GRADLE | Postgres > JooqCodeGen`.
 
-## Processing into Kafka
-
-The steps are performed in the same way as have been describing before for Postgres but with small variations:
-
-```sh
-$ docker-compose -f docker-compose.exflo-kafka.yml up -d
-```
-
-Alternatively you can do the same by running the Run configuration named `DOCKER | Kafka`.
-
-After a couple of seconds, `kafka` will be running on your machine, to verify, you can check the logs using the following command:
-
-```sh
-$ docker-compose -f docker-compose.exflo-kafka.yml logs
-```
-
-The final step is to execute the Run configuration named `ROPSTEN | Kafka | Run`.
-
 ## How to update tests
 
 We are using [KotlinTest](https://github.com/kotlintest/kotlintest) for verifying that everything works as intended.
 
-Inside `testutil` module you will find a series of helper classes. Currently the majority of tests are performed on `ingestion/base` module (although we will cover `postgres` and `kafka` modules as well).
+Inside `testutil` module you will find a series of helper classes. Currently the majority of tests are performed on `ingestion/base` module.
 
 We are using an exported [`test.blocks`](testutil/src/main/resources/test.blocks) blockchain that the testing framework ingests in order to perform tests. That way we can combine some tests that involves the usage of Solidity code (like testing for Tokens). If you want to update some tests on `truffle/`:
 

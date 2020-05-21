@@ -121,7 +121,6 @@ distributions {
       from("LICENSE") { into("") }
       from("README.md") { into("") }
       from("CHANGELOG.md") { into("") }
-      from("ingestion/kafka/build/libs") { into("plugins") }
       from("ingestion/postgres/build/libs") { into("plugins") }
     }
   }

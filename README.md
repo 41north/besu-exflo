@@ -19,7 +19,7 @@
 
 ## 🗒️ Features
 
-Exflo can extract the following information from a Besu archive instance into either a [Postgres](https://www.postgresql.org/) database or a [Kafka](https://kafka.apache.org/) topic:
+Exflo can extract the following information from a Besu archive instance into a [Postgres](https://www.postgresql.org/) database:
 
 - Block headers.
 - Transactions.
@@ -34,7 +34,6 @@ Some screenshots of captured data:
 | Plugin   | Screenshots                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Postgres | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-2.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-3.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-4.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/postgres-capture-5.png" width="100" /></p> |
-| Kafka    | <p><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/kafka-capture-1.png" width="100" /><img src="https://raw.githubusercontent.com/41north/exflo/develop/.github/assets/kafka-capture-2.png" width="100" /></p>                                                                                                                                                                                                                                                                                                                                                                            |
 
 ## ⏲️ Try Exflo in 10 seconds
 
@@ -50,18 +49,8 @@ docker-compose -f docker/exflo/docker-compose.postgres.yml up
 
 </details>
 
-<details>
-<summary>Kafka</summary>
-
-```bash
-docker-compose -f docker/exflo/docker-compose.kafka.yml up
-```
-
-</details>
-
 Wait for docker to properly initialize each service. Once everything is ready navigate to
-[`http://localhost:8082`](http://localhost:8082), you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or
-[`kafkahq`](https://akhq.io/).
+[`http://localhost:8082`](http://localhost:8082), you will be greeted with [`pgweb`](https://sosedoff.github.io/pgweb/).
 
 ## 🚆 Development quick start
 
@@ -102,21 +91,6 @@ Intellij:
 
 </details>
 
-<details>
-<summary>Kafka</summary>
-
-Terminal:
-
-```bash
-docker-compose -f docker-compose.exflo-kafka.yml up
-```
-
-Intellij:
-
-![Docker Intellij Run](.github/assets/docker-kafka-run.png)
-
-</details>
-
 Wait for each docker service to initialize.
 
 After that, you can start processing with Exflo:
@@ -136,23 +110,8 @@ Intellij:
 
 </details>
 
-<details>
-<summary>Kafka</summary>
-
-Terminal:
-
-```bash
-./gradlew runKafka
-```
-
-Intellij:
-
-![Kafka Intellij Run](.github/assets/ropsten-kafka-run.png)
-
-</details>
-
 You can now check the logs or open your browser and navigate to [`http://localhost:8082`](http://localhost:8082)
-and you will be greeted with either [`pgweb`](https://sosedoff.github.io/pgweb/) or [`kafkahq`](https://akhq.io/) respectively.
+and you will be greeted with [`pgweb`](https://sosedoff.github.io/pgweb/).
 
 Exflo will start processing immediately!
 
@@ -162,7 +121,7 @@ There are two possible ways of running Exflo with Besu.
 
 ### Bundled docker images
 
-We have provide a docker image that contains a pre-packaged version of Besu to make your life easier. This is the recommended way of running Exflo as you don't need to worry about placing the plugin in the correct folder path. Below is an an example using `docker-compose`:
+We have provided a docker image that contains a pre-packaged version of Besu to make your life easier. This is the recommended way of running Exflo as you don't need to worry about placing the plugin in the correct folder path. Below is an example using `docker-compose`:
 
 ```yaml
 version: "3.7"
@@ -174,7 +133,6 @@ services:
       BESU_NETWORK: ROPSTEN
       BESU_SYNC_MODE: FULL
       BESU_DATA_PATH: /opt/besu/data
-      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: "false"
       BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: "true"
       BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
 ```
@@ -202,7 +160,6 @@ services:
       BESU_NETWORK: ROPSTEN
       BESU_SYNC_MODE: FULL
       BESU_DATA_PATH: /opt/besu/data
-      BESU_PLUGIN_EXFLO_KAFKA_ENABLED: "false"
       BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: "true"
       BESU_PLUGIN_EXFLO_POSTGRES_JDBC_URL: jdbc:postgresql://postgres/exflo?user=exflo&password=exflo
 ```
