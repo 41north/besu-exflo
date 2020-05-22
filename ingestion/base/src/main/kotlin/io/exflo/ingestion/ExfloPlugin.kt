@@ -24,8 +24,8 @@ import io.exflo.ingestion.storage.InterceptingKeyValueStorageFactory
 import io.exflo.ingestion.storage.InterceptingPrivacyKeyValueStorageFactory
 import io.exflo.ingestion.tokens.precompiled.PrecompiledContractsFactory
 import io.exflo.ingestion.tracker.BlockWriter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -49,9 +49,12 @@ import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import picocli.CommandLine
+import kotlin.coroutines.CoroutineContext
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
+abstract class ExfloPlugin<T : ExfloCliOptions>(
+  override val coroutineContext: CoroutineContext = Dispatchers.IO
+) : BesuPlugin, CoroutineScope {
 
   protected abstract val name: String
 
@@ -187,10 +190,7 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
 
       blockWriter = koinApp.koin.get()
 
-      this.blockWriterJob = GlobalScope
-        .launch(Dispatchers.IO) {
-          blockWriter.run()
-        }
+      this.blockWriterJob = launch { blockWriter.run() }
     } catch (ex: Exception) {
       log.error("Failed to start", ex)
     }
@@ -222,6 +222,7 @@ interface ExfloCliOptions {
     BODY(2),
     RECEIPTS(3),
     TRACES(4);
+
     fun isActive(other: ProcessingLevel) = other.level <= this.level
   }
 }

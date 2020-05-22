@@ -84,7 +84,7 @@ class PostgresBlockWriter(
 
         do {
 
-          val headers = readHeadersFrom(head, 128)
+          val headers = readHeadersFrom(head)
 
           val elapsed = measureTime {
 

@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package io.exflo.ingestion.core
+package io.exflo.ingestion.postgres
 
-/**
- * Basic interface that defines an [ImportTask].
- */
-interface ImportTask {
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.exflo.testutil.KoinTestModules
+import org.koin.dsl.module
 
-  suspend fun run()
+object KoinPostgresIngestionModules {
+
+  private val postgresIngestionModule = module {
+    single {
+      ObjectMapper().registerModule(KotlinModule())
+    }
+  }
+
+  operator fun invoke() = KoinTestModules() + postgresIngestionModule
 }

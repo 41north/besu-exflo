@@ -50,13 +50,11 @@ dependencies {
   api("org.web3j:abi")
   api("org.web3j:utils")
 
-  api("io.reactivex.rxjava3:rxjava")
-
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
 
-  implementation("com.fasterxml.jackson.core:jackson-databind")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  api("com.fasterxml.jackson.core:jackson-databind")
+  api("com.fasterxml.jackson.module:jackson-module-kotlin")
 
   implementation("com.tinder.statemachine:statemachine")
 
