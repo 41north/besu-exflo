@@ -65,15 +65,7 @@ class BlockReader : KoinComponent {
   private val log = LogManager.getLogger()
 
   fun chainHead(): Hash? = blockchainStorage.chainHead.orElse(null)
-
-  fun fullBlock(
-    hash: Hash,
-    withHeader: Boolean = true,
-    withBody: Boolean = true,
-    withReceipts: Boolean = true,
-    withTrace: Boolean = true
-  ): FullBlock? = block(hash)?.let { fullBlock(it, withHeader, withBody, withReceipts, withTrace) }
-
+  
   fun fullBlock(
     block: Block,
     withHeader: Boolean = true,
