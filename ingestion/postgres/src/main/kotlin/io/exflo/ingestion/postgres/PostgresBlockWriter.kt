@@ -67,15 +67,15 @@ class PostgresBlockWriter(
 
   private val dbContext = DSL.using(dataSource, SQLDialect.POSTGRES)
 
-  private val log = LogManager.getLogger()
-
-  private val pollInterval = 1.seconds
+  private val pollInterval = cliOptions.pollInterval?.seconds ?: 1.seconds
 
   private val processingLevel = cliOptions.processingLevel
 
-  private val earliestBlockNumber = cliOptions.earliestBlockNumber ?: 0L
+  private val earliestBlockNumber = cliOptions.earliestBlockNumber ?: BlockHeader.GENESIS_BLOCK_NUMBER
 
-  override suspend fun run() {
+  private val log = LogManager.getLogger()
+
+  override suspend fun run() =
     coroutineScope {
 
       while (isActive) {
@@ -100,7 +100,7 @@ class PostgresBlockWriter(
 
                   try {
 
-                    // update any previous headers with the same numbers as those we are about to sync  and set them
+                    // update any previous headers with the same numbers as those we are about to sync and set them
                     // as no longer canonical
 
                     txCtx
@@ -139,7 +139,6 @@ class PostgresBlockWriter(
                       launch { trace(headerRecord, ommerChannel, traceRecords) }
 
                       launch {
-
                         writeToDb(txCtx, bodyRecords)
                         writeToDb(txCtx, receiptRecords)
                         writeToDb(txCtx, traceRecords)
@@ -175,15 +174,11 @@ class PostgresBlockWriter(
         // that has already been imported
 
         if (isActive) {
-          pollInterval
-            .apply {
-              log.debug("Import pass complete. Waiting $this before another attempt")
-              delay(this)
-            }
+          log.debug("Import pass complete. Waiting $pollInterval before another attempt")
+          delay(pollInterval)
         }
       }
     }
-  }
 
   private suspend fun writeToDb(ctx: DSLContext, channel: Channel<TableRecord<*>>, batchSize: Int = 256) {
 

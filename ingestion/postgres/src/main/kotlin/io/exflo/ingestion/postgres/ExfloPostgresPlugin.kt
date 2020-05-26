@@ -177,4 +177,12 @@ class ExfloPostgresCliOptions : ExfloCliOptions {
     description = ["Enables or disables checking migrations on the selected DB"]
   )
   var disableMigrations: Boolean = false
+
+  @CommandLine.Option(
+    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-poll-interval"],
+    defaultValue = "1",
+    paramLabel = "<INT>",
+    description = ["Interval at which checking if there are new blocks to process"]
+  )
+  var pollInterval: Int? = null
 }
