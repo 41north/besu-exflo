@@ -18,16 +18,26 @@ package io.exflo.ingestion.postgres
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.exflo.ingestion.tracker.BlockReader
 import io.exflo.testutil.KoinTestModules
+import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockReplay
+import org.hyperledger.besu.ethereum.api.jsonrpc.internal.processor.BlockTracer
+import org.hyperledger.besu.ethereum.transaction.TransactionSimulator
 import org.koin.dsl.module
 
 object KoinPostgresIngestionModules {
 
-  private val postgresIngestionModule = module {
-    single {
-      ObjectMapper().registerModule(KotlinModule())
-    }
+  private val ingestion = module {
+    single { BlockReplay(get(), get(), get()) }
+
+    single { BlockTracer(get()) }
+
+    single { TransactionSimulator(get(), get(), get()) }
+
+    single { BlockReader() }
+
+    single { ObjectMapper().registerModule(KotlinModule()) }
   }
 
-  operator fun invoke() = KoinTestModules() + postgresIngestionModule
+  operator fun invoke() = KoinTestModules() + ingestion
 }
