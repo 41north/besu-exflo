@@ -38,7 +38,9 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import java.io.PrintWriter
 import java.sql.Connection
+import java.sql.SQLFeatureNotSupportedException
 import java.util.logging.Logger
+import javax.sql.DataSource
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -83,7 +85,7 @@ class PostgresBlockWriterSpec : FunSpec(), KoinTest {
 
 object MockDataSources {
 
-  val shouldConvertAndStoreABatchOfBlocks: javax.sql.DataSource by lazy {
+  val shouldConvertAndStoreABatchOfBlocks: DataSource by lazy {
     val mockDataProvider = MockDataProvider { ctx ->
       val create = DSL.using(SQLDialect.POSTGRES)
 
@@ -92,43 +94,38 @@ object MockDataSources {
         sql.startsWith("select") && sql.contains(Tables.BLOCK_HEADER.toString()) -> {
           arrayOf(MockResult(0, create.newResult(Tables.BLOCK_HEADER.NUMBER, Tables.BLOCK_HEADER.HASH)))
         }
+        sql.startsWith("insert") || sql.startsWith("update") -> {
+          // ignore updates to db
+          arrayOf()
+        }
         else -> throw IllegalStateException("SQL statement not mocked: $sql")
       }
     }
-    MockDataSource(MockConnection(mockDataProvider))
+
+    MockDataSource(mockDataProvider)
   }
 
-  private class MockDataSource(private val mockConnection: MockConnection) : javax.sql.DataSource {
-    override fun setLogWriter(p0: PrintWriter?) {
-      throw NotImplementedError()
-    }
+  private class MockDataSource(
+    private val provider: MockDataProvider
+  ) : DataSource {
 
-    override fun setLoginTimeout(p0: Int) {
-      throw NotImplementedError()
-    }
+    override fun setLogWriter(out: PrintWriter?): Unit = throw SQLFeatureNotSupportedException()
 
-    override fun isWrapperFor(p0: Class<*>?): Boolean {
-      throw NotImplementedError()
-    }
+    override fun setLoginTimeout(seconds: Int): Unit = throw SQLFeatureNotSupportedException()
 
-    override fun <T : Any?> unwrap(p0: Class<T>?): T {
-      throw NotImplementedError()
-    }
+    override fun isWrapperFor(iface: Class<*>?): Boolean = throw SQLFeatureNotSupportedException()
 
-    override fun getConnection(): Connection = mockConnection
+    override fun <T : Any?> unwrap(iface: Class<T>?): T = throw SQLFeatureNotSupportedException()
 
-    override fun getConnection(p0: String?, p1: String?): Connection = mockConnection
+    override fun getConnection(): Connection = MockConnection(provider)
 
-    override fun getParentLogger(): Logger {
-      throw NotImplementedError()
-    }
+    override fun getConnection(username: String?, password: String?): Connection =
+      throw SQLFeatureNotSupportedException()
 
-    override fun getLogWriter(): PrintWriter {
-      throw NotImplementedError()
-    }
+    override fun getParentLogger(): Logger = throw SQLFeatureNotSupportedException()
 
-    override fun getLoginTimeout(): Int {
-      throw NotImplementedError()
-    }
+    override fun getLogWriter(): PrintWriter = throw SQLFeatureNotSupportedException()
+
+    override fun getLoginTimeout(): Int = throw SQLFeatureNotSupportedException()
   }
 }

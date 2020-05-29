@@ -96,7 +96,7 @@ dependencyManagement {
 
     dependency 'org.postgresql:postgresql:42.2.12'
 
-    dependency 'org.jooq:jooq:3.12.2'
+    dependency 'org.jooq:jooq:3.12.3'
 
     dependency 'com.zaxxer:HikariCP:3.4.5'
 
