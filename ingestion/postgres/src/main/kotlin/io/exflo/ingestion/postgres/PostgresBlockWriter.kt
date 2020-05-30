@@ -38,6 +38,7 @@ import io.exflo.postgres.jooq.tables.records.BlockHeaderRecord
 import io.exflo.postgres.jooq.tables.records.BlockTraceRecord
 import io.exflo.postgres.jooq.tables.records.OmmerRecord
 import io.exflo.postgres.jooq.tables.records.TransactionRecord
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -55,6 +56,7 @@ import org.jooq.impl.DSL
 import javax.sql.DataSource
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 import kotlin.time.seconds
 
 @ExperimentalTime
@@ -71,114 +73,214 @@ class PostgresBlockWriter(
 
   private val processingLevel = cliOptions.processingLevel
 
-  private val earliestBlockNumber = cliOptions.earliestBlockNumber ?: BlockHeader.GENESIS_BLOCK_NUMBER
+  private val startBlockNumber = cliOptions.earliestBlockNumber ?: BlockHeader.GENESIS_BLOCK_NUMBER
 
   private val log = LogManager.getLogger()
+
+  private val batchSize = 512
+
+  private val chunkSize = 64
 
   override suspend fun run() =
     coroutineScope {
 
+      // first ensure we have the genesis block
+
+      tryImportStartBlock()
+
+      // start import loop
+
       while (isActive) {
 
-        var head = latestHead()
+        val startNumber = requireNotNull(latestHeaderInDb(dbContext)) { "We should already have the genesis block" }
+          .number + 1L
 
-        do {
+        val range = startNumber.until(startNumber + batchSize)
 
-          val headers = readHeadersFrom(head)
+        val importCount = measureTimedValue { tryImport(range) }
 
-          val elapsed = measureTime {
+        val importRate = (importCount.value / importCount.duration.inSeconds).format(2)
 
-            val writeJobs = headers
-              .chunked(16)
-              .map { chunk ->
+        log.info("Import rate = $importRate: ${importCount.value} blocks in ${importCount.duration}")
 
-                launch {
-
-                  val connection = dataSource.connection
-
-                  val txCtx = DSL.using(connection)
-
-                  try {
-
-                    // update any previous headers with the same numbers as those we are about to sync and set them
-                    // as no longer canonical
-
-                    txCtx
-                      .update(Tables.BLOCK_HEADER)
-                      .set(Tables.BLOCK_HEADER.IS_CANONICAL, false)
-                      .where(Tables.BLOCK_HEADER.NUMBER.`in`(chunk.map { it.number }))
-                      .execute()
-
-                    //
-
-                    for (header in chunk) {
-
-                      // insert the header
-
-                      val headerRecord = header.hash
-                        .let { hash -> blockReader.totalDifficulty(hash) }
-                        .let { totalDifficulty ->
-                          header.toBlockHeaderRecord(
-                            requireNotNull(totalDifficulty) { "Total difficulty cannot be null, hash = ${header.hash}" }
-                          )
-                        }
-
-                      txCtx.insertInto(Tables.BLOCK_HEADER).set(headerRecord).execute()
-
-                      // insert the rest based on the processing level
-
-                      val bodyRecords = Channel<TableRecord<*>>(512)
-                      val receiptRecords = Channel<TableRecord<*>>(512)
-                      val traceRecords = Channel<TableRecord<*>>(512)
-
-                      val ommerChannel = Channel<OmmerRecord>(512)
-                      val transactionChannel = Channel<TransactionRecord>(512)
-
-                      launch { readBody(headerRecord, bodyRecords, ommerChannel, transactionChannel) }
-                      launch { readReceipts(headerRecord, transactionChannel, receiptRecords) }
-                      launch { trace(headerRecord, ommerChannel, traceRecords) }
-
-                      launch {
-                        writeToDb(txCtx, bodyRecords)
-                        writeToDb(txCtx, receiptRecords)
-                        writeToDb(txCtx, traceRecords)
-                      }.join()
-                    }
-
-                    connection.commit()
-                  } catch (e: Exception) {
-                    connection.rollback()
-                  } finally {
-                    connection.close()
-                  }
-                }
-              }
-
-            writeJobs.forEach { it.join() }
-          }
-
-          val headNumber = headers.firstOrNull()?.number
-          val tailNumber = headers.lastOrNull()?.number
-
-          val importRate = if (headers.isNotEmpty()) headers.size / elapsed.inSeconds else 0.0
-
-          log.info("Imported ${headers.size} blocks in $elapsed, rate = ${importRate.format(2)} / second. Start = $headNumber, finish = $tailNumber")
-
-          // grab the tail for the next read
-          if (headers.isNotEmpty()) {
-            head = headers.last().hash
-          }
-        } while (isActive && headers.isNotEmpty())
-
-        // finished an import pass, either reaching the genesis block from an initial sync, or reaching an ancestor
-        // that has already been imported
-
-        if (isActive) {
-          log.debug("Import pass complete. Waiting $pollInterval before another attempt")
+        if (isActive && importCount.value <= 1) {
           delay(pollInterval)
         }
       }
     }
+
+  private suspend fun tryImportStartBlock() {
+    if (latestHeaderInDb() == null) {
+      require(tryImport(LongRange(startBlockNumber, startBlockNumber)) == 1) { "Failed to import start block" }
+    }
+  }
+
+  private fun handleFork() {
+    dbContext.transaction { txConfig ->
+      val ctx = DSL.using(txConfig)
+
+      val forkHeader = requireNotNull(findForkHeader(ctx)) { "Fork header not found" }
+
+      // delete everything from the fork header onwards (inclusive)
+      // TODO preserve forked block data
+
+      ctx
+        .deleteFrom(Tables.BLOCK_HEADER)
+        .where(Tables.BLOCK_HEADER.NUMBER.ge(forkHeader.number))
+        .execute()
+
+      log.info("Fork detected. State reset to ${forkHeader.number - 1}")
+    }
+  }
+
+  private suspend fun tryImport(range: LongRange): Int {
+
+    log.info("Attempting to import $range")
+
+    val headers = blockReader.headers(range)
+
+    if (headers.isEmpty()) {
+      return 0
+    }
+
+    val firstHeader = headers.first()
+
+    // first check if a fork has occurred which affects any blocks we have already import
+
+    val forkDetected = latestHeaderInDb()
+      ?.let { Hash.fromHexString(it.hash) != firstHeader.parentHash }
+      ?: false
+
+    if (forkDetected) {
+      handleFork()
+
+      // short circuit and allow a fresh import pass with forked state removed
+      // specify 1 as the return value so that as immediate retry is scheduled instead of waiting for the poll interval
+      return 2
+    }
+
+    // next we check if we integrity check the headers we did read in case a fork occurred in the middle
+
+    if (!checkBatchIntegrity(headers.asReversed().drop(1), headers.last())) {
+      // best to simply stop this import pass and allow for a retry after the poll interval
+      return 0
+    }
+
+    return coroutineScope {
+
+      val jobs = headers
+        .chunked(chunkSize)
+        .map { chunk ->
+
+          async {
+
+            val connection = dataSource.connection
+
+            val txCtx = DSL.using(connection)
+
+            try {
+
+              for (header in chunk) {
+
+                val headerRecord = header.hash
+                  .let { hash -> blockReader.totalDifficulty(hash) }
+                  .let { totalDifficulty ->
+                    header.toBlockHeaderRecord(
+                      requireNotNull(totalDifficulty) { "Total difficulty cannot be null, hash = ${header.hash}" }
+                    )
+                  }
+
+                txCtx.insertInto(Tables.BLOCK_HEADER).set(headerRecord).execute()
+
+                // insert the rest based on the processing level
+
+                val bodyRecords = Channel<TableRecord<*>>(1024 * 10)
+                val receiptRecords = Channel<TableRecord<*>>(1024 * 10)
+                val traceRecords = Channel<TableRecord<*>>(1024 * 10)
+
+                val ommerChannel = Channel<OmmerRecord>(1024 * 10)
+                val transactionChannel = Channel<TransactionRecord>(1024 * 10)
+
+                launch { readBody(headerRecord, bodyRecords, ommerChannel, transactionChannel) }
+                launch { readReceipts(headerRecord, transactionChannel, receiptRecords) }
+                launch { trace(headerRecord, ommerChannel, traceRecords) }
+
+                launch {
+                  writeToDb(txCtx, bodyRecords)
+                  writeToDb(txCtx, receiptRecords)
+                  writeToDb(txCtx, traceRecords)
+                }.join()
+              }
+
+              connection.commit()
+
+              chunk.size
+            } finally {
+              connection.close()
+            }
+
+          }
+        }
+
+      jobs
+        .map{ it.await() }
+        .sum()
+
+    }
+  }
+
+  private fun checkBatchIntegrity(headers: List<BlockHeader>, child: BlockHeader): Boolean =
+    if (headers.isEmpty()) {
+      true
+    } else {
+      val parent = headers.first()
+      parent.hash == child.parentHash && checkBatchIntegrity(headers.drop(1), parent)
+    }
+
+  private fun findForkHeader(ctx: DSLContext): BlockHeader? {
+
+    val cursor = ctx
+      .select(Tables.BLOCK_HEADER.NUMBER, Tables.BLOCK_HEADER.HASH)
+      .from(Tables.BLOCK_HEADER)
+      .orderBy(Tables.BLOCK_HEADER.NUMBER.desc())
+      .fetchLazy()
+
+    var forkHeader: BlockHeader? = null
+
+    try {
+
+      for (record in cursor) {
+
+        val (number, hash) = record
+
+        val header =
+          requireNotNull(blockReader.header(number)) {
+            "Could not read header from block chain with number = $number"
+          }
+
+        val isDifferent = header.hash != Hash.fromHexString(hash)
+
+        if (isDifferent) {
+          forkHeader = header
+        } else {
+          break
+        }
+      }
+    } finally {
+      cursor.close()
+    }
+
+    return forkHeader
+  }
+
+  private fun latestHeaderInDb(ctx: DSLContext = dbContext): BlockHeaderRecord? =
+    ctx
+      .select(Tables.BLOCK_HEADER.NUMBER, Tables.BLOCK_HEADER.HASH)
+      .from(Tables.BLOCK_HEADER)
+      .orderBy(Tables.BLOCK_HEADER.NUMBER.desc())
+      .limit(1)
+      .fetchInto(Tables.BLOCK_HEADER)
+      .firstOrNull()
 
   private suspend fun writeToDb(ctx: DSLContext, channel: Channel<TableRecord<*>>, batchSize: Int = 256) {
 
@@ -196,68 +298,6 @@ class PostgresBlockWriter(
 
     // flush remainder of buffer
     ctx.batchInsert(writeBuffer).execute()
-  }
-
-  private fun latestHead(): Hash {
-
-    // the latest head from besu
-    var besuHead = blockReader.chainHead()!!
-
-    // check the earliest sync'd block number. If it is less than the configured earliest block number (or genesis)
-    // then we start syncing from the besu head
-
-    val earliestDbHeader = dbContext
-      .select(Tables.BLOCK_HEADER.NUMBER, Tables.BLOCK_HEADER.HASH)
-      .from(Tables.BLOCK_HEADER)
-      .orderBy(Tables.BLOCK_HEADER.NUMBER.asc())
-      .limit(1)
-      .fetch()
-      .firstOrNull()
-
-    val earliestDbNumber = earliestDbHeader?.value1()
-    val earliestDbHash = earliestDbHeader?.let { Hash.fromHexString(it.value2()) }
-
-    if (!(earliestDbNumber == null || earliestDbNumber <= earliestBlockNumber)) {
-      // we have not completed our initial historical sync
-      // lets restart from the earliest point we did reach
-      besuHead = blockReader.header(earliestDbHash!!)!!.parentHash
-      log.info("Restarting header import from block number = $earliestDbNumber")
-    }
-
-    return besuHead
-  }
-
-  private fun readHeadersFrom(hash: Hash, count: Int = 128): List<BlockHeader> {
-
-    // read the next series of headers starting from hash and propagating backwards via parent hashes, stopping at
-    // the configured earliest block number
-
-    val headers = blockReader
-      .headersFrom(hash, count + 1)
-      .filter { it.number >= earliestBlockNumber }
-
-    // map the hash strings into a set
-
-    val hashStrings = headers
-      .map { it.hash.toHexString() }
-      .toSet()
-
-    // check the import queue for existing entries for the headers we just read, indicating we are reaching a common ancestor
-    // TODO make this logic more robust by checking where in the sequence the common ancestor was found and ensuring it was at the end
-
-    val existingHashStrings = dbContext
-      .select(Tables.BLOCK_HEADER.HASH)
-      .from(Tables.BLOCK_HEADER)
-      .where(Tables.BLOCK_HEADER.HASH.`in`(hashStrings))
-      .fetch()
-      .map { it.value1() }
-
-    // subtract any existing hashes found in the db from the set of hashes read from besu and filtered the headers list
-
-    val newHashStrings = hashStrings.minus(existingHashStrings)
-
-    return headers
-      .filter { newHashStrings.contains(it.hash.toHexString()) }
   }
 
   private suspend fun readBody(

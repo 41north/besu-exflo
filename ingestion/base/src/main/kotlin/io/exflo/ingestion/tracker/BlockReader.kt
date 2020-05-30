@@ -101,6 +101,9 @@ class BlockReader : KoinComponent {
       )
     }
 
+  fun headers(range: LongRange): List<BlockHeader> =
+    range.mapNotNull { number -> this.header(number) }
+
   fun headersFrom(head: Hash, count: Int): List<BlockHeader> {
 
     var hash = head
