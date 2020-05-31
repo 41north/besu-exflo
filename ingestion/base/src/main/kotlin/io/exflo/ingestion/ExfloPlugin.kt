@@ -228,5 +228,6 @@ interface ExfloCliOptions {
 }
 
 object ExfloCliDefaultOptions {
+  const val EXFLO_KAFKA_PLUGIN_ID: String = "exflo-kafka"
   const val EXFLO_POSTGRES_PLUGIN_ID: String = "exflo-postgres"
 }

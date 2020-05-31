@@ -1,0 +1,82 @@
+version: '3.7'
+
+networks:
+  net:
+    driver: bridge
+
+volumes:
+
+  zookeeper-data:
+    driver: local
+
+  zookeeper-log:
+    driver: local
+
+  kafka-data:
+    driver: local
+
+services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.5.0
+    restart: unless-stopped
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-log:/var/lib/zookeeper/log
+    networks:
+      - net
+    ports:
+      - 2181:2181
+      - 9585:9585
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_JMX_PORT: 9585
+
+  kafka:
+    image: confluentinc/cp-kafka:5.5.0
+    restart: unless-stopped
+    hostname: kafka
+    depends_on:
+      - zookeeper
+    volumes:
+      - kafka-data:/var/lib/kafka
+    networks:
+      - net
+    ports:
+      - 9092:9092
+      - 9586:9586
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_COMPRESSION_TYPE: "zstd"
+      KAFKA_PRODUCER_MAX_REQUEST_SIZE: 52428800
+      KAFKA_CONSUMER_MAX_PARTITION_FETCH_BYTES: 10485760
+      KAFKA_CONSUMER_MAX_POLL_INTERVAL_MS: 120000
+      KAFKA_MESSAGE_MAX_BYTES: 52428800
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 10485760
+      KAFKA_TOPIC_DELETE_ENABLE: 'true'
+      CONFLUENT_METRICS_ENABLE: 'false'
+      KAFKA_JMX_PORT: 9586
+
+  kafkahq:
+    image: tchiotludo/kafkahq
+    networks:
+      - net
+    ports:
+      - 8082:8080
+    depends_on:
+      - kafka
+    environment:
+      KAFKAHQ_CONFIGURATION: |
+        kafkahq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:9092"

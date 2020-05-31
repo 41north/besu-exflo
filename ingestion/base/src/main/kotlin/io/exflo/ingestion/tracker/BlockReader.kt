@@ -67,31 +67,32 @@ class BlockReader : KoinComponent {
   fun chainHead(): Hash? = blockchainStorage.chainHead.orElse(null)
 
   fun fullBlock(
-    block: Block,
-    withHeader: Boolean = true,
+    header: BlockHeader,
     withBody: Boolean = true,
     withReceipts: Boolean = true,
     withTrace: Boolean = true
   ): FullBlock? =
-    block.let {
-      val header = if (withHeader) it.header else null
-      val totalDifficulty =
-        if (withHeader) requireNotNull(totalDifficulty(it.hash)) { "totalDifficulty not found" } else null
 
-      val body = if (withBody) it.body else null
+    header.let { it ->
+
+      val totalDifficulty = requireNotNull(totalDifficulty(header.hash)) { "totalDifficulty not found" }
+
+      val body = if (withBody) body(header.hash) else null
+
       val receipts =
-        if (withBody && withReceipts) requireNotNull(receipts(it.hash)) { "receipts not found" } else emptyList()
+        if (withBody && withReceipts) requireNotNull(receipts(header.hash)) { "receipts not found" } else emptyList()
 
-      val trace = if (withTrace) requireNotNull(trace(it.hash)) { "trace not found" } else null
+      val trace = if (withTrace) requireNotNull(trace(header.hash)) { "trace not found" } else null
       val touchedAccounts = trace?.let { t -> touchedAccounts(t) }
+
       val balanceDeltas = trace?.toBalanceDeltas(
         it.hash,
-        it.header.coinbase,
-        it.body.ommers.map { h -> Pair(h.hash, h.coinbase) }.toMap()
+        header.coinbase,
+        body?.ommers?.map { h -> Pair(h.hash, h.coinbase) }?.toMap() ?: emptyMap()
       )
 
       FullBlock(
-        header,
+        it,
         body,
         receipts,
         totalDifficulty,
