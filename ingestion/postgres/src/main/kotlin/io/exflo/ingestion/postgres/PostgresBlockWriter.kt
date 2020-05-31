@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 import org.apache.logging.log4j.LogManager
 import org.hyperledger.besu.ethereum.core.Address
 import org.hyperledger.besu.ethereum.core.BlockHeader
+import org.hyperledger.besu.ethereum.core.BlockHeader.GENESIS_BLOCK_NUMBER
 import org.hyperledger.besu.ethereum.core.Hash
 import org.jooq.DSLContext
 import org.jooq.JSONB
@@ -73,8 +74,6 @@ class PostgresBlockWriter(
   private val pollInterval = cliOptions.pollInterval?.seconds ?: 1.seconds
 
   private val processingLevel = cliOptions.processingLevel
-
-  private val startBlockNumber = cliOptions.earliestBlockNumber ?: BlockHeader.GENESIS_BLOCK_NUMBER
 
   private val log = LogManager.getLogger()
 
@@ -112,7 +111,9 @@ class PostgresBlockWriter(
 
   private suspend fun tryImportStartBlock() {
     if (latestHeaderInDb() == null) {
-      require(tryImport(LongRange(startBlockNumber, startBlockNumber)) == 1) { "Failed to import start block" }
+      require(tryImport(LongRange(GENESIS_BLOCK_NUMBER, GENESIS_BLOCK_NUMBER)) == 1) {
+        "Failed to import start block"
+      }
     }
   }
 

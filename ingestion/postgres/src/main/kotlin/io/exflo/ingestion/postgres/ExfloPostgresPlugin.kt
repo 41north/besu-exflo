@@ -150,13 +150,6 @@ class ExfloPostgresCliOptions : ExfloCliOptions {
   override var enabled: Boolean = false
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-earliest-block-number"],
-    paramLabel = "<LONG>",
-    description = ["Earliest block number to sync from"]
-  )
-  var earliestBlockNumber: Long? = null
-
-  @CommandLine.Option(
     names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_POSTGRES_PLUGIN_ID}-processing-level"],
     paramLabel = "<ENTITY>",
     description = ["Level of which this plugin will process entities. Each one relies on the previous one"]
