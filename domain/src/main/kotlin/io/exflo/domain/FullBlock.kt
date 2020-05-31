@@ -32,6 +32,6 @@ data class FullBlock(
   val receipts: List<TransactionReceipt>,
   val totalDifficulty: UInt256?,
   val trace: BlockTrace?,
-  val touchedAccounts: List<Account>?,
+  val touchedAccounts: Set<Account>?,
   val balanceDeltas: List<BalanceDelta>?
 )

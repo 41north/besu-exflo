@@ -160,7 +160,7 @@ fun BlockTrace.toBalanceDeltas(
 fun BlockTrace.touchedAccounts(
   networkConfig: EthNetworkConfig,
   worldStateArchive: WorldStateArchive
-): List<Account> {
+): Set<Account> {
 
   val block = this.block
   val header = block.header
@@ -169,40 +169,33 @@ fun BlockTrace.touchedAccounts(
 
   val worldState = worldStateArchive.get(header.stateRoot).get()
 
-  val txAccounts = when {
-    // TODO handle hard forks
+  // collect any account involved in the transactions
 
-    block.header.number > BlockHeader.GENESIS_BLOCK_NUMBER -> transactionTraces
-      .flatMap { txTrace -> txTrace.touchedAccounts.map { address -> address to worldState[address] } }
-      .toMap()
-
-    // For genesis block we need to pull the pre allocations
-    else -> GenesisConfigFile.fromConfig(networkConfig.genesisConfig)
+  return if (block.header.number == BlockHeader.GENESIS_BLOCK_NUMBER) {
+    // For genesis block we need to pull the pre allocations only
+    GenesisConfigFile.fromConfig(networkConfig.genesisConfig)
       .streamAllocations()
       .map { InMemoryAccount.fromGenesisAllocation(it) }
-      .collect(Collectors.toList())
-      .map { inMemoryAccount -> inMemoryAccount.address to inMemoryAccount }
-      .toMap()
+      .collect(Collectors.toSet())
+      .toSet()
+  } else {
+
+    val txAddresses = transactionTraces
+      .flatMap { txTrace -> txTrace.touchedAccounts }
+      .toSet()
+
+    // collect the block amd ommer coinbase addresses
+
+    val coinbaseAddresses =
+      setOf(block.header.coinbase)
+        .let { it + body.ommers.map { ommer -> ommer.coinbase } }
+
+    return (coinbaseAddresses + txAddresses)
+      // we only want one unique entry per address
+      .toSet()
+      .mapNotNull { address -> worldState[address] }
+      // Even if EIP158 is not enabled, we avoid capturing any empty / dead / unnecessary accounts
+      .filterNot { it.isEmpty }
+      .toSet()
   }
-
-  val allAccounts = txAccounts.let { map ->
-
-    // start with the coinbase
-    val minersByHash = mutableMapOf(block.header.hash to block.header.coinbase)
-
-    // add in the ommers
-    body.ommers.forEach { ommer -> minersByHash += ommer.hash to ommer.coinbase }
-
-    map + this.rewards
-      .map { (hash, _) ->
-        val address = minersByHash[hash]
-        address to worldState[address]
-      }.toMap()
-  }
-
-  return allAccounts
-    // Even if EIP158 is not enabled, we avoid serializing any empty / dead / unnecessary accounts
-    .filterNot { (_, acc) -> acc.isEmpty }
-    .values
-    .toList()
 }

@@ -38,6 +38,7 @@ import io.exflo.postgres.jooq.tables.records.BlockHeaderRecord
 import io.exflo.postgres.jooq.tables.records.BlockTraceRecord
 import io.exflo.postgres.jooq.tables.records.OmmerRecord
 import io.exflo.postgres.jooq.tables.records.TransactionRecord
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -203,13 +204,17 @@ class PostgresBlockWriter(
 
                 launch { readBody(headerRecord, bodyRecords, ommerChannel, transactionChannel) }
                 launch { readReceipts(headerRecord, transactionChannel, receiptRecords) }
-                launch { trace(headerRecord, ommerChannel, traceRecords) }
+
+                // tracing is more cpu intensive so we use the core bound dispatcher
+                launch(Dispatchers.Default) { trace(headerRecord, ommerChannel, traceRecords) }
 
                 launch {
                   writeToDb(txCtx, bodyRecords)
                   writeToDb(txCtx, receiptRecords)
                   writeToDb(txCtx, traceRecords)
                 }.join()
+
+                // log.info("Imported block number = ${header.number}")
               }
 
               connection.commit()
@@ -223,7 +228,7 @@ class PostgresBlockWriter(
         }
 
       jobs
-        .map{ it.await() }
+        .map { it.await() }
         .sum()
 
     }
@@ -401,43 +406,51 @@ class PostgresBlockWriter(
     val hash = Hash.fromHexString(header.hash)
     val coinbase = Address.fromHexString(header.coinbase)
 
-    val trace = requireNotNull(blockReader.trace(hash)) { "Trace cannot be null, hash = $hash" }
+    try {
 
-    recordsChannel.send(
-      BlockTraceRecord()
-        .apply {
-          this.blockHash = header.hash
-          this.trace = JSONB.valueOf(trace.jsonTrace)
+      // currently there are several bugs in besu's tracing which have been fixed but not yet released
+
+      val trace = requireNotNull(blockReader.trace(hash)) { "Trace cannot be null, hash = $hash" }
+
+      recordsChannel.send(
+        BlockTraceRecord()
+          .apply {
+            this.blockHash = header.hash
+            this.trace = JSONB.valueOf(trace.jsonTrace)
+          }
+      )
+
+      blockReader
+        .touchedAccounts(trace)
+        .map { it.toAccountRecord(header) }
+        .forEach { recordsChannel.send(it) }
+
+      var ommerCoinbaseMap = emptyMap<Hash, Address>()
+
+      for (ommer in ommerChannel) {
+        ommerCoinbaseMap = ommerCoinbaseMap + (Hash.fromHexString(ommer.hash) to Address.fromHexString(ommer.coinbase))
+      }
+
+      trace
+        .toBalanceDeltas(hash, coinbase, ommerCoinbaseMap)
+        .map { it.toBalanceDeltaRecord(header) }
+        .forEach { recordsChannel.send(it) }
+
+      trace.transactionTraces
+        .map { txTrace ->
+
+          txTrace.contractsCreated
+            .map { it.toContractCreatedRecord(header) }
+            .forEach { recordsChannel.send(it) }
+
+          txTrace.contractsDestroyed
+            .map { it.toContractDestroyedRecord(header) }
+            .forEach { recordsChannel.send(it) }
         }
-    )
-
-    blockReader
-      .touchedAccounts(trace)
-      .map { it.toAccountRecord(header) }
-      .forEach { recordsChannel.send(it) }
-
-    var ommerCoinbaseMap = emptyMap<Hash, Address>()
-
-    for (ommer in ommerChannel) {
-      ommerCoinbaseMap = ommerCoinbaseMap + (Hash.fromHexString(ommer.hash) to Address.fromHexString(ommer.coinbase))
+    } catch (t: Throwable) {
+      log.error("Failed to trace block, number = ${header.number}, hash = ${header.hash}", t)
     }
 
-    trace
-      .toBalanceDeltas(hash, coinbase, ommerCoinbaseMap)
-      .map { it.toBalanceDeltaRecord(header) }
-      .forEach { recordsChannel.send(it) }
-
-    trace.transactionTraces
-      .map { txTrace ->
-
-        txTrace.contractsCreated
-          .map { it.toContractCreatedRecord(header) }
-          .forEach { recordsChannel.send(it) }
-
-        txTrace.contractsDestroyed
-          .map { it.toContractDestroyedRecord(header) }
-          .forEach { recordsChannel.send(it) }
-      }
 
     recordsChannel.close()
   }

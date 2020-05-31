@@ -247,5 +247,5 @@ class BlockReader : KoinComponent {
   fun totalDifficulty(hash: Hash): UInt256? =
     blockchainStorage.getTotalDifficulty(hash).map { it.toUInt256() }.orElse(null)
 
-  fun touchedAccounts(trace: BlockTrace): List<Account> = trace.touchedAccounts(networkConfig, worldStateArchive)
+  fun touchedAccounts(trace: BlockTrace): Set<Account> = trace.touchedAccounts(networkConfig, worldStateArchive)
 }
