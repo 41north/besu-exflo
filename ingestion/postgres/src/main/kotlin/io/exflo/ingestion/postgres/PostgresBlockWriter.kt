@@ -57,7 +57,6 @@ import org.jooq.TableRecord
 import org.jooq.impl.DSL
 import javax.sql.DataSource
 import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 import kotlin.time.seconds
 
@@ -92,18 +91,41 @@ class PostgresBlockWriter(
 
       while (isActive) {
 
-        val startNumber = requireNotNull(latestHeaderInDb(dbContext)) { "We should already have the genesis block" }
+        // add one the latest header's block number
+        val startNumber = requireNotNull(latestHeaderInDb(dbContext)) { "No previous blocks found in the db" }
           .number + 1L
 
+        // generate a range with the required batch size
         val range = startNumber.until(startNumber + batchSize)
 
-        val importCount = measureTimedValue { tryImport(range) }
+        // attempt an import
+        val timedImport = measureTimedValue { tryImport(range) }
 
-        val importRate = (importCount.value / importCount.duration.inSeconds).format(2)
+        val (retryImmediately, headers) = timedImport.value
+        val elapsed = timedImport.duration
 
-        log.info("Import rate = $importRate: ${importCount.value} blocks in ${importCount.duration}")
+        val importRate = headers
+          ?.let { (it.size / elapsed.inSeconds) }
+          ?: 0.0
 
-        if (isActive && importCount.value <= 1) {
+        val first = headers?.first()
+        val last = headers?.last()
+
+        val importRangeStr =
+          if (!(first == null || last == null)) {
+            "${first.number}..${last.number}"
+          } else {
+            ""
+          }
+
+        val headerCount = headers?.size ?: 0
+
+        log.info("Imported $headerCount headers in $elapsed: [$importRangeStr]. Rate = ${importRate.format(0)} / s ")
+
+        if (isActive && !retryImmediately && headerCount <= 1) {
+          // typically we will import 1 block every 15 seconds
+          // during sync we will import more than 1 block per attempt so it makes sense to no wait and retry immediately
+          log.debug("Waiting $pollInterval before retrying import")
           delay(pollInterval)
         }
       }
@@ -111,9 +133,8 @@ class PostgresBlockWriter(
 
   private suspend fun tryImportStartBlock() {
     if (latestHeaderInDb() == null) {
-      require(tryImport(LongRange(GENESIS_BLOCK_NUMBER, GENESIS_BLOCK_NUMBER)) == 1) {
-        "Failed to import start block"
-      }
+      val (_, headers) = tryImport(LongRange(GENESIS_BLOCK_NUMBER, GENESIS_BLOCK_NUMBER))
+      check(headers != null && headers.size == 1) { "Failed to import start block" }
     }
   }
 
@@ -135,14 +156,14 @@ class PostgresBlockWriter(
     }
   }
 
-  private suspend fun tryImport(range: LongRange): Int {
+  private suspend fun tryImport(range: LongRange): Pair<Boolean, List<BlockHeader>?> {
 
-    log.info("Attempting to import $range")
+    log.debug("Attempting to import $range")
 
     val headers = blockReader.headers(range)
 
     if (headers.isEmpty()) {
-      return 0
+      return Pair(false, null)
     }
 
     val firstHeader = headers.first()
@@ -157,15 +178,14 @@ class PostgresBlockWriter(
       handleFork()
 
       // short circuit and allow a fresh import pass with forked state removed
-      // specify 1 as the return value so that as immediate retry is scheduled instead of waiting for the poll interval
-      return 2
+      return Pair(true, null)
     }
 
     // next we check if we integrity check the headers we did read in case a fork occurred in the middle
 
     if (!checkBatchIntegrity(headers.asReversed().drop(1), headers.last())) {
       // best to simply stop this import pass and allow for a retry after the poll interval
-      return 0
+      return Pair(false, null)
     }
 
     return coroutineScope {
@@ -214,24 +234,22 @@ class PostgresBlockWriter(
                   writeToDb(txCtx, receiptRecords)
                   writeToDb(txCtx, traceRecords)
                 }.join()
-
-                // log.info("Imported block number = ${header.number}")
               }
 
               connection.commit()
 
-              chunk.size
+              chunk
             } finally {
               connection.close()
             }
-
           }
         }
 
-      jobs
-        .map { it.await() }
-        .sum()
-
+      Pair(false,
+        jobs
+          .map { it.await() }
+          .flatten()
+      )
     }
   }
 
@@ -451,7 +469,6 @@ class PostgresBlockWriter(
     } catch (t: Throwable) {
       log.error("Failed to trace block, number = ${header.number}, hash = ${header.hash}", t)
     }
-
 
     recordsChannel.close()
   }
