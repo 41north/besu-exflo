@@ -217,13 +217,13 @@ interface ExfloCliOptions {
 
   var enabled: Boolean
 
-  enum class ProcessingLevel(val level: Int) {
+  enum class ProcessingEntity(val level: Int) {
     HEADER(1),
     BODY(2),
     RECEIPTS(3),
     TRACES(4);
 
-    fun isActive(other: ProcessingLevel) = other.level <= this.level
+    fun isActive(other: ProcessingEntity) = other.level <= this.level
   }
 }
 

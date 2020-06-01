@@ -28,7 +28,6 @@ import io.kcache.KafkaCacheConfig
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -75,10 +74,12 @@ class KafkaBlockWriter(
 
   private val pollInterval = 1.seconds
 
-  private val withBody: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessingLevel.BODY } != null
+  private val withBody: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessingEntity.BODY } != null
+
   private val withReceipts: Boolean =
-    cliOptions.entities.find { it == ExfloCliOptions.ProcessingLevel.RECEIPTS } != null
-  private val withTraces: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessingLevel.TRACES } != null
+    cliOptions.entities.find { it == ExfloCliOptions.ProcessingEntity.RECEIPTS } != null
+
+  private val withTraces: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessingEntity.TRACES } != null
 
   private lateinit var importCache: KafkaCache<Long, String>
 

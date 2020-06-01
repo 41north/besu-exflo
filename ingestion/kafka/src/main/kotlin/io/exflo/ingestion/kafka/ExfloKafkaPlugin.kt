@@ -18,10 +18,11 @@ package io.exflo.ingestion.kafka
 
 import io.exflo.ingestion.ExfloCliDefaultOptions
 import io.exflo.ingestion.ExfloCliOptions
-import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel
-import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.BODY
-import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.HEADER
-import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.RECEIPTS
+import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity
+import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity.BODY
+import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity.HEADER
+import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity.RECEIPTS
+import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity.TRACES
 import io.exflo.ingestion.ExfloPlugin
 import io.exflo.ingestion.tracker.BlockWriter
 import org.apache.kafka.clients.admin.AdminClient
@@ -101,9 +102,9 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
     paramLabel = "<ENTITY>",
     description = ["Comma separated list of entities to include on import / ingest. Default is a predefined list"],
     split = ",",
-    arity = "1..4"
+    arity = "1..3"
   )
-  var entities: List<ProcessingLevel> = listOf(HEADER, BODY, RECEIPTS)
+  var entities: List<ProcessingEntity> = listOf(BODY, RECEIPTS, TRACES)
 
   @CommandLine.Option(
     names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-bootstrap-servers"],

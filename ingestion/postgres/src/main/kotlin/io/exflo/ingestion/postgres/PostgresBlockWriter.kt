@@ -17,9 +17,9 @@
 package io.exflo.ingestion.postgres
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.BODY
-import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.RECEIPTS
-import io.exflo.ingestion.ExfloCliOptions.ProcessingLevel.TRACES
+import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity.BODY
+import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity.RECEIPTS
+import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity.TRACES
 import io.exflo.ingestion.extensions.format
 import io.exflo.ingestion.extensions.toBalanceDeltas
 import io.exflo.ingestion.postgres.extensions.toAccountRecord
@@ -71,7 +71,7 @@ class PostgresBlockWriter(
 
   private val pollInterval = cliOptions.pollInterval?.seconds ?: 1.seconds
 
-  private val processingLevel = cliOptions.processingLevel
+  private val processingLevel = cliOptions.processingEntity
 
   private val startBlockNumber = cliOptions.earliestBlockNumber ?: BlockHeader.GENESIS_BLOCK_NUMBER
 
