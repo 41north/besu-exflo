@@ -17,6 +17,7 @@
 package io.exflo.ingestion.kafka
 
 import io.exflo.ingestion.ExfloCliDefaultOptions
+import io.exflo.ingestion.ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID
 import io.exflo.ingestion.ExfloCliOptions
 import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity
 import io.exflo.ingestion.ExfloCliOptions.ProcessingEntity.BODY
@@ -38,7 +39,7 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class ExfloKafkaPlugin : ExfloPlugin<ExfloKafkaCliOptions>() {
 
-  override val name = ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID
+  override val name = EXFLO_KAFKA_PLUGIN_ID
 
   override val options = ExfloKafkaCliOptions()
 
@@ -83,7 +84,7 @@ class ExfloKafkaPlugin : ExfloPlugin<ExfloKafkaCliOptions>() {
 class ExfloKafkaCliOptions : ExfloCliOptions {
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-enabled"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-enabled"],
     paramLabel = "<BOOLEAN>",
     defaultValue = "false",
     description = ["Enable this plugin"]
@@ -91,14 +92,14 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
   override var enabled: Boolean = false
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-start-block-override"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-earliest-block-number"],
     paramLabel = "<LONG>",
-    description = ["Block number from which to start publishing"]
+    description = ["Earliest block number to sync from"]
   )
-  var startBlockOverride: Long? = null
+  var earliestBlockNumber: Long? = null
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-processing-entities"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-processing-entities"],
     paramLabel = "<ENTITY>",
     description = ["Comma separated list of entities to include on import / ingest. Default is a predefined list"],
     split = ",",
@@ -107,7 +108,7 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
   var entities: List<ProcessingEntity> = listOf(BODY, RECEIPTS, TRACES)
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-bootstrap-servers"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-bootstrap-servers"],
     defaultValue = "localhost:9092",
     paramLabel = "<STRING>",
     description = ["Kafka cluster to publish into"]
@@ -115,7 +116,7 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
   var bootstrapServers: String = "localhost:9092"
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-client-id"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-client-id"],
     paramLabel = "<STRING>",
     defaultValue = "exflo",
     description = ["Client id to use with Kafka Publisher"]
@@ -123,7 +124,7 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
   var clientId: String = "exflo"
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-replication-factor"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-replication-factor"],
     defaultValue = "1",
     paramLabel = "<INTEGER>",
     description = ["Replication factor to use for topics"]
@@ -131,7 +132,7 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
   var replicationFactor: Int = 1
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-import-cache-topic"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-import-cache-topic"],
     defaultValue = "_exflo-import-cache",
     paramLabel = "<STRING>",
     description = ["Topic to use for import progress tracking"]
@@ -139,7 +140,7 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
   var importCacheTopic: String = "_exflo-import-cache"
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-blocks-topic"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-blocks-topic"],
     defaultValue = "blocks",
     paramLabel = "<STRING>",
     description = ["Topic to use for chain tracker state store"]
@@ -147,7 +148,7 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
   var blocksTopic: String = "blocks"
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-blocks-topic-partitions"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-blocks-topic-partitions"],
     defaultValue = "1",
     paramLabel = "<INTEGER>",
     description = ["Num of partitions related to blocks topic"]
@@ -155,7 +156,7 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
   var blocksTopicPartitions: Int = 1
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-blocks-topic-replication-factor"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-blocks-topic-replication-factor"],
     defaultValue = "1",
     paramLabel = "<INTEGER>",
     description = ["Num of replication factor related to blocks topic"]
@@ -163,14 +164,14 @@ class ExfloKafkaCliOptions : ExfloCliOptions {
   var blocksTopicReplicationFactor: Int = 1
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-ignore-kafka-topic-creation"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-ignore-kafka-topic-creation"],
     paramLabel = "<BOOLEAN>",
     description = ["Enables or disables the creation of the required Kafka topic"]
   )
   var disableTopicCreation: Boolean = false
 
   @CommandLine.Option(
-    names = ["--plugin-${ExfloCliDefaultOptions.EXFLO_KAFKA_PLUGIN_ID}-safe-sync-block-amount"],
+    names = ["--plugin-$EXFLO_KAFKA_PLUGIN_ID-safe-sync-block-amount"],
     defaultValue = "256",
     paramLabel = "<INTEGER>",
     description = ["Number of blocks to check during the initial safe sync check"]

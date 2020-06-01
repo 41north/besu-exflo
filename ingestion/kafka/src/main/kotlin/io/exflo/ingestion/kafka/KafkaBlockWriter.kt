@@ -74,6 +74,8 @@ class KafkaBlockWriter(
 
   private val pollInterval = 1.seconds
 
+  private val startBlockNumber = cliOptions.earliestBlockNumber ?: BlockHeader.GENESIS_BLOCK_NUMBER
+
   private val withBody: Boolean = cliOptions.entities.find { it == ExfloCliOptions.ProcessingEntity.BODY } != null
 
   private val withReceipts: Boolean =
@@ -166,7 +168,7 @@ class KafkaBlockWriter(
 
   private suspend fun tryImportStartBlock() {
     if (latestHeaderInTopic() == null) {
-      val (_, headers) = tryImport(LongRange(GENESIS_BLOCK_NUMBER, GENESIS_BLOCK_NUMBER))
+      val (_, headers) = tryImport(LongRange(startBlockNumber, startBlockNumber))
       check(headers != null && headers.size == 1) { "Failed to import start block" }
     }
   }
