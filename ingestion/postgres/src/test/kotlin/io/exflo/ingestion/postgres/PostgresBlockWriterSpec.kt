@@ -17,6 +17,7 @@
 package io.exflo.ingestion.postgres
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.opentable.db.postgres.embedded.EmbeddedPostgres
 import io.exflo.ingestion.tracker.BlockReader
 import io.exflo.postgres.jooq.Tables
 import io.exflo.testutil.TestChainLoader
@@ -27,6 +28,8 @@ import io.kotlintest.extensions.TopLevelTest
 import io.kotlintest.specs.FunSpec
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import org.flywaydb.core.Flyway
+import org.flywaydb.core.api.configuration.FluentConfiguration
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 import org.jooq.tools.jdbc.MockConnection
@@ -53,15 +56,33 @@ class PostgresBlockWriterSpec : FunSpec(), KoinTest {
 
   private val scope = TestCoroutineScope()
 
+  private lateinit var pg: EmbeddedPostgres
+  private lateinit var dataSource: DataSource
+
   override fun beforeSpecClass(spec: Spec, tests: List<TopLevelTest>) {
     startKoin { modules(KoinPostgresIngestionModules()) }
 
-    // import test blocks
+    pg = EmbeddedPostgres
+      .builder()
+      .start()
+
+    dataSource = pg.postgresDatabase
+
+    // run migrations
+
+    val config = FluentConfiguration()
+      .dataSource(dataSource)
+      .locations("classpath:/db/migration")
+
+    Flyway(config).migrate()
+
+    // load test blocks into test chain
     testChainLoader.load()
   }
 
   override fun afterSpecClass(spec: Spec, results: Map<TestCase, TestResult>) {
     stopKoin()
+    pg.close()
   }
 
   init {
@@ -69,16 +90,14 @@ class PostgresBlockWriterSpec : FunSpec(), KoinTest {
     context("with a PostgresBlockWriter entity") {
 
       test("it should convert and store correctly a batch of blocks") {
-        val dataSource = MockDataSources.shouldConvertAndStoreABatchOfBlocks
-        val blockReader = blockReader
         val cliOptions = ExfloPostgresCliOptions()
-
         val writer = PostgresBlockWriter(mapper, dataSource, blockReader, cliOptions)
 
-        scope.runBlockingTest {
-          writer.run()
-        }
+        // scope.runBlockingTest {
+        //   writer.run()
+        // }
       }
+
     }
   }
 }
@@ -87,6 +106,7 @@ object MockDataSources {
 
   val shouldConvertAndStoreABatchOfBlocks: DataSource by lazy {
     val mockDataProvider = MockDataProvider { ctx ->
+
       val create = DSL.using(SQLDialect.POSTGRES)
 
       val sql = ctx.sql()

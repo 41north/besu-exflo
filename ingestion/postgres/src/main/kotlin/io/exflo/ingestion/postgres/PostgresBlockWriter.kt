@@ -197,7 +197,9 @@ class PostgresBlockWriter(
 
           async {
 
-            val connection = dataSource.connection
+            val connection = dataSource
+              .connection
+              .apply { autoCommit = false }
 
             val txCtx = DSL.using(connection)
 

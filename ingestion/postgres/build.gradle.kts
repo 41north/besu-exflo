@@ -39,6 +39,7 @@ dependencies {
 
   testImplementation(project(":testutil"))
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+  testImplementation("com.opentable.components:otj-pg-embedded")
 }
 
 val postgresUrl =

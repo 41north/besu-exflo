@@ -112,6 +112,8 @@ dependencyManagement {
 
     dependency 'org.flywaydb:flyway-core:6.4.2'
 
+    dependency 'com.opentable.components:otj-pg-embedded:0.13.3'
+
     // ------------------------------------------------------------------
     // Testing
     // ------------------------------------------------------------------
