@@ -14,5 +14,4 @@
 # limitations under the License.
 #
 
-io.exflo.ingestion.kafka.ExfloKafkaPlugin
 io.exflo.ingestion.postgres.ExfloPostgresPlugin

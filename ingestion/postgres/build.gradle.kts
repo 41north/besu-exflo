@@ -38,6 +38,8 @@ dependencies {
   runtimeOnly("org.apache.logging.log4j:log4j-core")
 
   testImplementation(project(":testutil"))
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+  testImplementation("com.opentable.components:otj-pg-embedded")
 }
 
 val postgresUrl =

@@ -24,7 +24,12 @@ import io.exflo.ingestion.storage.InterceptingKeyValueStorageFactory
 import io.exflo.ingestion.storage.InterceptingPrivacyKeyValueStorageFactory
 import io.exflo.ingestion.tokens.precompiled.PrecompiledContractsFactory
 import io.exflo.ingestion.tracker.BlockWriter
-import io.exflo.ingestion.tracker.ChainTracker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.hyperledger.besu.cli.BesuCommand
@@ -44,9 +49,12 @@ import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import picocli.CommandLine
+import kotlin.coroutines.CoroutineContext
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
+abstract class ExfloPlugin<T : ExfloCliOptions>(
+  override val coroutineContext: CoroutineContext = Dispatchers.IO
+) : BesuPlugin, CoroutineScope {
 
   protected abstract val name: String
 
@@ -61,6 +69,8 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
   private lateinit var commandLine: CommandLine
 
   private lateinit var besuCommand: BesuCommand
+
+  private lateinit var blockWriterJob: Job
 
   override fun register(context: BesuContext) {
 
@@ -157,7 +167,6 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
         single { protocolSchedule }
         single { genesisState }
         single { ScheduleBasedBlockHeaderFunctions.create(get<ProtocolSchedule<Void>>()) }
-        single { ChainTracker(get(), get(), get(), get(), get()) }
       }
 
       // implementation specific DI modules which we combine with other standard modules
@@ -180,7 +189,8 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
       implStart(koinApp)
 
       blockWriter = koinApp.koin.get()
-      blockWriter.start()
+
+      this.blockWriterJob = launch { blockWriter.run() }
     } catch (ex: Exception) {
       log.error("Failed to start", ex)
     }
@@ -193,7 +203,9 @@ abstract class ExfloPlugin<T : ExfloCliOptions> : BesuPlugin {
     }
 
     log.debug("Stopping plugin")
-    blockWriter.stop()
+
+    runBlocking { blockWriterJob.cancelAndJoin() }
+
     stopKoin()
   }
 }
@@ -205,21 +217,17 @@ interface ExfloCliOptions {
 
   var enabled: Boolean
 
-  var startBlockOverride: Long?
+  enum class ProcessingEntity(val level: Int) {
+    HEADER(1),
+    BODY(2),
+    RECEIPTS(3),
+    TRACES(4);
 
-  var maxForkSize: Int
-
-  enum class ProcessableEntity {
-    HEADER,
-    BODY,
-    RECEIPTS,
-    TRACES
+    fun isActive(other: ProcessingEntity) = other.level <= this.level
   }
 }
 
 object ExfloCliDefaultOptions {
-  const val EXFLO_POSTGRES_PLUGIN_ID: String = "exflo-postgres"
   const val EXFLO_KAFKA_PLUGIN_ID: String = "exflo-kafka"
-
-  const val MAX_FORK_SIZE: Int = 192
+  const val EXFLO_POSTGRES_PLUGIN_ID: String = "exflo-postgres"
 }

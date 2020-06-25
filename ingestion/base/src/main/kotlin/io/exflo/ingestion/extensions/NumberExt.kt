@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-pluginManagement {
+package io.exflo.ingestion.extensions
 
-  repositories {
-    gradlePluginPortal()
-    jcenter()
-    maven(url = "https://dl.bintray.com/gradle/gradle-plugins")
-  }
-}
-
-include(":domain")
-include(":ingestion:base")
-include(":ingestion:postgres")
-include(":plugin")
-include(":testutil")
+fun Double.format(digits: Int) = "%.${digits}f".format(this)
