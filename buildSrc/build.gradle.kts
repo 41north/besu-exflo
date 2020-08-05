@@ -22,6 +22,10 @@ plugins {
 apply(plugin = "io.spring.dependency-management")
 apply(from = "${project.rootDir}/../gradle/versions.gradle")
 
+kotlinDslPluginOptions {
+  experimentalWarning.set(false)
+}
+
 repositories {
   jcenter()
   maven(url = "https://dl.bintray.com/hyperledger-org/besu-repo/")

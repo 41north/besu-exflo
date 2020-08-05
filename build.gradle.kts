@@ -15,7 +15,6 @@
  */
 
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import io.exflo.gradle.tasks.IntellijRunConfiguratorTask
 import me.qoomon.gradle.gitversioning.GitVersioningPluginConfig
 import me.qoomon.gradle.gitversioning.GitVersioningPluginConfig.CommitVersionDescription
 import me.qoomon.gradle.gitversioning.GitVersioningPluginConfig.VersionDescription
