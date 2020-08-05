@@ -32,6 +32,7 @@ plugins {
   id("io.spring.dependency-management") version "1.0.9.RELEASE"
   id("com.github.ben-manes.versions") version "0.28.0"
   id("me.qoomon.git-versioning") version "3.0.0"
+  id("dev.north.fortyone.intellij.run.generator") version "0.1.0"
 }
 
 if (!JavaVersion.current().isJava11Compatible) {
@@ -115,6 +116,11 @@ allprojects {
   }
 }
 
+`intellij-run-generator` {
+    tasksDefinitionsFile.set(File("intellij-run-configs.yaml"))
+    tasksDefinitionOutputDir.set(File(".idea/runConfigurations"))
+  }
+
 distributions {
   main {
     contents {
@@ -130,10 +136,6 @@ distributions {
 tasks {
   jar {
     enabled = false
-  }
-
-  register<IntellijRunConfiguratorTask>("generateIntellijRunConfigs") {
-    tasksDefinitions = File("intellij-run-configs.yaml")
   }
 
   withType<DependencyUpdatesTask> {
