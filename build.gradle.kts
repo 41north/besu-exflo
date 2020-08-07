@@ -73,6 +73,7 @@ distTar.apply {
 }
 
 allprojects {
+  apply(plugin = "io.spring.dependency-management")
   apply(from = "$rootDir/gradle/versions.gradle")
   apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
