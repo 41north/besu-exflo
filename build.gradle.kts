@@ -21,6 +21,10 @@ import me.qoomon.gradle.gitversioning.GitVersioningPluginConfig.VersionDescripti
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
+if (!JavaVersion.current().isJava11Compatible) {
+  throw GradleException("Java 11 or later is required to build Exflo. Detected version ${JavaVersion.current()}")
+}
+
 plugins {
   `maven-publish`
   distribution
@@ -31,11 +35,7 @@ plugins {
   id("io.spring.dependency-management") version "1.0.9.RELEASE"
   id("com.github.ben-manes.versions") version "0.28.0"
   id("me.qoomon.git-versioning") version "3.0.0"
-  id("dev.north.fortyone.intellij.run.generator") version "0.1.0"
-}
-
-if (!JavaVersion.current().isJava11Compatible) {
-  throw GradleException("Java 11 or later is required to build Exflo. Detected version ${JavaVersion.current()}")
+  id("dev.north.fortyone.intellij.run.generator") version "0.2.0"
 }
 
 version = "0.0.0-SNAPSHOT"
@@ -73,7 +73,6 @@ distTar.apply {
 }
 
 allprojects {
-  apply(plugin = "io.spring.dependency-management")
   apply(from = "$rootDir/gradle/versions.gradle")
   apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
@@ -89,14 +88,14 @@ allprojects {
 
   tasks {
     withType<KotlinCompile>().all {
-      sourceCompatibility = "${JavaVersion.VERSION_11}"
-      targetCompatibility = "${JavaVersion.VERSION_11}"
-      kotlinOptions.jvmTarget = "${JavaVersion.VERSION_11}"
+      sourceCompatibility = "11"
+      targetCompatibility = "11"
+      kotlinOptions.jvmTarget = "11"
     }
 
     withType<JavaCompile> {
-      sourceCompatibility = "${JavaVersion.VERSION_11}"
-      targetCompatibility = "${JavaVersion.VERSION_11}"
+      sourceCompatibility = "11"
+      targetCompatibility = "11"
     }
   }
 
@@ -115,10 +114,10 @@ allprojects {
   }
 }
 
-`intellij-run-generator` {
-    tasksDefinitionsFile.set(File("intellij-run-configs.yaml"))
-    tasksDefinitionOutputDir.set(File(".idea/runConfigurations"))
-  }
+intellijRunGenerator {
+  tasksDefinitions.set(File("./intellij-run-configs/"))
+  tasksDefinitionOutput.set(File(".idea/runConfigurations"))
+}
 
 distributions {
   main {

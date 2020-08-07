@@ -1,0 +1,27 @@
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.GradleRunConfig
+name: GRADLE | Ktlint > Format
+filename: GRADLE__Ktlint__Format.xml
+default: false
+tasks:
+  - ktlintFormat
+
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.GradleRunConfig
+name: GRADLE | Postgres > FlywayClean
+filename: GRADLE__Postgres__FlywayClean.xml
+default: false
+tasks:
+  - flywayClean
+
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.GradleRunConfig
+name: GRADLE | Postgres > FlywayMigrate
+filename: GRADLE__Postgres__FlywayMigrate.xml
+default: false
+tasks:
+  - flywayMigrate
+
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.GradleRunConfig
+name: GRADLE | Postgres > JooqCodeGen
+filename: GRADLE__Postgres__JooqCodeGen.xml
+default: false
+tasks:
+  - jooq-codegen-primary

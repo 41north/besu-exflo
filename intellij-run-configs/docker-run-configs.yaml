@@ -1,0 +1,11 @@
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.DockerRunConfig
+name: DOCKER | Kafka
+filename: DOCKER__Kafka.xml
+default: false
+dockerComposeFileName: docker-compose.exflo-kafka.yml
+
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.DockerRunConfig
+name: DOCKER | Postgres
+filename: DOCKER__Postgres.xml
+default: false
+dockerComposeFileName: docker-compose.exflo-postgres.yml

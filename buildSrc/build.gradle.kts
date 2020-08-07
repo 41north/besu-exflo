@@ -41,15 +41,4 @@ dependencies {
   implementation("org.hyperledger.besu:plugin-api")
   implementation("org.hyperledger.besu.internal:core")
   implementation("org.hyperledger.besu.internal:util")
-
-  implementation("org.redundent:kotlin-xml-builder")
-  implementation("com.fasterxml.jackson.core:jackson-databind")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
-
-  implementation("javax.activation:activation:1.1.1")
-  implementation("javax.xml.bind:jaxb-api:2.3.0")
-  implementation("com.sun.xml.bind:jaxb-core:2.3.0.1")
-
-  runtimeOnly("com.sun.xml.bind:jaxb-impl:2.3.0.1")
 }

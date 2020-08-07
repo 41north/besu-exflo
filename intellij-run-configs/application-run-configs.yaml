@@ -1,0 +1,125 @@
+# ------------------------------------------------------------------------------
+# DEV KAFKA
+# ------------------------------------------------------------------------------
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.ApplicationRunConfig
+name: BESU | Dev | Kafka > Run
+filename: BESU__Dev__Kafka__Run.xml
+default: false
+mainClassName: org.hyperledger.besu.Besu
+module: exflo.ingestion.kafka.main
+envs:
+  BESU_SYNC_MODE: FULL
+  BESU_LOGGING: INFO
+  BESU_P2P_ENABLED: 'false'
+  BESU_RPC_WS_ENABLED: 'true'
+  BESU_RPC_HTTP_ENABLED: 'true'
+  BESU_RPC_HTTP_API: eth,net,web3,admin,debug
+  BESU_NETWORK: DEV
+  BESU_DATA_PATH: "/opt/besu/dev"
+  BESU_MINER_ENABLED: 'true'
+  BESU_MINER_COINBASE: '0xf17f52151EbEF6C7334FAD080c5704D77216b732'
+  BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'true'
+
+# ------------------------------------------------------------------------------
+# DEV POSTGRES
+# ------------------------------------------------------------------------------
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.ApplicationRunConfig
+name: BESU | Dev | Postgres > Run
+filename: BESU__Dev__Postgres__Run.xml
+default: false
+mainClassName: org.hyperledger.besu.Besu
+module: exflo.ingestion.postgres.main
+envs:
+  BESU_SYNC_MODE: FULL
+  BESU_LOGGING: INFO
+  BESU_P2P_ENABLED: 'false'
+  BESU_RPC_WS_ENABLED: 'true'
+  BESU_RPC_HTTP_ENABLED: 'true'
+  BESU_RPC_HTTP_API: eth,net,web3,admin,debug
+  BESU_NETWORK: DEV
+  BESU_DATA_PATH: "/opt/besu/dev"
+  BESU_MINER_ENABLED: 'true'
+  BESU_MINER_COINBASE: '0xf17f52151EbEF6C7334FAD080c5704D77216b732'
+  BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: 'true'
+
+# ------------------------------------------------------------------------------
+# ROPSTEN KAFKA
+# ------------------------------------------------------------------------------
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.ApplicationRunConfig
+name: BESU | Ropsten | Kafka > Run
+filename: BESU__Ropsten__Kafka__Run.xml
+default: false
+mainClassName: org.hyperledger.besu.Besu
+module: exflo.ingestion.kafka.main
+envs:
+  BESU_SYNC_MODE: FULL
+  BESU_LOGGING: INFO
+  BESU_P2P_ENABLED: 'true'
+  BESU_RPC_WS_ENABLED: 'true'
+  BESU_RPC_HTTP_ENABLED: 'true'
+  BESU_RPC_HTTP_API: eth,net,web3,admin,debug
+  BESU_NETWORK: ROPSTEN
+  BESU_DATA_PATH: "/opt/besu/ropsten"
+  BESU_BOOTNODES: "enode://cd24a0c66055d788ce2bb77c2525915724a56de577b3e39c1a4dde347e60c83f082285a9d43a5ba0d7efc929699106d147e8d3612baafcaeb8f3075f36a82670@180.64.84.98:51044,enode://cd24a0c66055d788ce2bb77c2525915724a56de577b3e39c1a4dde347e60c83f082285a9d43a5ba0d7efc929699106d147e8d3612baafcaeb8f3075f36a82670@180.64.84.98:51044"
+  BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'true'
+
+# ------------------------------------------------------------------------------
+# ROPSTEN POSTGRES
+# ------------------------------------------------------------------------------
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.ApplicationRunConfig
+name: BESU | Ropsten | Postgres > Run
+filename: BESU__Ropsten__Postgres__Run.xml
+default: false
+mainClassName: org.hyperledger.besu.Besu
+module: exflo.ingestion.postgres.main
+envs:
+  BESU_SYNC_MODE: FULL
+  BESU_LOGGING: INFO
+  BESU_P2P_ENABLED: 'true'
+  BESU_RPC_WS_ENABLED: 'true'
+  BESU_RPC_HTTP_ENABLED: 'true'
+  BESU_RPC_HTTP_API: eth,net,web3,admin,debug
+  BESU_NETWORK: ROPSTEN
+  BESU_DATA_PATH: "/opt/besu/ropsten"
+  BESU_BOOTNODES: "enode://cd24a0c66055d788ce2bb77c2525915724a56de577b3e39c1a4dde347e60c83f082285a9d43a5ba0d7efc929699106d147e8d3612baafcaeb8f3075f36a82670@180.64.84.98:51044,enode://cd24a0c66055d788ce2bb77c2525915724a56de577b3e39c1a4dde347e60c83f082285a9d43a5ba0d7efc929699106d147e8d3612baafcaeb8f3075f36a82670@180.64.84.98:51044"
+  BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: 'true'
+
+# ------------------------------------------------------------------------------
+# MAINNET KAFKA
+# ------------------------------------------------------------------------------
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.ApplicationRunConfig
+name: BESU | Mainnet | Kafka > Run
+filename: BESU__Mainnet__Kafka__Run.xml
+default: false
+mainClassName: org.hyperledger.besu.Besu
+module: exflo.ingestion.kafka.main
+envs:
+  BESU_SYNC_MODE: FULL
+  BESU_LOGGING: INFO
+  BESU_P2P_ENABLED: 'true'
+  BESU_RPC_WS_ENABLED: 'true'
+  BESU_RPC_HTTP_ENABLED: 'true'
+  BESU_RPC_HTTP_API: eth,net,web3,admin,debug
+  BESU_NETWORK: MAINNET
+  BESU_DATA_PATH: "/opt/besu/mainnet"
+  BESU_PLUGIN_EXFLO_KAFKA_ENABLED: 'true'
+
+# ------------------------------------------------------------------------------
+# MAINNET POSTGRES
+# ------------------------------------------------------------------------------
+--- !!dev.north.fortyone.gradle.intellij.run.generator.models.ApplicationRunConfig
+name: BESU | Mainnet | Postgres > Run
+filename: BESU__Mainnet__Postgres__Run.xml
+default: false
+mainClassName: org.hyperledger.besu.Besu
+module: exflo.ingestion.postgres.main
+envs:
+  BESU_SYNC_MODE: FULL
+  BESU_LOGGING: INFO
+  BESU_P2P_ENABLED: 'true'
+  BESU_RPC_WS_ENABLED: 'true'
+  BESU_RPC_HTTP_ENABLED: 'true'
+  BESU_RPC_HTTP_API: eth,net,web3,admin,debug
+  BESU_NETWORK: MAINNET
+  BESU_DATA_PATH: "/opt/besu/mainnet"
+  BESU_PLUGIN_EXFLO_POSTGRES_ENABLED: 'true'

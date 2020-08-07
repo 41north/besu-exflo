@@ -78,8 +78,6 @@ dependencyManagement {
 
     dependency 'com.beust:klaxon:5.2'
 
-    dependency 'org.redundent:kotlin-xml-builder:1.6.0'
-
     dependency 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
     dependency 'com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0'
     dependency 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.0'
