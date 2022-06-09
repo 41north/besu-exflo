@@ -15,7 +15,7 @@
     A plugin for the <a href="http://besu.hyperledger.org/en/stable/">Besu</a> enterprise-grade Ethereum client with the aim of making it easier to extract chain data into a variety of different data stores and processing pipelines. <br/><br /> Written with ❤️ in <a href="https://kotlinlang.org">Kotlin</a>.
 </p>
 
-<p align="center"><b>⚠️ Warning</b>: This project is in alpha stage, and we are working actively!</p>
+<p align="center"><b>⚠️ Warning</b>: This project is **DEPRECATED**, use it at your own risk!</p>
 
 ## 🗒️ Features
 
