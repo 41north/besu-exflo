@@ -11,7 +11,7 @@ ARG FLATBUFFERS_IMAGE_TAG="stretch-slim"
 FROM ${FLATBUFFERS_IMAGE_BASE}:${FLATBUFFERS_IMAGE_TAG} as flatbuffer_build
 
 ARG FLATBUFFERS_ARCHIVE_BASE_URL="https://github.com/google/flatbuffers/archive"
-ARG FLATBUFFERS_ARCHIVE_TAG="1.11.0"
+ARG FLATBUFFERS_ARCHIVE_TAG="v1.12.0"
 ARG FLATBUFFERS_BUILD_TYPE="Release"
 
 # Set to exactly "true" to use clang
